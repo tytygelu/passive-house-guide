@@ -62,4 +62,4 @@ Acest proiect este licențiat sub MIT License - vezi fișierul [LICENSE](LICENSE
 
 ## Contact
 
-Pentru întrebări și sugestii, ne puteți contacta la [adresa_de_email@example.com]
+Pentru întrebări și sugestii, ne puteți contacta la [tytygelu@yahoo.com]
