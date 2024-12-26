@@ -1,5 +1,3 @@
-# passive-house-guide
-
 # Passive House Guide | Ghid Case Passive
 
 O platformă multilingvă comprehensivă pentru informații despre case passive și clădiri NZEB (Nearly Zero-Energy Buildings).
