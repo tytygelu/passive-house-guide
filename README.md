@@ -1,65 +1,36 @@
-# Passive House Guide | Ghid Case Passive
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-O platformă multilingvă comprehensivă pentru informații despre case passive și clădiri NZEB (Nearly Zero-Energy Buildings).
+## Getting Started
 
-## Despre Proiect
-
-Acest proiect își propune să ofere o resursă completă pentru toți cei interesați de casele passive și construcțiile cu consum aproape zero de energie. Platforma oferă informații tehnice, ghiduri practice și instrumente interactive pentru:
-
-- Principiile fundamentale ale caselor passive
-- Materiale și soluții constructive recomandate
-- Sisteme și tehnologii eficiente energetic
-- Certificări și standarde internaționale
-- Calculatoare de costuri și eficiență energetică
-
-## Tehnologii Utilizate
-
-- Next.js 14
-- React
-- Tailwind CSS
-- i18next pentru internaționalizare
-- Prisma pentru baza de date
-- Vercel pentru deployment
-
-## Funcționalități Principale
-
-- Conținut multilingv (EN, RO, DE, FR , etc)
-- Calculatoare interactive pentru eficiență energetică
-- Bază de date cu materiale și specificații tehnice
-- Ghiduri și tutoriale interactive
-- Studii de caz din diferite zone climatice
-
-## Instalare și Rulare Locală
+First, run the development server:
 
 ```bash
-# Clonează repository-ul
-git clone https://github.com/tytygelu/passive-house-guide.git
-
-# Instalează dependențele
-cd passive-house-guide
-npm install
-
-# Configurează variabilele de mediu
-cp .env.example .env.local
-
-# Pornește serverul de development
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-## Contribuție
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Suntem deschiși contribuțiilor! Dacă dorești să contribui la proiect:
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-1. Fork acest repository
-2. Creează un branch pentru feature-ul tău (`git checkout -b feature/AmazingFeature`)
-3. Commit schimbările (`git commit -m 'Add some AmazingFeature'`)
-4. Push la branch (`git push origin feature/AmazingFeature`)
-5. Deschide un Pull Request
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-## Licență
+## Learn More
 
-Acest proiect este licențiat sub MIT License - vezi fișierul [LICENSE](LICENSE) pentru detalii.
+To learn more about Next.js, take a look at the following resources:
 
-## Contact
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-Pentru întrebări și sugestii, ne puteți contacta la [tytygelu@yahoo.com]
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
