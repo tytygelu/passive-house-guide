@@ -23,7 +23,7 @@ Acest proiect își propune să ofere o resursă completă pentru toți cei inte
 
 ## Funcționalități Principale
 
-- Conținut multilingv (EN, RO, DE, FR)
+- Conținut multilingv (EN, RO, DE, FR , etc)
 - Calculatoare interactive pentru eficiență energetică
 - Bază de date cu materiale și specificații tehnice
 - Ghiduri și tutoriale interactive
