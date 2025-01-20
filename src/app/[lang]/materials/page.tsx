@@ -1,8 +1,7 @@
 import { getDictionary } from '../../../dictionaries'
 
 export default async function MaterialsPage({ params }: { params: { lang: string } }) {
-  const lang = (await params).lang;
-  const dict = await getDictionary(lang);
+  const dict = await getDictionary(params.lang);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">

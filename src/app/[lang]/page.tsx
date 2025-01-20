@@ -13,10 +13,7 @@ export async function generateStaticParams() {
 
 // Componenta principală a paginii
 export default async function Page({ params }: { params: { lang: string } }) {
-  // Folosim await pentru a accesa params
-  const lang = (await params).lang;
-  // Apoi folosim valoarea extrasă
-  const dict = await getDictionary(lang);
+  const dict = await getDictionary(params.lang);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -25,7 +22,7 @@ export default async function Page({ params }: { params: { lang: string } }) {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">{dict.home.title}</h1>
             <ClientNav 
-              lang={lang} 
+              lang={params.lang} 
               menuItems={{
                 home: dict.home.menu.home,
                 principles: dict.home.menu.principles,
