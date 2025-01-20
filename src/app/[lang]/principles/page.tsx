@@ -2,7 +2,7 @@ import { getDictionary } from '../../../dictionaries'
 import { PageProps } from '@/types/page'
 
 export default async function PrinciplesPage({ params }: PageProps) {
-  const { lang } = params;
+  const { lang } = await params;
   const dict = await getDictionary(lang);
 
   return (
