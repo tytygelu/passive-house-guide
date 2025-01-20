@@ -1,6 +1,7 @@
 // src/app/[lang]/page.tsx
 import { getDictionary } from '../../dictionaries'
 import ClientNav from '@/components/ClientNav'
+import { PageProps } from '@/types/page'
 
 export async function generateStaticParams() {
   return [
@@ -12,8 +13,9 @@ export async function generateStaticParams() {
 }
 
 // Componenta principală a paginii
-export default async function Page({ params }: { params: { lang: string } }) {
-  const dict = await getDictionary(params.lang);
+export default async function Page({ params }: PageProps) {
+  const { lang } = params;
+  const dict = await getDictionary(lang);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -22,7 +24,7 @@ export default async function Page({ params }: { params: { lang: string } }) {
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-bold">{dict.home.title}</h1>
             <ClientNav 
-              lang={params.lang} 
+              lang={lang} 
               menuItems={{
                 home: dict.home.menu.home,
                 principles: dict.home.menu.principles,

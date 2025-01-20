@@ -1,7 +1,9 @@
 import { getDictionary } from '../../../dictionaries'
+import { PageProps } from '@/types/page'
 
-export default async function CaseStudiesPage({ params }: { params: { lang: string } }) {
-  const dict = await getDictionary(params.lang);
+export default async function CaseStudiesPage({ params }: PageProps) {
+  const { lang } = params;
+  const dict = await getDictionary(lang);
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
