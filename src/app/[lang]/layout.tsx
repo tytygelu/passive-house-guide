@@ -1,14 +1,13 @@
 // src/app/[lang]/layout.tsx
 import ClientNav from '@/components/ClientNav'
 import { getDictionary } from '@/dictionaries/dictionaries'
+import { LayoutProps } from '@/types/page'
 
 export default async function LanguageLayout({
   children,
-  params
-}: {
-  children: React.ReactNode
-  params: { lang: string }
-}) {
+  params: paramsPromise
+}: LayoutProps) {
+  const params = await paramsPromise
   const dict = await getDictionary(params.lang)
   
   return (
