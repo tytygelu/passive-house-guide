@@ -1,14 +1,15 @@
-import { getDictionary } from '../../../dictionaries'
 import { PageProps } from '@/types/page'
+import { getDictionary } from '@/dictionaries/dictionaries'
 
-export default async function CaseStudiesPage({ params }: PageProps) {
-  const { lang } = await params;
-  const dict = await getDictionary(lang);
+export default async function CaseStudies({ params }: PageProps) {
+  const dict = await getDictionary(params.lang)
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold mb-6">{dict.home.menu.projects}</h1>
-      {/* Case studies content will be added here */}
+    <div className="min-h-screen bg-gray-50">
+      <div className="text-center py-16">
+        <h1 className="text-4xl font-bold mb-4">{dict.home.menu.projects}</h1>
+        <p className="text-xl text-gray-600">Real-world examples of passive house projects.</p>
+      </div>
     </div>
   )
 }
