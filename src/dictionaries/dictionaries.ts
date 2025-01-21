@@ -20,6 +20,26 @@ type Dictionary = {
       description: string;
     };
   };
+  footer: {
+    about: {
+      title: string;
+      description: string;
+    };
+    social: {
+      title: string;
+      follow: string;
+      twitter: string;
+      linkedin: string;
+      github: string;
+    };
+    contact: {
+      title: string;
+      email: string;
+      phone: string;
+      address: string;
+    };
+    copyright: string;
+  };
 }
 
 const dictionaries: Record<string, Dictionary> = {
@@ -51,6 +71,26 @@ const dictionaries: Record<string, Dictionary> = {
         title: 'Contact Us',
         description: 'Get in touch with our team'
       }
+    },
+    footer: {
+      about: {
+        title: 'About Us',
+        description: 'We help you build sustainable, energy-efficient homes that respect the environment and reduce energy costs.'
+      },
+      social: {
+        title: 'Connect',
+        follow: 'Follow us',
+        twitter: 'Twitter',
+        linkedin: 'LinkedIn',
+        github: 'GitHub'
+      },
+      contact: {
+        title: 'Contact',
+        email: 'Email: contact@zeroenergy.casa',
+        phone: 'Phone: +40 123 456 789',
+        address: 'Address: Bucharest, Romania'
+      },
+      copyright: ' 2025 Passive House Guide. All rights reserved.'
     }
   },
   ro: {
@@ -81,6 +121,26 @@ const dictionaries: Record<string, Dictionary> = {
         title: 'Contact',
         description: 'Contactează echipa noastră'
       }
+    },
+    footer: {
+      about: {
+        title: 'Despre Noi',
+        description: 'Te ajutăm să construiești case sustenabile și eficiente energetic care respectă mediul și reduc costurile cu energia.'
+      },
+      social: {
+        title: 'Conectează-te',
+        follow: 'Urmărește-ne',
+        twitter: 'Twitter',
+        linkedin: 'LinkedIn',
+        github: 'GitHub'
+      },
+      contact: {
+        title: 'Contact',
+        email: 'Email: contact@zeroenergy.casa',
+        phone: 'Telefon: +40 123 456 789',
+        address: 'Adresă: București, România'
+      },
+      copyright: ' 2025 Ghid Case Pasive. Toate drepturile rezervate.'
     }
   },
   de: {
@@ -111,6 +171,26 @@ const dictionaries: Record<string, Dictionary> = {
         title: 'Kontakt',
         description: 'Nehmen Sie Kontakt mit unserem Team auf'
       }
+    },
+    footer: {
+      about: {
+        title: 'Über Uns',
+        description: 'Wir helfen Ihnen beim Bau nachhaltiger, energieeffizienter Häuser, die die Umwelt respektieren und Energiekosten senken.'
+      },
+      social: {
+        title: 'Verbinden',
+        follow: 'Folgen Sie uns',
+        twitter: 'Twitter',
+        linkedin: 'LinkedIn',
+        github: 'GitHub'
+      },
+      contact: {
+        title: 'Kontakt',
+        email: 'E-Mail: contact@zeroenergy.casa',
+        phone: 'Telefon: +40 123 456 789',
+        address: 'Adresse: Bukarest, Rumänien'
+      },
+      copyright: ' 2025 Passivhaus-Leitfaden. Alle Rechte vorbehalten.'
     }
   },
   fr: {
@@ -141,10 +221,30 @@ const dictionaries: Record<string, Dictionary> = {
         title: 'Contact',
         description: 'Contactez notre équipe'
       }
+    },
+    footer: {
+      about: {
+        title: 'À Propos',
+        description: 'Nous vous aidons à construire des maisons durables et économes en énergie qui respectent l\'environnement et réduisent les coûts énergétiques.'
+      },
+      social: {
+        title: 'Connectez-vous',
+        follow: 'Suivez-nous',
+        twitter: 'Twitter',
+        linkedin: 'LinkedIn',
+        github: 'GitHub'
+      },
+      contact: {
+        title: 'Contact',
+        email: 'Email: contact@zeroenergy.casa',
+        phone: 'Téléphone: +40 123 456 789',
+        address: 'Adresse: Bucarest, Roumanie'
+      },
+      copyright: ' 2025 Guide Maison Passive. Tous droits réservés.'
     }
   }
 }
 
 export async function getDictionary(locale: string): Promise<Dictionary> {
-  return dictionaries[locale] || dictionaries.en;
+  return dictionaries[locale]
 }
