@@ -13,14 +13,16 @@ export default async function LanguageLayout({
   
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="p-4 border-b">
-        <nav className="container mx-auto flex justify-between items-center">
+      <header className="p-4 border-b bg-white">
+        <nav className="container mx-auto max-w-6xl px-4 flex justify-between items-center">
           <div className="text-xl font-bold">Passive House Guide</div>
           <ClientNav lang={params.lang} menuItems={dict.navigation} />
         </nav>
       </header>
-      <main className="flex-grow container mx-auto p-4">
-        {children}
+      <main className="flex-grow">
+        <div className="container mx-auto max-w-6xl px-4 py-8">
+          {children}
+        </div>
       </main>
     </div>
   )
