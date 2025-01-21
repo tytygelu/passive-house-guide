@@ -5,9 +5,8 @@ import { LayoutProps } from '@/types/page'
 
 export default async function LanguageLayout({
   children,
-  params: paramsPromise
+  params
 }: LayoutProps) {
-  const params = await paramsPromise
   const dict = await getDictionary(params.lang)
   
   return (

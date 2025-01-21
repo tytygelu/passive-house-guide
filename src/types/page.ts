@@ -1,11 +1,15 @@
 // src/types/page.ts
 import { ReactNode } from 'react'
 
+export type PageParams = {
+  lang: string
+}
+
 export type PageProps = {
-  params: Promise<{ lang: string }>
+  params: PageParams
 }
 
 export type LayoutProps = {
   children: ReactNode
-  params: Promise<{ lang: string }>
+  params: PageParams
 }
