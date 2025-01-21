@@ -6,10 +6,10 @@ export type PageParams = {
 }
 
 export type PageProps = {
-  params: PageParams
+  params: Promise<PageParams>
 }
 
 export type LayoutProps = {
   children: ReactNode
-  params: PageParams
+  params: Promise<PageParams>
 }

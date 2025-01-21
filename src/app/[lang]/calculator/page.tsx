@@ -2,7 +2,8 @@ import { PageProps } from '@/types/page'
 import { getDictionary } from '@/dictionaries/dictionaries'
 
 export default async function Calculator({ params }: PageProps) {
-  const dict = await getDictionary(params.lang)
+  const { lang } = await params
+  const dict = await getDictionary(lang)
 
   return (
     <div className="min-h-screen bg-gray-50">
