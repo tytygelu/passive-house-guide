@@ -8,8 +8,8 @@ export default async function Contact({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="text-center py-16">
-        <h1 className="text-4xl font-bold mb-4">{dict.home.menu.contact}</h1>
-        <p className="text-xl text-gray-600">Get in touch with our team.</p>
+        <h1 className="text-4xl font-bold mb-4">{dict.sections.contact.title}</h1>
+        <p className="text-xl text-gray-600">{dict.sections.contact.description}</p>
       </div>
     </div>
   )

@@ -22,16 +22,16 @@ export default async function Page({ params }: PageProps) {
       <header className="bg-white shadow-sm">
         <nav className="max-w-7xl mx-auto p-4">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">{dict.home.title}</h1>
+            <h1 className="text-2xl font-bold">{dict.title}</h1>
             <ClientNav 
               lang={lang} 
               menuItems={{
-                home: dict.home.menu.home,
-                principles: dict.home.menu.principles,
-                materials: dict.home.menu.materials,
-                calculator: dict.home.menu.calculator,
-                case_studies: dict.home.menu.projects,
-                contact: dict.home.menu.contact
+                home: dict.menu.home,
+                principles: dict.menu.principles,
+                materials: dict.menu.materials,
+                calculator: dict.menu.calculator,
+                case_studies: dict.menu.projects,
+                contact: dict.menu.contact
               }} 
             />
           </div>
@@ -40,8 +40,8 @@ export default async function Page({ params }: PageProps) {
 
       <main className="max-w-7xl mx-auto px-4 py-12">
         <section className="text-center mb-16">
-          <h2 className="text-4xl font-bold mb-4">{dict.home.title}</h2>
-          <p className="text-xl text-gray-600">{dict.home.subtitle}</p>
+          <h2 className="text-4xl font-bold mb-4">{dict.title}</h2>
+          <p className="text-xl text-gray-600">{dict.subtitle}</p>
         </section>
       </main>
     </div>
