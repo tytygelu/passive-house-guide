@@ -1,5 +1,5 @@
 // src/app/[lang]/page.tsx
-import { getDictionary } from '../../dictionaries'
+import { getDictionary } from '@/dictionaries/dictionaries'
 import ClientNav from '@/components/ClientNav'
 import { PageProps } from '@/types/page'
 
