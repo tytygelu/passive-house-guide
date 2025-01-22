@@ -18,6 +18,14 @@ type Dictionary = {
     contact: {
       title: string;
       description: string;
+      form: {
+        name: string;
+        email: string;
+        message: string;
+        submit: string;
+      };
+      success: string;
+      error: string;
     };
   };
   footer: {
@@ -68,7 +76,15 @@ const dictionaries: Record<string, Dictionary> = {
       },
       contact: {
         title: 'Contact Us',
-        description: 'Get in touch with our team'
+        description: 'Get in touch with our team',
+        form: {
+          name: 'Your Name',
+          email: 'Your Email',
+          message: 'Your Message',
+          submit: 'Send Message'
+        },
+        success: 'Message sent successfully!',
+        error: 'Failed to send message. Please try again.'
       }
     },
     footer: {
@@ -117,7 +133,15 @@ const dictionaries: Record<string, Dictionary> = {
       },
       contact: {
         title: 'Contact',
-        description: 'Contactează echipa noastră'
+        description: 'Contactează echipa noastră',
+        form: {
+          name: 'Numele tău',
+          email: 'Email-ul tău',
+          message: 'Mesajul tău',
+          submit: 'Trimite Mesaj'
+        },
+        success: 'Mesaj trimis cu succes!',
+        error: 'Eroare la trimiterea mesajului. Te rugăm să încerci din nou.'
       }
     },
     footer: {
@@ -166,7 +190,15 @@ const dictionaries: Record<string, Dictionary> = {
       },
       contact: {
         title: 'Kontakt',
-        description: 'Nehmen Sie Kontakt mit unserem Team auf'
+        description: 'Nehmen Sie Kontakt mit unserem Team auf',
+        form: {
+          name: 'Ihr Name',
+          email: 'Ihre E-Mail',
+          message: 'Ihre Nachricht',
+          submit: 'Nachricht senden'
+        },
+        success: 'Nachricht erfolgreich gesendet!',
+        error: 'Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.'
       }
     },
     footer: {
@@ -215,7 +247,15 @@ const dictionaries: Record<string, Dictionary> = {
       },
       contact: {
         title: 'Contact',
-        description: 'Contactez notre équipe'
+        description: 'Contactez notre équipe',
+        form: {
+          name: 'Votre Nom',
+          email: 'Votre Email',
+          message: 'Votre Message',
+          submit: 'Envoyer le Message'
+        },
+        success: 'Message envoyé avec succès!',
+        error: 'Erreur lors de l\'envoi du message. Veuillez réessayer.'
       }
     },
     footer: {
