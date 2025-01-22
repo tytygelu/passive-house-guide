@@ -4,7 +4,6 @@ export const en = {
       title: 'Passive House Guide',
       subtitle: 'Your comprehensive resource for sustainable building',
       menu: {
-        home: 'Home',
         principles: 'Principles',
         materials: 'Materials',
         calculator: 'Energy Calculator',

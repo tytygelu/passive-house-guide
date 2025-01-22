@@ -1,10 +1,9 @@
 // src/dictionaries/ro.ts (Romanian - Pentru piața locală)
 export const ro = {
     home: {
-      title: 'Ghid Case Passive',
+      title: 'Ghid Case Pasive',
       subtitle: 'Resursa ta completă pentru construcții sustenabile',
       menu: {
-        home: 'Acasă',
         principles: 'Principii',
         materials: 'Materiale',
         calculator: 'Calculator Energetic',

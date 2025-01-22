@@ -4,7 +4,6 @@ export const fr = {
       title: 'Guide Maison Passive',
       subtitle: 'Votre ressource complète pour la construction durable',
       menu: {
-        home: 'Accueil',
         principles: 'Principes',
         materials: 'Matériaux',
         calculator: 'Calculateur Énergétique',

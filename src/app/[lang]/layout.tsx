@@ -3,6 +3,7 @@ import ClientNav from '@/components/ClientNav'
 import { getDictionary } from '@/dictionaries/dictionaries'
 import { LayoutProps } from '@/types/page'
 import { FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa'
+import { EnvelopeIcon } from '@heroicons/react/24/outline'
 
 export default async function LanguageLayout({
   children,
@@ -13,13 +14,8 @@ export default async function LanguageLayout({
   
   return (
     <div className="flex flex-col min-h-screen">
-      <header className="p-4 border-b bg-white">
-        <nav className="container mx-auto max-w-6xl px-4 flex justify-between items-center">
-          <div className="text-xl font-bold">Passive House Guide</div>
-          <ClientNav lang={lang} menuItems={dict.navigation} />
-        </nav>
-      </header>
-      <main className="flex-grow">
+      <ClientNav lang={lang} menuItems={dict.navigation} />
+      <main className="flex-grow pt-24">
         <div className="container mx-auto max-w-6xl px-4 py-8">
           {children}
         </div>
@@ -49,21 +45,23 @@ export default async function LanguageLayout({
                 </a>
               </div>
             </div>
-            
+
             {/* Contact Info */}
             <div>
               <h3 className="text-xl font-bold mb-4">{dict.footer.contact.title}</h3>
-              <div className="space-y-2 text-gray-300">
-                <p>{dict.footer.contact.email}</p>
-                <p>{dict.footer.contact.phone}</p>
-                <p>{dict.footer.contact.address}</p>
-              </div>
+              <a 
+                href="mailto:zero.energy.passive.house@gmail.com"
+                className="text-gray-300 hover:text-white transition-colors flex items-center gap-2"
+              >
+                <EnvelopeIcon className="h-5 w-5" />
+                zero.energy.passive.house@gmail.com
+              </a>
             </div>
           </div>
           
           {/* Copyright */}
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-            <p>{dict.footer.copyright}</p>
+          <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
+            <p> {new Date().getFullYear()} Passive House Guide. {dict.footer.rights}</p>
           </div>
         </div>
       </footer>

@@ -45,7 +45,6 @@ type Dictionary = {
 const dictionaries: Record<string, Dictionary> = {
   en: {
     navigation: {
-      home: 'Home',
       principles: 'Principles',
       materials: 'Materials',
       calculator: 'Energy Calculator',
@@ -95,7 +94,6 @@ const dictionaries: Record<string, Dictionary> = {
   },
   ro: {
     navigation: {
-      home: 'Acasă',
       principles: 'Principii',
       materials: 'Materiale',
       calculator: 'Calculator Energie',
@@ -145,7 +143,6 @@ const dictionaries: Record<string, Dictionary> = {
   },
   de: {
     navigation: {
-      home: 'Startseite',
       principles: 'Prinzipien',
       materials: 'Materialien',
       calculator: 'Energierechner',
@@ -195,7 +192,6 @@ const dictionaries: Record<string, Dictionary> = {
   },
   fr: {
     navigation: {
-      home: 'Accueil',
       principles: 'Principes',
       materials: 'Matériaux',
       calculator: 'Calculateur Énergie',

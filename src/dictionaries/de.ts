@@ -2,9 +2,8 @@
 export const de = {
     home: {
       title: 'Passivhaus-Leitfaden',
-      subtitle: 'Ihr umfassender Leitfaden für nachhaltiges Bauen',
+      subtitle: 'Ihre umfassende Ressource für nachhaltiges Bauen',
       menu: {
-        home: 'Startseite',
         principles: 'Grundprinzipien',
         materials: 'Materialien',
         calculator: 'Energierechner',
