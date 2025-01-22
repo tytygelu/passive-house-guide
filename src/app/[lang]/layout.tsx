@@ -61,7 +61,7 @@ export default async function LanguageLayout({
           
           {/* Copyright */}
           <div className="mt-12 pt-8 border-t border-gray-800 text-center text-gray-400">
-            <p> {new Date().getFullYear()} Passive House Guide. {dict.footer.rights}</p>
+            <p>&copy; {new Date().getFullYear()} {dict.title}. {dict.footer.copyright}</p>
           </div>
         </div>
       </footer>
