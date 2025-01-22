@@ -3,7 +3,20 @@
 import { useState } from 'react'
 import { sendEmail } from '@/app/[lang]/contact/actions'
 
-export default function ContactForm({ translations }: { translations: any }) {
+interface ContactTranslations {
+  title: string
+  description: string
+  form: {
+    name: string
+    email: string
+    message: string
+    submit: string
+  }
+  success: string
+  error: string
+}
+
+export default function ContactForm({ translations }: { translations: ContactTranslations }) {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
@@ -34,7 +47,7 @@ export default function ContactForm({ translations }: { translations: any }) {
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-          {translations.name}
+          {translations.form.name}
         </label>
         <input
           type="text"
@@ -47,7 +60,7 @@ export default function ContactForm({ translations }: { translations: any }) {
 
       <div>
         <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-          {translations.email}
+          {translations.form.email}
         </label>
         <input
           type="email"
@@ -60,7 +73,7 @@ export default function ContactForm({ translations }: { translations: any }) {
 
       <div>
         <label htmlFor="message" className="block text-sm font-medium text-gray-700">
-          {translations.message}
+          {translations.form.message}
         </label>
         <textarea
           name="message"
@@ -83,7 +96,7 @@ export default function ContactForm({ translations }: { translations: any }) {
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
           ) : (
-            translations.submit
+            translations.form.submit
           )}
         </button>
       </div>
