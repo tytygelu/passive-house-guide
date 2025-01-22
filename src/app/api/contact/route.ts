@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const { data, error } = await resend.emails.send({
       from: 'onboarding@resend.dev',
       to: 'zero.energy.passive.house@gmail.com',
-      reply_to: email,
+      replyTo: email,
       subject: `New Contact Form Message from ${name}`,
       html: `
         <h3>New Contact Form Message</h3>
