@@ -2,16 +2,11 @@
 import { getDictionary } from '@/dictionaries/dictionaries'
 import { PageProps } from '@/types/page'
 import PageTransition from '@/components/PageTransition'
-import Hero from '@/components/Hero'
-import Features from '@/components/Features'
-import Principles from '@/components/Principles'
 
 export async function generateStaticParams() {
   return [
     { lang: 'en' },
     { lang: 'ro' },
-    { lang: 'de' },
-    { lang: 'fr' }
   ]
 }
 
@@ -21,11 +16,12 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <PageTransition>
-      <main>
-        <Hero dict={dict} />
-        <Features dict={dict} />
-        <Principles dict={dict} lang={lang} />
-      </main>
+      <div className="min-h-screen bg-gray-50">
+        <div className="text-center py-16">
+          <h1 className="text-4xl font-bold mb-4">{dict.title}</h1>
+          <p className="text-xl text-gray-600">{dict.subtitle}</p>
+        </div>
+      </div>
     </PageTransition>
   )
 }
