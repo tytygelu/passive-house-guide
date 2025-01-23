@@ -3,13 +3,14 @@ import { ReactNode } from 'react'
 
 export type PageParams = {
   lang: string
+  [key: string]: string
 }
 
 export type PageProps = {
-  params: Promise<PageParams>
+  params: PageParams
 }
 
 export type LayoutProps = {
   children: ReactNode
-  params: Promise<PageParams>
+  params: PageParams
 }

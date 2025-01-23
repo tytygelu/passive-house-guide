@@ -8,11 +8,7 @@ interface PostParams {
   slug: string
 }
 
-interface PostProps {
-  params: PostParams
-}
-
-export default async function Post({ params }: PostProps) {
+export default async function Post({ params }: PageProps) {
   const { lang, slug } = params
   const post = getPostBySlug('principles', lang, slug, [
     'title',
