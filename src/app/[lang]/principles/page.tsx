@@ -5,8 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 export default async function PrinciplesPage({ params }: PageProps) {
-  const { lang } = params;
-  const dict = await getDictionary(lang);
+  const { lang } = await params
+  const dict = await getDictionary(lang)
   const posts = getAllPosts('principles', lang, ['slug', 'title', 'excerpt', 'coverImage', 'date'])
 
   return (

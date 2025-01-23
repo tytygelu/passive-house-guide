@@ -4,7 +4,7 @@ import { PageProps } from '@/types/page'
 import Image from 'next/image'
 
 export default async function Post({ params }: PageProps) {
-  const { lang, slug } = params
+  const { lang, slug } = await params
   const post = getPostBySlug('principles', lang, slug, [
     'title',
     'date',

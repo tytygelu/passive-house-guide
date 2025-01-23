@@ -11,7 +11,7 @@ export async function generateStaticParams() {
 }
 
 export default async function Page({ params }: PageProps) {
-  const { lang } = params
+  const { lang } = await params
   const dict = await getDictionary(lang)
 
   return (

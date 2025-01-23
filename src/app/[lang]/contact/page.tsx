@@ -4,7 +4,7 @@ import PageTransition from '@/components/PageTransition'
 import { EnvelopeIcon } from '@heroicons/react/24/outline'
 
 export default async function Contact({ params }: PageProps) {
-  const { lang } = params
+  const { lang } = await params
   const dict = await getDictionary(lang)
 
   return (
