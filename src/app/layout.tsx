@@ -11,19 +11,19 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon.ico',
-    apple: '/apple-touch-icon.png',
+    apple: '/web-app-manifest-192x192.png',
     other: [
       {
         rel: 'icon',
         type: 'image/png',
-        sizes: '32x32',
-        url: '/favicon-32x32.png',
+        sizes: '192x192',
+        url: '/web-app-manifest-192x192.png',
       },
       {
         rel: 'icon',
         type: 'image/png',
-        sizes: '16x16',
-        url: '/favicon-16x16.png',
+        sizes: '512x512',
+        url: '/web-app-manifest-512x512.png',
       },
     ],
   },
