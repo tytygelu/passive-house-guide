@@ -6,10 +6,28 @@ const postsDirectory = join(process.cwd(), 'src/content')
 
 export function getPostSlugs(category: string, lang: string) {
   const categoryPath = join(postsDirectory, category, lang)
+  const enPath = join(postsDirectory, category, 'en')
+
+  // If the language directory doesn't exist, use English
   if (!fs.existsSync(categoryPath)) {
-    return []
+    if (!fs.existsSync(enPath)) {
+      return []
+    }
+    return fs.readdirSync(enPath)
   }
-  return fs.readdirSync(categoryPath)
+
+  // Get posts in the requested language
+  const langPosts = fs.readdirSync(categoryPath)
+
+  // If English is not the requested language, also get English posts that don't exist in the requested language
+  if (lang !== 'en' && fs.existsSync(enPath)) {
+    const enPosts = fs.readdirSync(enPath)
+    const langPostsSet = new Set(langPosts)
+    const additionalPosts = enPosts.filter(post => !langPostsSet.has(post))
+    return [...langPosts, ...additionalPosts]
+  }
+
+  return langPosts
 }
 
 export function getPostBySlug(category: string, lang: string, slug: string, fields: string[] = []) {
@@ -55,7 +73,14 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
 export function getAllPosts(category: string, lang: string, fields: string[] = []) {
   const slugs = getPostSlugs(category, lang)
   const posts = slugs
-    .map((slug) => getPostBySlug(category, lang, slug, fields))
+    .map((slug) => {
+      try {
+        return getPostBySlug(category, lang, slug, fields)
+      } catch {
+        return null
+      }
+    })
+    .filter((post): post is NonNullable<typeof post> => post !== null)
     // sort posts by date in descending order
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
   return posts
