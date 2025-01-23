@@ -3,7 +3,7 @@ import { getDictionary } from '@/dictionaries/dictionaries'
 import PageTransition from '@/components/PageTransition'
 
 export default async function Calculator({ params }: PageProps) {
-  const { lang } = await params
+  const { lang } = params
   const dict = await getDictionary(lang)
 
   return (
