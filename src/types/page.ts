@@ -1,5 +1,5 @@
 // src/types/page.ts
-import { ReactNode } from 'react'
+import { ReactNode } from 'react';
 
 export type PageParams = {
   lang: string
@@ -7,10 +7,10 @@ export type PageParams = {
 }
 
 export type PageProps = {
-  params?: PageParams | Promise<PageParams>
+  params: Promise<any>
 }
 
 export type LayoutProps = {
   children: ReactNode
-  params?: PageParams | Promise<PageParams>
+  params: Promise<any>
 }
