@@ -3,11 +3,6 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { PageProps } from '@/types/page'
 import Image from 'next/image'
 
-interface PostParams {
-  lang: string
-  slug: string
-}
-
 export default async function Post({ params }: PageProps) {
   const { lang, slug } = params
   const post = getPostBySlug('principles', lang, slug, [
