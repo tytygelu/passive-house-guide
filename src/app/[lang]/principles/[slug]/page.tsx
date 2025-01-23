@@ -45,7 +45,7 @@ export default async function Post({ params }: PageProps) {
         </div>
       </article>
     )
-  } catch (error) {
+  } catch {
     notFound()
   }
 }
