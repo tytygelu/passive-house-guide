@@ -20,6 +20,11 @@ type Props = {
 export default function CookieConsent({ lang }: Props) {
   const [showConsent, setShowConsent] = useState(false)
   const [dict, setDict] = useState<CookieDict | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const loadDictionary = async () => {
@@ -30,11 +35,13 @@ export default function CookieConsent({ lang }: Props) {
   }, [lang])
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookie-consent')
-    if (!consent) {
-      setShowConsent(true)
+    if (mounted) {
+      const consent = localStorage.getItem('cookie-consent')
+      if (!consent) {
+        setShowConsent(true)
+      }
     }
-  }, [])
+  }, [mounted])
 
   const acceptCookies = () => {
     localStorage.setItem('cookie-consent', 'accepted')
@@ -46,7 +53,7 @@ export default function CookieConsent({ lang }: Props) {
     setShowConsent(false)
   }
 
-  if (!showConsent || !dict) return null
+  if (!mounted || !showConsent || !dict) return null
 
   return (
     <motion.div
