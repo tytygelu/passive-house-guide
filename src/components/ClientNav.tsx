@@ -184,7 +184,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                   whileHover={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.3 }}
                 />
-                {lang.toUpperCase()}
+                {lang?.toUpperCase()}
               </motion.button>
               
               <motion.div 
