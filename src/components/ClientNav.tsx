@@ -143,29 +143,35 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
-            {Object.entries(menuItems).map(([key, label]) => (
-              <Link
-                key={key}
-                href={`/${lang}${getRoute(key)}`}
-                className={clsx(
-                  'relative py-2 group',
-                  getCurrentRoute() === getRoute(key) 
-                    ? 'text-primary font-medium' 
-                    : 'text-gray-600 hover:text-gray-900'
-                )}
-              >
-                {label}
-                <motion.div
-                  className="absolute bottom-0 left-0 w-full h-0.5 bg-primary origin-left"
-                  initial={{ scaleX: 0 }}
-                  animate={{ 
-                    scaleX: getCurrentRoute() === getRoute(key) ? 1 : 0 
-                  }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
-              </Link>
-            ))}
+            {Object.entries(menuItems).map(([key, label]) => {
+              const currentRoute = getCurrentRoute()
+              const targetRoute = getRoute(key)
+              const isActive = currentRoute === targetRoute
+              
+              return (
+                <Link
+                  key={key}
+                  href={`/${lang}${targetRoute}`}
+                  className={clsx(
+                    'relative py-2 group',
+                    isActive 
+                      ? 'text-primary font-medium' 
+                      : 'text-gray-600 hover:text-gray-900'
+                  )}
+                >
+                  {label}
+                  <motion.div
+                    className="absolute bottom-0 left-0 w-full h-0.5 bg-primary origin-left"
+                    initial={{ scaleX: 0 }}
+                    animate={{ 
+                      scaleX: isActive ? 1 : 0 
+                    }}
+                    whileHover={{ scaleX: 1 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Link>
+              )
+            })}
           </div>
 
           <div className="flex items-center space-x-4">
