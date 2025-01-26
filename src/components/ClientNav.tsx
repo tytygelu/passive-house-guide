@@ -52,38 +52,75 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
   return (
     <motion.nav
       className={clsx(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
-        isScrolled ? 'bg-white/80 backdrop-blur-md shadow-sm' : 'bg-transparent'
+        'fixed top-0 left-0 right-0 z-50',
+        isScrolled 
+          ? 'h-16 bg-white/90 backdrop-blur-md shadow-sm' 
+          : 'h-20 bg-transparent'
       )}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
-      transition={{ duration: 0.3 }}
+      transition={{ 
+        duration: 0.5,
+        ease: [0.4, 0, 0.2, 1]
+      }}
     >
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+      <div className="container mx-auto px-4 h-full">
+        <div className="flex items-center justify-between h-full">
           <Link href={`/${lang}`} className="relative">
             <AnimatePresence mode="wait">
               {isScrolled ? (
                 <motion.div
                   key="short"
-                  className="font-bold text-xl"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+                  className="font-bold"
+                  initial={{ 
+                    opacity: 0,
+                    x: -20,
+                    scale: 0.8
+                  }}
+                  animate={{ 
+                    opacity: 1,
+                    x: 0,
+                    scale: 1
+                  }}
+                  exit={{ 
+                    opacity: 0,
+                    x: -20,
+                    scale: 0.8
+                  }}
+                  transition={{ 
+                    duration: 0.4,
+                    ease: [0.4, 0, 0.2, 1]
+                  }}
                 >
-                  PHG
+                  <span className="text-xl text-primary">P</span>
+                  <span className="text-xl">H</span>
+                  <span className="text-xl text-primary">G</span>
                 </motion.div>
               ) : (
                 <motion.div
                   key="full"
                   className="font-bold text-2xl"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.3 }}
+                  initial={{ 
+                    opacity: 0,
+                    x: 20,
+                    scale: 0.8
+                  }}
+                  animate={{ 
+                    opacity: 1,
+                    x: 0,
+                    scale: 1
+                  }}
+                  exit={{ 
+                    opacity: 0,
+                    x: 20,
+                    scale: 0.8
+                  }}
+                  transition={{ 
+                    duration: 0.4,
+                    ease: [0.4, 0, 0.2, 1]
+                  }}
                 >
-                  Passive House Guide
+                  <span className="text-primary">Passive</span> House Guide
                 </motion.div>
               )}
             </AnimatePresence>
@@ -95,8 +132,10 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                 key={key}
                 href={`/${lang}${getRoute(key)}`}
                 className={clsx(
-                  'hover:text-primary transition-colors',
-                  getCurrentRoute() === getRoute(key) && 'text-primary'
+                  'hover:text-primary transition-colors duration-300',
+                  getCurrentRoute() === getRoute(key) 
+                    ? 'text-primary font-medium' 
+                    : 'text-gray-600'
                 )}
               >
                 {label}
@@ -106,18 +145,27 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
 
           <div className="flex items-center space-x-4">
             <div className="relative group">
-              <button className="hover:text-primary transition-colors">
+              <button 
+                className={clsx(
+                  'px-3 py-1.5 rounded-md transition-all duration-300',
+                  'hover:bg-gray-100'
+                )}
+              >
                 {lang.toUpperCase()}
               </button>
               
-              <div className="absolute right-0 mt-2 w-24 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200">
+              <div className="absolute right-0 mt-2 w-28 bg-white rounded-md shadow-lg opacity-0 invisible 
+                            group-hover:opacity-100 group-hover:visible transition-all duration-200
+                            border border-gray-100">
                 {languages.map(language => (
                   <Link
                     key={language.code}
                     href={`/${language.code}${getCurrentRoute()}`}
                     className={clsx(
-                      'block px-4 py-2 text-sm hover:bg-gray-100',
-                      language.code === lang && 'text-primary'
+                      'block px-4 py-2 text-sm transition-colors duration-200',
+                      language.code === lang 
+                        ? 'bg-gray-50 text-primary font-medium' 
+                        : 'hover:bg-gray-50'
                     )}
                   >
                     {language.code.toUpperCase()}
