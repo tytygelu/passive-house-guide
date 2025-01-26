@@ -129,8 +129,8 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                     ease: [0.4, 0, 0.2, 1]
                   }}
                 >
-                  <span className="text-primary transition-all duration-300 group-hover:text-primary/80">Passive</span>
-                  <span className="transition-all duration-300 group-hover:text-primary"> House Guide</span>
+                  <span className="transition-all duration-300 group-hover:text-gray-600">Passive</span>
+                  <span className="transition-all duration-300 group-hover:text-gray-600"> House Guide</span>
                   <motion.div
                     className="absolute -bottom-1 left-0 w-full h-0.5 bg-primary origin-left"
                     initial={{ scaleX: 0 }}
