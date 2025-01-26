@@ -26,7 +26,7 @@ export default function Analytics() {
       {/* Google AdSense */}
       <Script
         async
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4195148067095287"
         crossOrigin="anonymous"
         strategy="afterInteractive"
       />

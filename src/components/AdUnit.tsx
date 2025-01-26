@@ -33,7 +33,7 @@ export default function AdUnit({ slot, format = 'auto', responsive = true, style
           textAlign: 'center',
           ...(responsive ? { width: '100%' } : {}),
         }}
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX" // Înlocuiește cu codul tău de publisher
+        data-ad-client="ca-pub-4195148067095287"
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive={responsive}
