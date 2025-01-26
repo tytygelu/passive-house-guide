@@ -29,11 +29,19 @@ export const en = {
         }
       },
       features: {
-        insulation: 'Superior Insulation',
-        windows: 'High-Performance Windows',
-        ventilation: 'Heat Recovery Ventilation',
-        airtightness: 'Airtight Construction',
-        solar: 'Solar Energy Integration'
+        title: 'Key Features',
+        items: [
+          'In-depth passive house principles',
+          'Material selection guides',
+          'Energy efficiency calculations',
+          'Case studies and examples'
+        ]
       }
+    },
+    cookies: {
+      title: 'Cookie Settings',
+      description: 'We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.',
+      accept: 'Accept All',
+      decline: 'Decline'
     }
-  }
+}

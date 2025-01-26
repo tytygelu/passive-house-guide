@@ -2,12 +2,34 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { getDictionary } from '@/dictionaries/dictionaries'
 
-export default function CookieConsent() {
+type CookieDict = {
+  cookies: {
+    title: string
+    description: string
+    accept: string
+    decline: string
+  }
+}
+
+type Props = {
+  lang: string
+}
+
+export default function CookieConsent({ lang }: Props) {
   const [showConsent, setShowConsent] = useState(false)
+  const [dict, setDict] = useState<CookieDict | null>(null)
 
   useEffect(() => {
-    // Verificăm dacă utilizatorul a acceptat deja cookie-urile
+    const loadDictionary = async () => {
+      const dictionary = await getDictionary(lang)
+      setDict(dictionary as unknown as CookieDict)
+    }
+    loadDictionary()
+  }, [lang])
+
+  useEffect(() => {
     const consent = localStorage.getItem('cookie-consent')
     if (!consent) {
       setShowConsent(true)
@@ -24,7 +46,7 @@ export default function CookieConsent() {
     setShowConsent(false)
   }
 
-  if (!showConsent) return null
+  if (!showConsent || !dict) return null
 
   return (
     <motion.div
@@ -38,10 +60,9 @@ export default function CookieConsent() {
         <div className="max-w-4xl mx-auto">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900">Cookie Settings</h3>
+              <h3 className="text-lg font-semibold text-gray-900">{dict.cookies.title}</h3>
               <p className="mt-1 text-sm text-gray-600">
-                We use cookies to enhance your browsing experience, serve personalized ads or content, and analyze our traffic. 
-                By clicking &quot;Accept All&quot;, you consent to our use of cookies.
+                {dict.cookies.description}
               </p>
             </div>
             <div className="flex flex-row gap-3 w-full md:w-auto">
@@ -49,13 +70,13 @@ export default function CookieConsent() {
                 onClick={declineCookies}
                 className="flex-1 md:flex-initial min-w-[100px] px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
               >
-                Decline
+                {dict.cookies.decline}
               </button>
               <button
                 onClick={acceptCookies}
                 className="flex-1 md:flex-initial min-w-[100px] px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition-colors"
               >
-                Accept All
+                {dict.cookies.accept}
               </button>
             </div>
           </div>

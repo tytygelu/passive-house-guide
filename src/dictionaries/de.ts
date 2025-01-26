@@ -4,16 +4,16 @@ export const de = {
       title: 'Passivhaus-Leitfaden',
       subtitle: 'Ihre umfassende Ressource für nachhaltiges Bauen',
       menu: {
-        principles: 'Grundprinzipien',
+        principles: 'Prinzipien',
         materials: 'Materialien',
-        calculator: 'Energierechner',
+        calculator: 'Energie-Rechner',
         projects: 'Fallstudien',
         contact: 'Kontakt'
       },
       sections: {
         principles: {
           title: 'Grundprinzipien',
-          description: 'Lernen Sie die grundlegenden Prinzipien der Passivhaus-Bauweise und NZEB-Standards.'
+          description: 'Lernen Sie die grundlegenden Prinzipien der Passivhauskonstruktion und NZEB-Standards.'
         },
         materials: {
           title: 'Materialien & Systeme',
@@ -21,19 +21,27 @@ export const de = {
         },
         certification: {
           title: 'Zertifizierungsprozess',
-          description: 'Leitfaden durch die Passivhaus- und NZEB-Zertifizierungsanforderungen.'
+          description: 'Leitfaden durch Passivhaus- und NZEB-Zertifizierungsanforderungen.'
         },
         calculator: {
-          title: 'Energierechner',
-          description: 'Berechnen Sie die Energieeffizienz und Leistungskennzahlen Ihres Gebäudes.'
+          title: 'Energie-Rechner',
+          description: 'Berechnen Sie die Energieleistung und Effizienzmetriken Ihres Gebäudes.'
         }
       },
       features: {
-        insulation: 'Hochwertige Dämmung',
-        windows: 'Hochleistungsfenster',
-        ventilation: 'Wärmerückgewinnung',
-        airtightness: 'Luftdichte Konstruktion',
-        solar: 'Solarenergie-Integration'
+        title: 'Hauptmerkmale',
+        items: [
+          'Vertiefte Passivhaus-Prinzipien',
+          'Materialauswahlführer',
+          'Energieeffizienzberechnungen',
+          'Fallstudien und Beispiele'
+        ]
       }
+    },
+    cookies: {
+      title: 'Cookie-Einstellungen',
+      description: 'Wir verwenden Cookies, um Ihr Browsererlebnis zu verbessern, personalisierte Werbung oder Inhalte anzuzeigen und unseren Verkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu.',
+      accept: 'Alle akzeptieren',
+      decline: 'Ablehnen'
     }
-  }
+}

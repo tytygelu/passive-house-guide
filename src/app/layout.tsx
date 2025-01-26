@@ -40,7 +40,7 @@ export default function RootLayout({
       <body className={inter.className}>
         <ClientNav lang={params.lang} menuItems={menuItems} />
         {children}
-        <CookieConsent />
+        <CookieConsent lang={params.lang} />
       </body>
     </html>
   )
