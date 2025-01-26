@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 
 type ClientNavProps = {
@@ -61,8 +61,32 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
     >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href={`/${lang}`} className="text-xl font-bold hover:text-primary transition-colors">
-            Passive House Guide
+          <Link href={`/${lang}`} className="relative">
+            <AnimatePresence mode="wait">
+              {isScrolled ? (
+                <motion.div
+                  key="short"
+                  className="font-bold text-xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  PHG
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="full"
+                  className="font-bold text-2xl"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  Passive House Guide
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Link>
 
           <div className="hidden md:flex items-center space-x-8">
