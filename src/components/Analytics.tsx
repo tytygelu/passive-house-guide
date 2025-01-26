@@ -23,13 +23,13 @@ export default function Analytics() {
         `}
       </Script>
 
-      {/* Google AdSense - Vom adăuga când avem codul de publisher */}
-      {/* <Script
+      {/* Google AdSense */}
+      <Script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
         crossOrigin="anonymous"
         strategy="afterInteractive"
-      /> */}
+      />
     </>
   )
 }
