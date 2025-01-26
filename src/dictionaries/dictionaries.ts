@@ -48,6 +48,12 @@ type Dictionary = {
     };
     copyright: string;
   };
+  cookies: {
+    title: string;
+    description: string;
+    accept: string;
+    decline: string;
+  };
 }
 
 const dictionaries: Record<string, Dictionary> = {
@@ -106,6 +112,12 @@ const dictionaries: Record<string, Dictionary> = {
         address: 'Address: Bucharest, Romania'
       },
       copyright: ' 2025 Passive House Guide. All rights reserved.'
+    },
+    cookies: {
+      title: 'Cookies',
+      description: 'We use cookies to improve your experience.',
+      accept: 'Accept',
+      decline: 'Decline'
     }
   },
   ro: {
@@ -163,6 +175,12 @@ const dictionaries: Record<string, Dictionary> = {
         address: 'Adresă: București, România'
       },
       copyright: ' 2025 Ghid Case Pasive. Toate drepturile rezervate.'
+    },
+    cookies: {
+      title: 'Cookie-uri',
+      description: 'Folosim cookie-uri pentru a îmbunătăți experiența ta.',
+      accept: 'Acceptă',
+      decline: 'Respinge'
     }
   },
   de: {
@@ -220,6 +238,12 @@ const dictionaries: Record<string, Dictionary> = {
         address: 'Adresse: Bukarest, Rumänien'
       },
       copyright: ' 2025 Passivhaus-Leitfaden. Alle Rechte vorbehalten.'
+    },
+    cookies: {
+      title: 'Cookies',
+      description: 'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.',
+      accept: 'Akzeptieren',
+      decline: 'Ablehnen'
     }
   },
   fr: {
@@ -277,6 +301,12 @@ const dictionaries: Record<string, Dictionary> = {
         address: 'Adresse: Bucarest, Roumanie'
       },
       copyright: ' 2025 Guide Maison Passive. Tous droits réservés.'
+    },
+    cookies: {
+      title: 'Cookies',
+      description: 'Nous utilisons des cookies pour améliorer votre expérience.',
+      accept: 'Accepter',
+      decline: 'Refuser'
     }
   }
 }
