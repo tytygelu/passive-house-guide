@@ -48,6 +48,33 @@ export const ro: Dictionary = {
       ]
     }
   },
+  privacy: {
+    title: 'Politica de Confidențialitate',
+    introduction: {
+      title: 'Introducere',
+      content: 'Această Politică de Confidențialitate explică modul în care colectăm, folosim și protejăm informațiile dvs. personale atunci când utilizați site-ul nostru.'
+    },
+    dataCollection: {
+      title: 'Colectarea și Utilizarea Datelor',
+      content: 'Colectăm și procesăm anumite informații atunci când vizitați site-ul nostru. Acestea includ:',
+      items: [
+        'Informații despre vizitele dvs. prin Google Analytics',
+        'Preferințele și setările dvs.',
+        'Informații tehnice despre dispozitivul și conexiunea dvs. la internet',
+        'Informațiile pe care ni le furnizați când ne contactați'
+      ]
+    },
+    cookies: {
+      title: 'Cookie-uri și Publicitate',
+      content: 'Folosim cookie-uri și tehnologii similare pentru a îmbunătăți experiența dvs. de navigare și pentru a vă arăta conținut și reclame personalizate prin Google AdSense.',
+      googleLink: 'Pentru a afla mai multe despre modul în care Google folosește datele când utilizați site-ul nostru, vă rugăm să vizitați:',
+      linkText: 'Cum folosește Google datele când utilizați site-urile sau aplicațiile partenerilor noștri'
+    },
+    contact: {
+      title: 'Contact',
+      content: 'Dacă aveți întrebări despre Politica noastră de Confidențialitate, vă rugăm să ne contactați prin pagina de contact.'
+    }
+  },
   cookies: {
     title: 'Consimțământ Cookie',
     description: 'Folosim cookie-uri pentru a îmbunătăți experiența dvs.',
@@ -55,12 +82,19 @@ export const ro: Dictionary = {
     decline: 'Refuz'
   },
   footer: {
-    social: {
-      title: 'Social Media'
+    about: {
+      title: 'Despre Noi',
+      description: 'Ghidul tău complet pentru construcția caselor pasive, ajutându-te să construiești case sustenabile și eficiente energetic.'
+    },
+    quickLinks: {
+      title: 'Link-uri Rapide',
+      privacy: 'Politica de Confidențialitate',
+      contact: 'Contact'
     },
     contact: {
       title: 'Contact',
-      email: 'zero.energy.passive.house@gmail.com'
-    }
+      email: 'contact@passivehouseguide.com'
+    },
+    rights: 'Toate drepturile rezervate.'
   }
 }

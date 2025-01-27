@@ -1,50 +1,66 @@
 import { FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa'
 import { EnvelopeIcon } from '@heroicons/react/24/outline'
-import { Dictionary } from '@/dictionaries/dictionaries'
+import { getDictionary } from '@/dictionaries/dictionaries'
+import Link from 'next/link'
 
 interface FooterProps {
-  dict: Dictionary
+  lang: string
 }
 
-export default function Footer({ dict }: FooterProps) {
+export default async function Footer({ lang }: FooterProps) {
+  const dict = await getDictionary(lang)
+
   return (
-    <footer className="bg-gray-900 text-white py-16">
-      <div className="container mx-auto max-w-4xl px-4">
-        <div className="flex flex-col items-center gap-12">
-          {/* Social Links */}
-          <div className="text-center">
-            <h3 className="text-xl font-bold mb-4">{dict.footer.social.title}</h3>
-            <div className="flex space-x-6">
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
-                <FaTwitter className="text-2xl" />
-              </a>
-              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
-                <FaLinkedin className="text-2xl" />
-              </a>
-              <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-300 hover:text-white transition-colors">
-                <FaGithub className="text-2xl" />
-              </a>
-            </div>
+    <footer className="bg-gray-900 text-white py-12">
+      <div className="container mx-auto px-4">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-16">
+          {/* Column 1: About */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{dict.footer.about.title}</h3>
+            <p className="text-gray-400 text-sm">
+              {dict.footer.about.description}
+            </p>
           </div>
 
-          {/* Contact Info */}
-          <div className="text-center">
-            <h3 className="text-xl font-bold mb-4">{dict.footer.contact.title}</h3>
-            <div className="flex items-center gap-2 text-gray-300">
-              <EnvelopeIcon className="h-5 w-5" />
-              <a 
-                href={`mailto:${dict.footer.contact.email}`}
-                className="hover:text-white transition-colors"
+          {/* Column 2: Quick Links */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{dict.footer.quickLinks.title}</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href={`/${lang}/privacy`} className="text-gray-400 hover:text-white text-sm">
+                  {dict.footer.quickLinks.privacy}
+                </Link>
+              </li>
+              <li>
+                <Link href={`/${lang}/contact`} className="text-gray-400 hover:text-white text-sm">
+                  {dict.footer.quickLinks.contact}
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Contact */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4">{dict.footer.contact.title}</h3>
+            <p className="text-gray-400 text-sm mb-2">
+              {dict.footer.contact.email}
+            </p>
+            <div className="flex space-x-4">
+              <a
+                href="https://github.com/tytygelu/passive-house-guide"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white text-sm"
               >
-                {dict.footer.contact.email}
+                GitHub
               </a>
             </div>
           </div>
         </div>
-        
+
         {/* Copyright */}
-        <div className="mt-12 pt-8 border-t border-white/40 shadow-sm text-center text-gray-400">
-          <p>&copy; {new Date().getFullYear()} Passive House Guide. All rights reserved.</p>
+        <div className="max-w-6xl mx-auto mt-8 pt-8 border-t border-gray-800 text-center text-sm text-gray-400">
+          <p> 2024 Passive House Guide. {dict.footer.rights}</p>
         </div>
       </div>
     </footer>

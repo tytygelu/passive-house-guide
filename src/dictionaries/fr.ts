@@ -48,6 +48,33 @@ export const fr: Dictionary = {
       ]
     }
   },
+  privacy: {
+    title: 'Politique de Confidentialité',
+    introduction: {
+      title: 'Introduction',
+      content: 'Cette Politique de Confidentialité explique comment nous collectons, utilisons et protégeons vos informations personnelles lorsque vous utilisez notre site web.'
+    },
+    dataCollection: {
+      title: 'Collecte et Utilisation des Données',
+      content: 'Nous collectons et traitons certaines informations lorsque vous visitez notre site web. Cela inclut:',
+      items: [
+        'Informations sur vos visites via Google Analytics',
+        'Vos préférences et paramètres',
+        'Informations techniques sur votre appareil et votre connexion internet',
+        'Informations que vous nous fournissez lorsque vous nous contactez'
+      ]
+    },
+    cookies: {
+      title: 'Cookies et Publicité',
+      content: 'Nous utilisons des cookies et des technologies similaires pour améliorer votre expérience de navigation et pour vous montrer du contenu et des publicités personnalisés via Google AdSense.',
+      googleLink: 'Pour en savoir plus sur la façon dont Google utilise les données lorsque vous utilisez notre site, veuillez visiter:',
+      linkText: 'Comment Google utilise les données lorsque vous utilisez les sites ou applications de nos partenaires'
+    },
+    contact: {
+      title: 'Contact',
+      content: 'Si vous avez des questions concernant notre Politique de Confidentialité, veuillez nous contacter via notre page de contact.'
+    }
+  },
   cookies: {
     title: 'Consentement des Cookies',
     description: 'Nous utilisons des cookies pour améliorer votre expérience.',
@@ -55,12 +82,19 @@ export const fr: Dictionary = {
     decline: 'Refuser'
   },
   footer: {
-    social: {
-      title: 'Réseaux Sociaux'
+    about: {
+      title: 'À Propos',
+      description: 'Votre guide complet pour la construction de maisons passives, vous aidant à construire des maisons durables et économes en énergie.'
+    },
+    quickLinks: {
+      title: 'Liens Rapides',
+      privacy: 'Politique de Confidentialité',
+      contact: 'Contact'
     },
     contact: {
       title: 'Contact',
-      email: 'zero.energy.passive.house@gmail.com'
-    }
+      email: 'contact@passivehouseguide.com'
+    },
+    rights: 'Tous droits réservés.'
   }
 }
