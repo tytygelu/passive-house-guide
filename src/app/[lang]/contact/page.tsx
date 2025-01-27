@@ -1,6 +1,6 @@
 import { PageProps } from '@/types/page'
 import { getDictionary } from '@/dictionaries/dictionaries'
-import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline'
+import { EnvelopeIcon } from '@heroicons/react/24/outline'
 import PageTransition from '@/components/PageTransition'
 
 export default async function Contact({ params }: PageProps) {
@@ -16,15 +16,12 @@ export default async function Contact({ params }: PageProps) {
           
           <div className="flex items-center justify-center space-x-2 text-gray-600">
             <EnvelopeIcon className="h-5 w-5" />
-            <span>{dict.footer.contact.email}</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2 text-gray-600 mt-2">
-            <PhoneIcon className="h-5 w-5" />
-            <span>{dict.footer.contact.phone}</span>
-          </div>
-          <div className="flex items-center justify-center space-x-2 text-gray-600 mt-2">
-            <MapPinIcon className="h-5 w-5" />
-            <span>{dict.footer.contact.address}</span>
+            <a 
+              href="mailto:zero.energy.passive.house@gmail.com" 
+              className="hover:text-primary transition-colors"
+            >
+              zero.energy.passive.house@gmail.com
+            </a>
           </div>
         </div>
       </div>
