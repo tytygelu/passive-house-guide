@@ -69,27 +69,33 @@ export type Dictionary = {
     decline: string
   }
   footer: {
-    social: {
+    about: {
       title: string
+      description: string
+    }
+    quickLinks: {
+      title: string
+      privacy: string
+      contact: string
     }
     contact: {
       title: string
       email: string
     }
+    rights: string
   }
 }
 
-export async function getDictionary(locale: string): Promise<Dictionary> {
-  switch (locale) {
-    case 'en':
-      return (await import('./en')).en
-    case 'ro':
-      return (await import('./ro')).ro
-    case 'de':
-      return (await import('./de')).de
-    case 'fr':
-      return (await import('./fr')).fr
-    default:
-      return (await import('./en')).en
-  }
+import { en } from './en'
+import { ro } from './ro'
+import { de } from './de'
+import { fr } from './fr'
+
+const dictionaries = {
+  en,
+  ro,
+  de,
+  fr,
 }
+
+export const getDictionary = async (locale: string) => dictionaries[locale as keyof typeof dictionaries]

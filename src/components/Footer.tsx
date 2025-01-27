@@ -1,13 +1,7 @@
-import { FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa'
-import { EnvelopeIcon } from '@heroicons/react/24/outline'
 import { getDictionary } from '@/dictionaries/dictionaries'
 import Link from 'next/link'
 
-interface FooterProps {
-  lang: string
-}
-
-export default async function Footer({ lang }: FooterProps) {
+export default async function Footer({ lang }: { lang: string }) {
   const dict = await getDictionary(lang)
 
   return (
