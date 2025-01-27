@@ -29,7 +29,7 @@ export default async function LanguageLayout({
           {children}
         </div>
       </main>
-      <Footer dict={dict} />
+      <Footer />
       <CookieConsent lang={lang} />
     </div>
   )

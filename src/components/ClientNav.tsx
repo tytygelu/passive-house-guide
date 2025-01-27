@@ -106,20 +106,13 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                 href={`/${lang}${targetRoute}`}
                 prefetch={false}
                 className={clsx(
-                  'relative py-2 group whitespace-nowrap text-sm',
+                  'px-4 py-2 rounded-lg transition-all duration-300 text-sm',
                   isActive 
-                    ? 'text-primary font-medium' 
-                    : 'text-gray-600 hover:text-gray-900'
+                    ? 'bg-white shadow-lg text-gray-900' 
+                    : 'text-gray-600 hover:bg-white/50 hover:shadow-md hover:text-gray-900'
                 )}
               >
                 {label}
-                <motion.div
-                  className="absolute bottom-0 left-0 w-full h-0.5 bg-primary origin-left"
-                  initial={{ scaleX: 0 }}
-                  animate={{ scaleX: isActive ? 1 : 0 }}
-                  whileHover={{ scaleX: 1 }}
-                  transition={{ duration: 0.3 }}
-                />
               </Link>
             )
           })}
