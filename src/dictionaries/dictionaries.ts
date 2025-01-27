@@ -51,18 +51,6 @@ export type Dictionary = {
   };
 }
 
-import { en } from './en'
-import { ro } from './ro'
-import { de } from './de'
-import { fr } from './fr'
-
-const dictionaries: Record<string, Dictionary> = {
-  en,
-  ro,
-  de,
-  fr,
-}
-
 export async function getDictionary(locale: string): Promise<Dictionary> {
   switch (locale) {
     case 'en':
