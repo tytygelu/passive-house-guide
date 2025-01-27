@@ -34,6 +34,7 @@ export default async function Post({ params }: PageProps) {
               src={post.coverImage}
               alt={post.title}
               fill
+              sizes="100vw"
               className="object-cover rounded-lg"
               priority
             />

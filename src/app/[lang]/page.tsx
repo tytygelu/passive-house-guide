@@ -20,27 +20,55 @@ export default async function Page({ params }: PageProps) {
   return (
     <PageTransition>
       <div className="min-h-screen bg-gray-50">
-        <div className="text-center py-16">
-          <h1 className="text-4xl font-bold mb-4">{dict.title}</h1>
-          <p className="text-xl text-gray-600">{dict.subtitle}</p>
+        <div className="text-center py-24">
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">{dict.home.subtitle}</p>
 
           {/* Reclamă orizontală sus */}
-          <AdUnit 
-            slot="1234567890"  // Înlocuiește cu ID-ul tău de slot
-            format="horizontal"
-            style={{ minHeight: '90px' }}
-          />
+          <div className="mt-8">
+            <AdUnit 
+              slot="1234567890"  // Înlocuiește cu ID-ul tău de slot
+              format="horizontal"
+              style={{ minHeight: '90px' }}
+            />
+          </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-            {/* Conținut existent */}
+        {/* Secțiuni principale */}
+        <div className="container mx-auto px-4 py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Principii */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.principles.title}</h2>
+              <p className="text-gray-600">{dict.home.sections.principles.description}</p>
+            </div>
+
+            {/* Materiale */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.materials.title}</h2>
+              <p className="text-gray-600">{dict.home.sections.materials.description}</p>
+            </div>
+
+            {/* Calculator */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.calculator.title}</h2>
+              <p className="text-gray-600">{dict.home.sections.calculator.description}</p>
+            </div>
+
+            {/* Certificare */}
+            <div className="bg-white p-6 rounded-lg shadow-lg">
+              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.certification.title}</h2>
+              <p className="text-gray-600">{dict.home.sections.certification.description}</p>
+            </div>
           </div>
 
           {/* Reclamă orizontală jos */}
-          <AdUnit 
-            slot="0987654321"  // Înlocuiește cu ID-ul tău de slot
-            format="horizontal"
-            style={{ minHeight: '90px' }}
-          />
+          <div className="mt-8">
+            <AdUnit 
+              slot="0987654321"  // Înlocuiește cu ID-ul tău de slot
+              format="horizontal"
+              style={{ minHeight: '90px' }}
+            />
+          </div>
         </div>
       </div>
     </PageTransition>

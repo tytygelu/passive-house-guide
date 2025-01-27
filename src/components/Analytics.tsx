@@ -7,6 +7,11 @@ export default function Analytics() {
   // Google Analytics Measurement ID
   const GA_MEASUREMENT_ID = 'G-5CJ5S8N1BD'
   
+  // Verificăm dacă suntem în producție
+  if (process.env.NODE_ENV !== 'production') {
+    return null
+  }
+  
   return (
     <>
       {/* Google Analytics */}

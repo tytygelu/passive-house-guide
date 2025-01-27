@@ -1,47 +1,64 @@
 // src/dictionaries/ro.ts (Romanian - Pentru piața locală)
-export const ro = {
-    home: {
-      title: 'Ghid Case Pasive',
-      subtitle: 'Resursa ta completă pentru construcții sustenabile',
-      menu: {
-        principles: 'Principii',
-        materials: 'Materiale',
-        calculator: 'Calculator Energie',
-        projects: 'Studii de Caz',
-        contact: 'Contact'
+import { Dictionary } from './dictionaries'
+
+export const ro: Dictionary = {
+  home: {
+    title: 'Ghid Case Pasive',
+    subtitle: 'Resursa ta completă pentru construcții sustenabile',
+    menu: {
+      principles: 'Principii',
+      materials: 'Materiale',
+      calculator: 'Calculator Energie',
+      projects: 'Proiecte',
+      contact: 'Contact'
+    },
+    sections: {
+      principles: {
+        title: 'Principii',
+        description: 'Află despre principiile fundamentale ale caselor pasive'
       },
-      sections: {
-        principles: {
-          title: 'Principii de Bază',
-          description: 'Învață principiile fundamentale ale construcției caselor pasive și standardele NZEB.'
-        },
-        materials: {
-          title: 'Materiale și Sisteme',
-          description: 'Descoperă materiale de construcție și sisteme tehnice de înaltă performanță.'
-        },
-        certification: {
-          title: 'Proces de Certificare',
-          description: 'Ghid pentru cerințele de certificare Passivhaus și NZEB.'
-        },
-        calculator: {
-          title: 'Calculator Energie',
-          description: 'Calculează performanța energetică și metricile de eficiență ale clădirii tale.'
-        }
+      materials: {
+        title: 'Materiale de Construcție',
+        description: 'Descoperă materiale și sisteme tehnice de înaltă performanță'
       },
-      features: {
-        title: 'Caracteristici Cheie',
-        items: [
-          'Principii detaliate pentru case pasive',
-          'Ghiduri pentru selectarea materialelor',
-          'Calcule de eficiență energetică',
-          'Studii de caz și exemple'
-        ]
+      certification: {
+        title: 'Certificare',
+        description: 'Obține certificarea și alătură-te comunității caselor pasive'
+      },
+      calculator: {
+        title: 'Calculator Energie',
+        description: 'Calculează eficiența energetică a clădirii tale'
+      },
+      case_studies: {
+        title: 'Studii de Caz',
+        description: 'Exemple reale de case pasive'
+      },
+      contact: {
+        title: 'Contact',
+        description: 'Contactează echipa noastră'
       }
     },
-    cookies: {
-      title: 'Setări Cookie-uri',
-      description: 'Folosim cookie-uri pentru a îmbunătăți experiența de navigare, pentru a afișa reclame sau conținut personalizat și pentru a analiza traficul. Făcând clic pe "Acceptă Tot", ești de acord cu utilizarea cookie-urilor.',
-      accept: 'Acceptă Tot',
-      decline: 'Refuză'
+    features: {
+      title: 'Caracteristici Cheie',
+      items: [
+        'Eficiență energetică superioară',
+        'Confort termic excelent',
+        'Calitate ridicată a aerului interior',
+        'Construcție sustenabilă'
+      ]
     }
+  },
+  cookies: {
+    title: 'Cookie-uri',
+    description: 'Folosim cookie-uri pentru a îmbunătăți experiența ta.',
+    accept: 'Acceptă',
+    decline: 'Respinge'
+  },
+  footer: {
+    contact: {
+      email: 'Email: contact@zeroenergy.casa',
+      phone: 'Telefon: +40 123 456 789',
+      address: 'Adresă: București, România'
+    }
+  }
 }

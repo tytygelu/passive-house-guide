@@ -1,52 +1,38 @@
-type Dictionary = {
-  navigation: Record<string, string>;
-  title: string;
-  subtitle: string;
-  sections: {
-    calculator: {
-      title: string;
-      description: string;
-    };
-    materials: {
-      title: string;
-      description: string;
-    };
-    case_studies: {
-      title: string;
-      description: string;
-    };
-    contact: {
-      title: string;
-      description: string;
-      form: {
-        name: string;
-        email: string;
-        message: string;
-        submit: string;
+export type Dictionary = {
+  home: {
+    title: string;
+    subtitle: string;
+    menu: Record<string, string>;
+    sections: {
+      principles: {
+        title: string;
+        description: string;
       };
-      success: string;
-      error: string;
+      materials: {
+        title: string;
+        description: string;
+      };
+      certification: {
+        title: string;
+        description: string;
+      };
+      calculator: {
+        title: string;
+        description: string;
+      };
+      case_studies?: {
+        title: string;
+        description: string;
+      };
+      contact?: {
+        title: string;
+        description: string;
+      };
     };
-  };
-  footer: {
-    about: {
+    features: {
       title: string;
-      description: string;
+      items: string[];
     };
-    social: {
-      title: string;
-      follow: string;
-      twitter: string;
-      linkedin: string;
-      github: string;
-    };
-    contact: {
-      title: string;
-      email: string;
-      phone: string;
-      address: string;
-    };
-    copyright: string;
   };
   cookies: {
     title: string;
@@ -54,261 +40,25 @@ type Dictionary = {
     accept: string;
     decline: string;
   };
+  footer: {
+    contact: {
+      email: string;
+      phone: string;
+      address: string;
+    };
+  };
 }
 
+import { en } from './en'
+import { ro } from './ro'
+import { de } from './de'
+import { fr } from './fr'
+
 const dictionaries: Record<string, Dictionary> = {
-  en: {
-    navigation: {
-      principles: 'Principles',
-      materials: 'Materials',
-      calculator: 'Energy Calculator',
-      case_studies: 'Case Studies',
-      contact: 'Contact'
-    },
-    title: 'Passive House Guide',
-    subtitle: 'Your comprehensive resource for sustainable building',
-    sections: {
-      calculator: {
-        title: 'Energy Calculator',
-        description: 'Calculate the energy efficiency of your building'
-      },
-      materials: {
-        title: 'Building Materials',
-        description: 'Discover high-performance building materials and technical systems'
-      },
-      case_studies: {
-        title: 'Case Studies',
-        description: 'Real-world examples of passive house projects'
-      },
-      contact: {
-        title: 'Contact Us',
-        description: 'Get in touch with our team',
-        form: {
-          name: 'Your Name',
-          email: 'Your Email',
-          message: 'Your Message',
-          submit: 'Send Message'
-        },
-        success: 'Message sent successfully!',
-        error: 'Failed to send message. Please try again.'
-      }
-    },
-    footer: {
-      about: {
-        title: 'About Us',
-        description: 'We help you build sustainable, energy-efficient homes that respect the environment and reduce energy costs.'
-      },
-      social: {
-        title: 'Connect',
-        follow: 'Follow us',
-        twitter: 'Twitter',
-        linkedin: 'LinkedIn',
-        github: 'GitHub'
-      },
-      contact: {
-        title: 'Contact',
-        email: 'Email: contact@zeroenergy.casa',
-        phone: 'Phone: +40 123 456 789',
-        address: 'Address: Bucharest, Romania'
-      },
-      copyright: ' 2025 Passive House Guide. All rights reserved.'
-    },
-    cookies: {
-      title: 'Cookies',
-      description: 'We use cookies to improve your experience.',
-      accept: 'Accept',
-      decline: 'Decline'
-    }
-  },
-  ro: {
-    navigation: {
-      principles: 'Principii',
-      materials: 'Materiale',
-      calculator: 'Calculator Energie',
-      case_studies: 'Studii de Caz',
-      contact: 'Contact'
-    },
-    title: 'Ghid Case Pasive',
-    subtitle: 'Resursa ta completă pentru construcții sustenabile',
-    sections: {
-      calculator: {
-        title: 'Calculator Energie',
-        description: 'Calculează eficiența energetică a clădirii tale'
-      },
-      materials: {
-        title: 'Materiale de Construcție',
-        description: 'Descoperă materiale și sisteme tehnice de înaltă performanță'
-      },
-      case_studies: {
-        title: 'Studii de Caz',
-        description: 'Exemple reale de case pasive'
-      },
-      contact: {
-        title: 'Contact',
-        description: 'Contactează echipa noastră',
-        form: {
-          name: 'Numele tău',
-          email: 'Email-ul tău',
-          message: 'Mesajul tău',
-          submit: 'Trimite Mesaj'
-        },
-        success: 'Mesaj trimis cu succes!',
-        error: 'Eroare la trimiterea mesajului. Te rugăm să încerci din nou.'
-      }
-    },
-    footer: {
-      about: {
-        title: 'Despre Noi',
-        description: 'Te ajutăm să construiești case sustenabile și eficiente energetic care respectă mediul și reduc costurile cu energia.'
-      },
-      social: {
-        title: 'Conectează-te',
-        follow: 'Urmărește-ne',
-        twitter: 'Twitter',
-        linkedin: 'LinkedIn',
-        github: 'GitHub'
-      },
-      contact: {
-        title: 'Contact',
-        email: 'Email: contact@zeroenergy.casa',
-        phone: 'Telefon: +40 123 456 789',
-        address: 'Adresă: București, România'
-      },
-      copyright: ' 2025 Ghid Case Pasive. Toate drepturile rezervate.'
-    },
-    cookies: {
-      title: 'Cookie-uri',
-      description: 'Folosim cookie-uri pentru a îmbunătăți experiența ta.',
-      accept: 'Acceptă',
-      decline: 'Respinge'
-    }
-  },
-  de: {
-    navigation: {
-      principles: 'Prinzipien',
-      materials: 'Materialien',
-      calculator: 'Energierechner',
-      case_studies: 'Fallstudien',
-      contact: 'Kontakt'
-    },
-    title: 'Passivhaus-Leitfaden',
-    subtitle: 'Ihre umfassende Ressource für nachhaltiges Bauen',
-    sections: {
-      calculator: {
-        title: 'Energierechner',
-        description: 'Berechnen Sie die Energieeffizienz Ihres Gebäudes'
-      },
-      materials: {
-        title: 'Baumaterialien',
-        description: 'Entdecken Sie hochleistungsfähige Baumaterialien und technische Systeme'
-      },
-      case_studies: {
-        title: 'Fallstudien',
-        description: 'Praxisbeispiele von Passivhausprojekten'
-      },
-      contact: {
-        title: 'Kontakt',
-        description: 'Nehmen Sie Kontakt mit unserem Team auf',
-        form: {
-          name: 'Ihr Name',
-          email: 'Ihre E-Mail',
-          message: 'Ihre Nachricht',
-          submit: 'Nachricht senden'
-        },
-        success: 'Nachricht erfolgreich gesendet!',
-        error: 'Fehler beim Senden der Nachricht. Bitte versuchen Sie es erneut.'
-      }
-    },
-    footer: {
-      about: {
-        title: 'Über Uns',
-        description: 'Wir helfen Ihnen beim Bau nachhaltiger, energieeffizienter Häuser, die die Umwelt respektieren und Energiekosten senken.'
-      },
-      social: {
-        title: 'Verbinden',
-        follow: 'Folgen Sie uns',
-        twitter: 'Twitter',
-        linkedin: 'LinkedIn',
-        github: 'GitHub'
-      },
-      contact: {
-        title: 'Kontakt',
-        email: 'E-Mail: contact@zeroenergy.casa',
-        phone: 'Telefon: +40 123 456 789',
-        address: 'Adresse: Bukarest, Rumänien'
-      },
-      copyright: ' 2025 Passivhaus-Leitfaden. Alle Rechte vorbehalten.'
-    },
-    cookies: {
-      title: 'Cookies',
-      description: 'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.',
-      accept: 'Akzeptieren',
-      decline: 'Ablehnen'
-    }
-  },
-  fr: {
-    navigation: {
-      principles: 'Principes',
-      materials: 'Matériaux',
-      calculator: 'Calculateur Énergie',
-      case_studies: 'Études de Cas',
-      contact: 'Contact'
-    },
-    title: 'Guide Maison Passive',
-    subtitle: 'Votre ressource complète pour la construction durable',
-    sections: {
-      calculator: {
-        title: 'Calculateur Énergie',
-        description: 'Calculez l\'efficacité énergétique de votre bâtiment'
-      },
-      materials: {
-        title: 'Matériaux de Construction',
-        description: 'Découvrez des matériaux et systèmes techniques haute performance'
-      },
-      case_studies: {
-        title: 'Études de Cas',
-        description: 'Exemples réels de maisons passives'
-      },
-      contact: {
-        title: 'Contact',
-        description: 'Contactez notre équipe',
-        form: {
-          name: 'Votre Nom',
-          email: 'Votre Email',
-          message: 'Votre Message',
-          submit: 'Envoyer le Message'
-        },
-        success: 'Message envoyé avec succès!',
-        error: 'Erreur lors de l\'envoi du message. Veuillez réessayer.'
-      }
-    },
-    footer: {
-      about: {
-        title: 'À Propos',
-        description: 'Nous vous aidons à construire des maisons durables et économes en énergie qui respectent l\'environnement et réduisent les coûts énergétiques.'
-      },
-      social: {
-        title: 'Connectez-vous',
-        follow: 'Suivez-nous',
-        twitter: 'Twitter',
-        linkedin: 'LinkedIn',
-        github: 'GitHub'
-      },
-      contact: {
-        title: 'Contact',
-        email: 'Email: contact@zeroenergy.casa',
-        phone: 'Téléphone: +40 123 456 789',
-        address: 'Adresse: Bucarest, Roumanie'
-      },
-      copyright: ' 2025 Guide Maison Passive. Tous droits réservés.'
-    },
-    cookies: {
-      title: 'Cookies',
-      description: 'Nous utilisons des cookies pour améliorer votre expérience.',
-      accept: 'Accepter',
-      decline: 'Refuser'
-    }
-  }
+  en,
+  ro,
+  de,
+  fr,
 }
 
 export async function getDictionary(locale: string): Promise<Dictionary> {

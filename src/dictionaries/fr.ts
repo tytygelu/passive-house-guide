@@ -1,47 +1,64 @@
 // src/dictionaries/fr.ts (French - Pentru piața franceză importantă)
-export const fr = {
-    home: {
-      title: 'Guide Maison Passive',
-      subtitle: 'Votre ressource complète pour la construction durable',
-      menu: {
-        principles: 'Principes',
-        materials: 'Matériaux',
-        calculator: 'Calculateur Énergie',
-        projects: 'Études de Cas',
-        contact: 'Contact'
+import { Dictionary } from './dictionaries'
+
+export const fr: Dictionary = {
+  home: {
+    title: 'Guide Maison Passive',
+    subtitle: 'Votre ressource complète pour la construction durable',
+    menu: {
+      principles: 'Principes',
+      materials: 'Matériaux',
+      calculator: 'Calculateur Énergie',
+      projects: 'Projets',
+      contact: 'Contact'
+    },
+    sections: {
+      principles: {
+        title: 'Principes',
+        description: 'Découvrez les principes fondamentaux de la conception des maisons passives'
       },
-      sections: {
-        principles: {
-          title: 'Principes Fondamentaux',
-          description: 'Découvrez les principes fondamentaux de la construction passive et les normes NZEB.'
-        },
-        materials: {
-          title: 'Matériaux & Systèmes',
-          description: 'Découvrez des matériaux de construction et des systèmes techniques haute performance.'
-        },
-        certification: {
-          title: 'Processus de Certification',
-          description: 'Guide des exigences de certification Passivhaus et NZEB.'
-        },
-        calculator: {
-          title: 'Calculateur Énergie',
-          description: 'Calculez la performance énergétique et les métriques d\'efficacité de votre bâtiment.'
-        }
+      materials: {
+        title: 'Matériaux de Construction',
+        description: 'Découvrez des matériaux et systèmes techniques haute performance'
       },
-      features: {
-        title: 'Caractéristiques Clés',
-        items: [
-          'Principes approfondis de maison passive',
-          'Guides de sélection des matériaux',
-          'Calculs d\'efficacité énergétique',
-          'Études de cas et exemples'
-        ]
+      certification: {
+        title: 'Certification',
+        description: 'Obtenez la certification et rejoignez la communauté des maisons passives'
+      },
+      calculator: {
+        title: 'Calculateur Énergie',
+        description: 'Calculez l\'efficacité énergétique de votre bâtiment'
+      },
+      case_studies: {
+        title: 'Études de Cas',
+        description: 'Exemples réels de maisons passives'
+      },
+      contact: {
+        title: 'Contact',
+        description: 'Contactez notre équipe'
       }
     },
-    cookies: {
-      title: 'Paramètres des Cookies',
-      description: 'Nous utilisons des cookies pour améliorer votre expérience de navigation, diffuser des publicités ou du contenu personnalisé et analyser notre trafic. En cliquant sur "Tout accepter", vous consentez à l\'utilisation des cookies.',
-      accept: 'Tout accepter',
-      decline: 'Refuser'
+    features: {
+      title: 'Caractéristiques Clés',
+      items: [
+        'Efficacité énergétique supérieure',
+        'Excellent confort thermique',
+        'Haute qualité de l\'air intérieur',
+        'Construction durable'
+      ]
     }
+  },
+  cookies: {
+    title: 'Cookies',
+    description: 'Nous utilisons des cookies pour améliorer votre expérience.',
+    accept: 'Accepter',
+    decline: 'Refuser'
+  },
+  footer: {
+    contact: {
+      email: 'Email: contact@zeroenergy.casa',
+      phone: 'Téléphone: +40 123 456 789',
+      address: 'Adresse: Bucarest, Roumanie'
+    }
+  }
 }

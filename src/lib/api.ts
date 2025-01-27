@@ -8,22 +8,30 @@ export function getPostSlugs(category: string, lang: string) {
   const categoryPath = join(postsDirectory, category, lang)
   const enPath = join(postsDirectory, category, 'en')
 
+  console.log('Looking for posts in:', { categoryPath, enPath })
+
   // If the language directory doesn't exist, use English
   if (!fs.existsSync(categoryPath)) {
+    console.log('Category path does not exist:', categoryPath)
     if (!fs.existsSync(enPath)) {
+      console.log('English path does not exist:', enPath)
       return []
     }
+    console.log('Using English posts')
     return fs.readdirSync(enPath)
   }
 
   // Get posts in the requested language
   const langPosts = fs.readdirSync(categoryPath)
+  console.log('Found posts in language directory:', langPosts)
 
   // If English is not the requested language, also get English posts that don't exist in the requested language
   if (lang !== 'en' && fs.existsSync(enPath)) {
     const enPosts = fs.readdirSync(enPath)
+    console.log('Found English posts:', enPosts)
     const langPostsSet = new Set(langPosts)
     const additionalPosts = enPosts.filter(post => !langPostsSet.has(post))
+    console.log('Additional posts from English:', additionalPosts)
     return [...langPosts, ...additionalPosts]
   }
 
@@ -34,17 +42,15 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
   const realSlug = slug.replace(/\.mdx$/, '')
   const fullPath = join(postsDirectory, category, lang, `${realSlug}.mdx`)
   
-  // Check if file exists
-  if (!fs.existsSync(fullPath)) {
-    // If file doesn't exist in requested language, try English
-    const enPath = join(postsDirectory, category, 'en', `${realSlug}.mdx`)
-    if (!fs.existsSync(enPath)) {
-      throw new Error(`Post not found: ${fullPath}`)
-    }
-    return getPostBySlug(category, 'en', slug, fields)
+  // Check if file exists in requested language
+  const fileExists = fs.existsSync(fullPath)
+  const filePath = fileExists ? fullPath : join(postsDirectory, category, 'en', `${realSlug}.mdx`)
+  
+  if (!fs.existsSync(filePath)) {
+    throw new Error(`Post not found: ${fullPath}`)
   }
 
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
+  const fileContents = fs.readFileSync(filePath, 'utf8')
   const { data, content } = matter(fileContents)
 
   type Items = {
@@ -72,16 +78,21 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
 
 export function getAllPosts(category: string, lang: string, fields: string[] = []) {
   const slugs = getPostSlugs(category, lang)
+  console.log('Found slugs:', slugs)
   const posts = slugs
     .map((slug) => {
       try {
-        return getPostBySlug(category, lang, slug, fields)
-      } catch {
+        const post = getPostBySlug(category, lang, slug, fields)
+        console.log('Processing post:', { slug, date: post.date })
+        return post
+      } catch (error) {
+        console.error('Error processing post:', slug, error)
         return null
       }
     })
     .filter((post): post is NonNullable<typeof post> => post !== null)
     // sort posts by date in descending order
     .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
+  console.log('Final sorted posts:', posts.map(p => ({ slug: p.slug, date: p.date })))
   return posts
 }

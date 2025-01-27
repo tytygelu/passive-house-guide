@@ -1,47 +1,64 @@
 // src/dictionaries/de.ts (German - Germania fiind pionier în case passive)
-export const de = {
-    home: {
-      title: 'Passivhaus-Leitfaden',
-      subtitle: 'Ihre umfassende Ressource für nachhaltiges Bauen',
-      menu: {
-        principles: 'Prinzipien',
-        materials: 'Materialien',
-        calculator: 'Energie-Rechner',
-        projects: 'Fallstudien',
-        contact: 'Kontakt'
+import { Dictionary } from './dictionaries'
+
+export const de: Dictionary = {
+  home: {
+    title: 'Passivhaus-Leitfaden',
+    subtitle: 'Ihre umfassende Ressource für nachhaltiges Bauen',
+    menu: {
+      principles: 'Prinzipien',
+      materials: 'Materialien',
+      calculator: 'Energierechner',
+      projects: 'Projekte',
+      contact: 'Kontakt'
+    },
+    sections: {
+      principles: {
+        title: 'Prinzipien',
+        description: 'Erfahren Sie mehr über die grundlegenden Prinzipien des Passivhaus-Designs'
       },
-      sections: {
-        principles: {
-          title: 'Grundprinzipien',
-          description: 'Lernen Sie die grundlegenden Prinzipien der Passivhauskonstruktion und NZEB-Standards.'
-        },
-        materials: {
-          title: 'Materialien & Systeme',
-          description: 'Entdecken Sie hochleistungsfähige Baumaterialien und technische Systeme.'
-        },
-        certification: {
-          title: 'Zertifizierungsprozess',
-          description: 'Leitfaden durch Passivhaus- und NZEB-Zertifizierungsanforderungen.'
-        },
-        calculator: {
-          title: 'Energie-Rechner',
-          description: 'Berechnen Sie die Energieleistung und Effizienzmetriken Ihres Gebäudes.'
-        }
+      materials: {
+        title: 'Baumaterialien',
+        description: 'Entdecken Sie hochleistungsfähige Baumaterialien und technische Systeme'
       },
-      features: {
-        title: 'Hauptmerkmale',
-        items: [
-          'Vertiefte Passivhaus-Prinzipien',
-          'Materialauswahlführer',
-          'Energieeffizienzberechnungen',
-          'Fallstudien und Beispiele'
-        ]
+      certification: {
+        title: 'Zertifizierung',
+        description: 'Lassen Sie sich zertifizieren und werden Sie Teil der Passivhaus-Gemeinschaft'
+      },
+      calculator: {
+        title: 'Energierechner',
+        description: 'Berechnen Sie die Energieeffizienz Ihres Gebäudes'
+      },
+      case_studies: {
+        title: 'Fallstudien',
+        description: 'Praxisbeispiele von Passivhausprojekten'
+      },
+      contact: {
+        title: 'Kontakt',
+        description: 'Nehmen Sie Kontakt mit unserem Team auf'
       }
     },
-    cookies: {
-      title: 'Cookie-Einstellungen',
-      description: 'Wir verwenden Cookies, um Ihr Browsererlebnis zu verbessern, personalisierte Werbung oder Inhalte anzuzeigen und unseren Verkehr zu analysieren. Durch Klicken auf "Alle akzeptieren" stimmen Sie der Verwendung von Cookies zu.',
-      accept: 'Alle akzeptieren',
-      decline: 'Ablehnen'
+    features: {
+      title: 'Hauptmerkmale',
+      items: [
+        'Überlegene Energieeffizienz',
+        'Ausgezeichneter thermischer Komfort',
+        'Hohe Raumluftqualität',
+        'Nachhaltiges Bauen'
+      ]
     }
+  },
+  cookies: {
+    title: 'Cookies',
+    description: 'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.',
+    accept: 'Akzeptieren',
+    decline: 'Ablehnen'
+  },
+  footer: {
+    contact: {
+      email: 'E-Mail: contact@zeroenergy.casa',
+      phone: 'Telefon: +40 123 456 789',
+      address: 'Adresse: Bukarest, Rumänien'
+    }
+  }
 }
