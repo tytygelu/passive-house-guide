@@ -49,16 +49,18 @@ export const ro: Dictionary = {
     }
   },
   cookies: {
-    title: 'Cookie-uri',
-    description: 'Folosim cookie-uri pentru a îmbunătăți experiența ta.',
-    accept: 'Acceptă',
-    decline: 'Respinge'
+    title: 'Consimțământ Cookie',
+    description: 'Folosim cookie-uri pentru a îmbunătăți experiența dvs.',
+    accept: 'Accept',
+    decline: 'Refuz'
   },
   footer: {
+    social: {
+      title: 'Social Media'
+    },
     contact: {
-      email: 'Email: contact@zeroenergy.casa',
-      phone: 'Telefon: +40 123 456 789',
-      address: 'Adresă: București, România'
+      title: 'Contact',
+      email: 'zero.energy.passive.house@gmail.com'
     }
   }
 }

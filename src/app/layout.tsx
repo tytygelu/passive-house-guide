@@ -13,10 +13,14 @@ export const metadata: Metadata = {
   title: 'Passive House Guide',
   description: 'Your guide to building passive houses',
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
-    apple: '/favicon.ico',
-  }
+    icon: [
+      { url: '/icon.png', sizes: '32x32' },
+      { url: '/icon.svg', type: 'image/svg+xml' }
+    ],
+    shortcut: ['/favicon.ico'],
+    apple: [{ url: '/apple-icon.png' }]
+  },
+  manifest: '/manifest.json'
 }
 
 export async function generateStaticParams() {
@@ -32,6 +36,10 @@ export default async function RootLayout({
   return (
     <html lang={lang}>
       <head>
+        <link rel="icon" type="image/png" sizes="32x32" href="/icon.png" />
+        <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+        <link rel="shortcut icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-icon.png" />
         <Analytics />
       </head>
       <body className={inter.className}>

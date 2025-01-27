@@ -49,16 +49,18 @@ export const en: Dictionary = {
     }
   },
   cookies: {
-    title: 'Cookies',
-    description: 'We use cookies to improve your experience.',
+    title: 'Cookie Consent',
+    description: 'We use cookies to enhance your experience.',
     accept: 'Accept',
     decline: 'Decline'
   },
   footer: {
+    social: {
+      title: 'Social Media'
+    },
     contact: {
-      email: 'Email: contact@zeroenergy.casa',
-      phone: 'Phone: +40 123 456 789',
-      address: 'Address: Bucharest, Romania'
+      title: 'Contact',
+      email: 'zero.energy.passive.house@gmail.com'
     }
   }
 }

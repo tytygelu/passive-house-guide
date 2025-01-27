@@ -75,9 +75,9 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                 exit={{ opacity: 0, x: -20, scale: 0.8 }}
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
               >
-                <span className="text-xl text-primary transition-all duration-300 group-hover:text-primary/80">P</span>
-                <span className="text-xl transition-all duration-300 group-hover:text-primary">H</span>
-                <span className="text-xl text-primary transition-all duration-300 group-hover:text-primary/80">G</span>
+                <span className="text-xl text-gray-900 transition-all duration-300 group-hover:text-gray-600">P</span>
+                <span className="text-xl text-gray-900 transition-all duration-300 group-hover:text-gray-600">H</span>
+                <span className="text-xl text-gray-900 transition-all duration-300 group-hover:text-gray-600">G</span>
               </motion.div>
             ) : (
               <motion.div
@@ -88,7 +88,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                 exit={{ opacity: 0, x: 20, scale: 0.8 }}
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
               >
-                <span className="transition-all duration-300 group-hover:text-gray-600">Passive House Guide</span>
+                <span className="text-gray-900 transition-all duration-300 group-hover:text-gray-600">Passive House Guide</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -121,7 +121,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
             <motion.button 
               className={clsx(
                 'px-3 py-1.5 rounded-md transition-all duration-300 text-sm',
-                'relative overflow-hidden group'
+                'relative overflow-hidden group text-gray-600 hover:text-gray-900'
               )}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -151,12 +151,12 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                   className={clsx(
                     'block px-4 py-2 text-sm transition-all duration-200 relative overflow-hidden',
                     language.code === lang 
-                      ? 'bg-gray-50 text-primary font-medium' 
-                      : 'hover:bg-gray-50'
+                      ? 'bg-gray-50 text-gray-900 font-medium' 
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   )}
                 >
                   <motion.div
-                    className="absolute inset-0 bg-primary/5"
+                    className="absolute inset-0 bg-gray-50"
                     initial={{ x: '-100%' }}
                     whileHover={{ x: 0 }}
                     transition={{ duration: 0.3 }}

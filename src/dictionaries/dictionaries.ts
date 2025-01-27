@@ -41,10 +41,12 @@ export type Dictionary = {
     decline: string;
   };
   footer: {
+    social: {
+      title: string;
+    };
     contact: {
+      title: string;
       email: string;
-      phone: string;
-      address: string;
     };
   };
 }
@@ -62,5 +64,16 @@ const dictionaries: Record<string, Dictionary> = {
 }
 
 export async function getDictionary(locale: string): Promise<Dictionary> {
-  return dictionaries[locale]
+  switch (locale) {
+    case 'en':
+      return (await import('./en')).en
+    case 'ro':
+      return (await import('./ro')).ro
+    case 'de':
+      return (await import('./de')).de
+    case 'fr':
+      return (await import('./fr')).fr
+    default:
+      return (await import('./en')).en
+  }
 }

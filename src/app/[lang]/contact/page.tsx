@@ -6,6 +6,8 @@ import PageTransition from '@/components/PageTransition'
 export default async function Contact({ params }: PageProps) {
   const { lang } = await params
   const dict = await getDictionary(lang)
+  const displayEmail = dict.footer.contact.email
+  const realEmail = dict.footer.contact.email
 
   return (
     <PageTransition>
@@ -17,10 +19,11 @@ export default async function Contact({ params }: PageProps) {
           <div className="flex items-center justify-center space-x-2 text-gray-600">
             <EnvelopeIcon className="h-5 w-5" />
             <a 
-              href="mailto:zero.energy.passive.house@gmail.com" 
+              href={`mailto:${realEmail}`}
               className="hover:text-primary transition-colors"
+              data-email={realEmail}
             >
-              zero.energy.passive.house@gmail.com
+              {displayEmail}
             </a>
           </div>
         </div>
