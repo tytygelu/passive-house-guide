@@ -48,6 +48,22 @@ export const en: Dictionary = {
       ]
     }
   },
+  footer: {
+    about: {
+      title: 'About Us',
+      description: 'We are dedicated to promoting sustainable building practices through passive house principles.'
+    },
+    quickLinks: {
+      title: 'Quick Links',
+      privacy: 'Privacy Policy',
+      contact: 'Contact Us'
+    },
+    contact: {
+      title: 'Contact',
+      email: 'contact@passivehouseguide.com'
+    },
+    rights: 'All rights reserved.'
+  },
   privacy: {
     title: 'Privacy Policy',
     introduction: {
@@ -80,21 +96,5 @@ export const en: Dictionary = {
     description: 'We use cookies to enhance your experience.',
     accept: 'Accept',
     decline: 'Decline'
-  },
-  footer: {
-    about: {
-      title: 'About Us',
-      description: 'Your comprehensive guide to passive house construction, helping you build sustainable and energy-efficient homes.'
-    },
-    quickLinks: {
-      title: 'Quick Links',
-      privacy: 'Privacy Policy',
-      contact: 'Contact Us'
-    },
-    contact: {
-      title: 'Contact',
-      email: 'contact@passivehouseguide.com'
-    },
-    rights: 'All rights reserved.'
   }
 }

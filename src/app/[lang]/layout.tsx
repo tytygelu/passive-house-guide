@@ -23,7 +23,7 @@ export default async function LanguageLayout({
   const dict = await getDictionary(lang)
   
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-[#E8E8E8]">
       <ClientNav lang={lang} menuItems={dict.home.menu} />
       <Analytics />
       <main className="flex-grow pt-24">

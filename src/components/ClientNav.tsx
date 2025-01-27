@@ -52,8 +52,8 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
       className={clsx(
         'fixed top-0 left-0 right-0 z-50 px-4',
         isScrolled 
-          ? 'h-16 bg-white/90 backdrop-blur-md shadow-sm' 
-          : 'h-20 bg-transparent'
+          ? 'h-16 bg-[#9EB3B4]/90 backdrop-blur-md shadow-sm' 
+          : 'h-20 bg-[#9EB3B4]'
       )}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -69,15 +69,15 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
             {isScrolled ? (
               <motion.div
                 key="short"
-                className="font-bold relative"
+                className="font-bold text-xl relative"
                 initial={{ opacity: 0, x: -20, scale: 0.8 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: -20, scale: 0.8 }}
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
               >
-                <span className="text-xl text-gray-900 transition-all duration-300 group-hover:text-gray-600">P</span>
-                <span className="text-xl text-gray-900 transition-all duration-300 group-hover:text-gray-600">H</span>
-                <span className="text-xl text-gray-900 transition-all duration-300 group-hover:text-gray-600">G</span>
+                <span className="text-white transition-all duration-300 group-hover:text-gray-100">P</span>
+                <span className="text-white transition-all duration-300 group-hover:text-gray-100">H</span>
+                <span className="text-white transition-all duration-300 group-hover:text-gray-100">G</span>
               </motion.div>
             ) : (
               <motion.div
@@ -88,7 +88,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                 exit={{ opacity: 0, x: 20, scale: 0.8 }}
                 transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
               >
-                <span className="text-gray-900 transition-all duration-300 group-hover:text-gray-600">Passive House Guide</span>
+                <span className="text-white transition-all duration-300 group-hover:text-gray-100">Passive House Guide</span>
               </motion.div>
             )}
           </AnimatePresence>
@@ -106,10 +106,10 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                 href={`/${lang}${targetRoute}`}
                 prefetch={false}
                 className={clsx(
-                  'px-4 py-2 rounded-lg transition-all duration-300 text-sm',
+                  'px-4 py-2 rounded-lg transition-all duration-300 text-base font-medium',
                   isActive 
-                    ? 'bg-white shadow-lg text-gray-900' 
-                    : 'text-gray-600 hover:bg-white/50 hover:shadow-md hover:text-gray-900'
+                    ? 'bg-white/90 shadow-lg text-[#4A5859]' 
+                    : 'text-white hover:bg-white/20 hover:shadow-md'
                 )}
               >
                 {label}
@@ -120,8 +120,8 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
           <div className="relative group">
             <motion.button 
               className={clsx(
-                'px-3 py-1.5 rounded-md transition-all duration-300 text-sm',
-                'relative overflow-hidden group text-gray-600 hover:text-gray-900'
+                'px-3 py-1.5 rounded-md transition-all duration-300 text-base font-medium',
+                'relative overflow-hidden group text-white hover:text-[#4A5859]'
               )}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

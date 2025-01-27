@@ -40,6 +40,22 @@ export type Dictionary = {
       items: string[]
     }
   }
+  footer: {
+    about: {
+      title: string
+      description: string
+    }
+    quickLinks: {
+      title: string
+      privacy: string
+      contact: string
+    }
+    contact: {
+      title: string
+      email: string
+    }
+    rights: string
+  }
   privacy: {
     title: string
     introduction: {
@@ -67,22 +83,6 @@ export type Dictionary = {
     description: string
     accept: string
     decline: string
-  }
-  footer: {
-    about: {
-      title: string
-      description: string
-    }
-    quickLinks: {
-      title: string
-      privacy: string
-      contact: string
-    }
-    contact: {
-      title: string
-      email: string
-    }
-    rights: string
   }
 }
 
