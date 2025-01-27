@@ -23,26 +23,20 @@ export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({ lang: locale }))
 }
 
-const menuItems = {
-  principles: 'Principles',
-  materials: 'Materials',
-  calculator: 'Calculator',
-  case_studies: 'Case Studies',
-  contact: 'Contact'
-}
-
 export default async function RootLayout({
   children,
   params,
 }: LayoutProps) {
+  const { lang } = await params
+  
   return (
-    <html lang={params.lang}>
+    <html lang={lang}>
       <head>
         <Analytics />
       </head>
       <body className={inter.className}>
         {children}
-        <CookieConsent lang={params.lang} />
+        <CookieConsent lang={lang} />
       </body>
     </html>
   )
