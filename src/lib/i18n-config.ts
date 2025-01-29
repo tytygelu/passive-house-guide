@@ -1,19 +1,15 @@
 export const i18n = {
   defaultLocale: 'en',
   locales: [
-    // European languages
-    'en', 'ro', 'de', 'fr', 'it', 'es', 'nl', 'pl', 'sv', 'no', 'da', 'fi', 'pt',
-    'cs', 'sk', 'hu', 'el', 'bg', 'hr', 'sl', 'et', 'lv', 'lt', 'ga', 'is', 'mt',
-    'lb', 'sq', 'mk', 'sr', 'bs', 'ua',
+    // Main languages
+    'en', 'fr', 'de', 'es', 'pt-br', 'ro',
     
-    // Asian languages
-    'zh', 'ja', 'ko', 'hi', 'bn', 'ur', 'ar', 'fa', 'he', 'th', 'vi', 'id', 'ms',
-    
-    // African languages
-    'sw', 'am', 'ha', 'yo', 'zu', 'xh', 'af',
-    
-    // American languages
-    'en-us', 'es-mx', 'pt-br', 'es-ar', 'qu', 'ay', 'gn'
+    // Other languages (alphabetically ordered)
+    'af', 'am', 'ar', 'ay', 'bg', 'bn', 'bs', 'cs', 'da', 'el', 'en-us', 'es-ar',
+    'es-mx', 'et', 'fa', 'fi', 'ga', 'gn', 'ha', 'he', 'hi', 'hr', 'hu', 'id',
+    'is', 'it', 'ja', 'ko', 'lb', 'lt', 'lv', 'mk', 'ms', 'mt', 'nl', 'no', 'pl',
+    'pt', 'qu', 'sk', 'sl', 'sq', 'sr', 'sv', 'sw', 'th', 'ua', 'ur', 'vi', 'xh',
+    'yo', 'zh', 'zu'
   ],
 } as const
 
