@@ -38,7 +38,16 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
   }
 
   const getCurrentRoute = () => {
-    return pathname.substring(3)
+    // Split path by '/' and remove empty strings
+    const parts = pathname.split('/').filter(Boolean)
+    
+    // If we have at least 2 parts (lang and route)
+    if (parts.length >= 2) {
+      // Return everything after the language code
+      return '/' + parts.slice(1).join('/')
+    }
+    
+    return '/'
   }
 
   const languages = [
