@@ -21,7 +21,7 @@ export default async function PrivacyPage({ params }: PageProps) {
             <h2 className="text-2xl font-semibold mb-4">{dict.privacy.dataCollection.title}</h2>
             <p>{dict.privacy.dataCollection.content}</p>
             <ul className="list-disc pl-6 mt-4">
-              {dict.privacy.dataCollection.items.map((item, index) => (
+              {dict.privacy.dataCollection.items.map((item: string, index: number) => (
                 <li key={index}>{item}</li>
               ))}
             </ul>

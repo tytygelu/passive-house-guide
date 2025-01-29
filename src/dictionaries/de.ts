@@ -1,10 +1,15 @@
-// src/dictionaries/de.ts (German - Pentru piața germană)
+// src/dictionaries/de.ts (German)
 import { Dictionary } from './dictionaries'
 
 export const de: Dictionary = {
   home: {
     title: 'Passivhaus-Leitfaden',
     subtitle: 'Ihre umfassende Ressource für nachhaltiges Bauen',
+    description: 'Entdecken Sie die Welt der Passivhäuser und nachhaltiger Architektur',
+    learnMore: 'Mehr erfahren',
+    readMore: 'Weiterlesen',
+    latestArticles: 'Neueste Artikel',
+    viewAll: 'Alle anzeigen',
     menu: {
       principles: 'Prinzipien',
       materials: 'Materialien',
@@ -15,11 +20,11 @@ export const de: Dictionary = {
     sections: {
       principles: {
         title: 'Prinzipien',
-        description: 'Lernen Sie die grundlegenden Prinzipien des Passivhausbaus kennen'
+        description: 'Lernen Sie die grundlegenden Prinzipien des Passivhaus-Designs kennen'
       },
       materials: {
         title: 'Baumaterialien',
-        description: 'Entdecken Sie hochwertige Baumaterialien und technische Systeme'
+        description: 'Entdecken Sie hochleistungsfähige Materialien und technische Systeme'
       },
       certification: {
         title: 'Zertifizierung',
@@ -31,20 +36,20 @@ export const de: Dictionary = {
       },
       case_studies: {
         title: 'Fallstudien',
-        description: 'Reale Beispiele von Passivhausprojekten'
+        description: 'Reale Beispiele von Passivhaus-Projekten'
       },
       contact: {
         title: 'Kontakt',
-        description: 'Kontaktieren Sie unser Team'
+        description: 'Nehmen Sie Kontakt mit unserem Team auf'
       }
     },
     features: {
       title: 'Hauptmerkmale',
       items: [
-        'Überlegene Energieeffizienz',
-        'Ausgezeichneter thermischer Komfort',
+        'Hervorragende Energieeffizienz',
+        'Außergewöhnlicher thermischer Komfort',
         'Hohe Raumluftqualität',
-        'Nachhaltiges Bauen'
+        'Nachhaltige Konstruktion'
       ]
     }
   },
@@ -52,21 +57,21 @@ export const de: Dictionary = {
     title: 'Datenschutzerklärung',
     introduction: {
       title: 'Einführung',
-      content: 'Diese Datenschutzerklärung erläutert, wie wir Ihre personenbezogenen Daten bei der Nutzung unserer Website erfassen, verwenden und schützen.'
+      content: 'Diese Datenschutzerklärung erläutert, wie wir Ihre personenbezogenen Daten bei der Nutzung unserer Website erheben, verwenden und schützen.'
     },
     dataCollection: {
-      title: 'Datenerfassung und -verwendung',
-      content: 'Wir erfassen und verarbeiten bestimmte Informationen, wenn Sie unsere Website besuchen. Dazu gehören:',
+      title: 'Datenerhebung und -nutzung',
+      content: 'Wir erheben und verarbeiten bestimmte Informationen, wenn Sie unsere Website besuchen. Dazu gehören:',
       items: [
         'Informationen über Ihre Besuche durch Google Analytics',
         'Ihre Präferenzen und Einstellungen',
         'Technische Informationen über Ihr Gerät und Ihre Internetverbindung',
-        'Informationen, die Sie uns bei der Kontaktaufnahme zur Verfügung stellen'
+        'Informationen, die Sie uns bei der Kontaktaufnahme mitteilen'
       ]
     },
     cookies: {
       title: 'Cookies und Werbung',
-      content: 'Wir verwenden Cookies und ähnliche Technologien, um Ihr Browsing-Erlebnis zu verbessern und Ihnen personalisierte Inhalte und Anzeigen durch Google AdSense anzuzeigen.',
+      content: 'Wir verwenden Cookies und ähnliche Technologien, um Ihr Browsing-Erlebnis zu verbessern und Ihnen personalisierte Inhalte und Werbung durch Google AdSense anzuzeigen.',
       googleLink: 'Um mehr darüber zu erfahren, wie Google Daten verwendet, wenn Sie unsere Website nutzen, besuchen Sie bitte:',
       linkText: 'Wie Google Daten verwendet, wenn Sie die Websites oder Apps unserer Partner nutzen'
     },
@@ -77,23 +82,23 @@ export const de: Dictionary = {
   },
   cookies: {
     title: 'Cookie-Zustimmung',
-    description: 'Wir verwenden Cookies, um Ihre Erfahrung zu verbessern.',
+    description: 'Wir verwenden Cookies, um Ihr Erlebnis zu verbessern.',
     accept: 'Akzeptieren',
     decline: 'Ablehnen'
   },
   footer: {
     about: {
-      title: 'Über Uns',
-      description: 'Ihr umfassender Leitfaden für den Passivhausbau, der Ihnen hilft, nachhaltige und energieeffiziente Häuser zu bauen.'
+      title: 'Über uns',
+      description: 'Wir setzen uns für die Förderung nachhaltiger Baupraktiken durch Passivhaus-Prinzipien ein.'
     },
     quickLinks: {
-      title: 'Schnellzugriff',
-      privacy: 'Datenschutzerklärung',
+      title: 'Schnelllinks',
+      privacy: 'Datenschutz',
       contact: 'Kontakt'
     },
     contact: {
       title: 'Kontakt',
-      email: 'contact@passivehouseguide.com'
+      email: 'zero.energy.passive.house@gmail.com'
     },
     rights: 'Alle Rechte vorbehalten.'
   }

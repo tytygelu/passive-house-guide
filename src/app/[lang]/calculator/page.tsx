@@ -1,6 +1,13 @@
 import { PageProps } from '@/types/page'
 import { getDictionary } from '@/dictionaries/dictionaries'
 import PageTransition from '@/components/PageTransition'
+import { i18n } from '@/lib/i18n-config'
+
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({
+    lang: locale
+  }))
+}
 
 export default async function Calculator({ params }: PageProps) {
   const { lang } = await params

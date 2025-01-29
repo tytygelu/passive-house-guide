@@ -3,14 +3,12 @@ import { getDictionary } from '@/dictionaries/dictionaries'
 import { PageProps } from '@/types/page'
 import PageTransition from '@/components/PageTransition'
 import AdUnit from '@/components/AdUnit'
+import { i18n } from '@/lib/i18n-config'
 
 export async function generateStaticParams() {
-  return [
-    { lang: 'en' },
-    { lang: 'ro' },
-    { lang: 'de' },
-    { lang: 'fr' }
-  ]
+  return i18n.locales.map((locale) => ({
+    lang: locale
+  }))
 }
 
 export default async function Page({ params }: PageProps) {

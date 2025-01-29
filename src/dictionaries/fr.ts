@@ -5,6 +5,11 @@ export const fr: Dictionary = {
   home: {
     title: 'Guide Maison Passive',
     subtitle: 'Votre ressource complète pour la construction durable',
+    description: 'Découvrez le monde des maisons passives et de l\'architecture durable',
+    learnMore: 'En savoir plus',
+    readMore: 'Lire plus',
+    latestArticles: 'Derniers articles',
+    viewAll: 'Voir tout',
     menu: {
       principles: 'Principes',
       materials: 'Matériaux',
@@ -93,7 +98,7 @@ export const fr: Dictionary = {
     },
     contact: {
       title: 'Contact',
-      email: 'contact@passivehouseguide.com'
+      email: 'zero.energy.passive.house@gmail.com'
     },
     rights: 'Tous droits réservés.'
   }

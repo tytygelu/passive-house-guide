@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
+import Flag from 'react-world-flags'
 
 type ClientNavProps = {
   lang: string
@@ -14,10 +15,11 @@ type ClientNavProps = {
 export default function ClientNav({ lang, menuItems }: ClientNavProps) {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
-  
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
+
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50)
+      setIsScrolled(window.scrollY > 0)
     }
 
     window.addEventListener('scroll', handleScroll)
@@ -36,15 +38,76 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
   }
 
   const getCurrentRoute = () => {
-    const parts = pathname.split('/')
-    return parts.length > 2 ? '/' + parts.slice(2).join('/') : '/'
+    return pathname.substring(3)
   }
 
   const languages = [
-    { code: 'en', name: 'English' },
-    { code: 'ro', name: 'Română' },
-    { code: 'de', name: 'Deutsch' },
-    { code: 'fr', name: 'Français' }
+    // Europa
+    { code: 'en', name: 'English', flag: 'GB' },
+    { code: 'ro', name: 'Română', flag: 'RO' },
+    { code: 'de', name: 'Deutsch', flag: 'DE' },
+    { code: 'fr', name: 'Français', flag: 'FR' },
+    { code: 'it', name: 'Italiano', flag: 'IT' },
+    { code: 'es', name: 'Español', flag: 'ES' },
+    { code: 'nl', name: 'Nederlands', flag: 'NL' },
+    { code: 'pl', name: 'Polski', flag: 'PL' },
+    { code: 'sv', name: 'Svenska', flag: 'SE' },
+    { code: 'no', name: 'Norsk', flag: 'NO' },
+    { code: 'da', name: 'Dansk', flag: 'DK' },
+    { code: 'fi', name: 'Suomi', flag: 'FI' },
+    { code: 'pt', name: 'Português', flag: 'PT' },
+    { code: 'cs', name: 'Čeština', flag: 'CZ' },
+    { code: 'sk', name: 'Slovenčina', flag: 'SK' },
+    { code: 'hu', name: 'Magyar', flag: 'HU' },
+    { code: 'el', name: 'Ελληνικά', flag: 'GR' },
+    { code: 'bg', name: 'Български', flag: 'BG' },
+    { code: 'hr', name: 'Hrvatski', flag: 'HR' },
+    { code: 'sl', name: 'Slovenščina', flag: 'SI' },
+    { code: 'et', name: 'Eesti', flag: 'EE' },
+    { code: 'lv', name: 'Latviešu', flag: 'LV' },
+    { code: 'lt', name: 'Lietuvių', flag: 'LT' },
+    { code: 'ga', name: 'Gaeilge', flag: 'IE' },
+    { code: 'is', name: 'Íslenska', flag: 'IS' },
+    { code: 'mt', name: 'Malti', flag: 'MT' },
+    { code: 'lb', name: 'Lëtzebuergesch', flag: 'LU' },
+    { code: 'sq', name: 'Shqip', flag: 'AL' },
+    { code: 'mk', name: 'Македонски', flag: 'MK' },
+    { code: 'sr', name: 'Српски', flag: 'RS' },
+    { code: 'bs', name: 'Bosanski', flag: 'BA' },
+    { code: 'ua', name: 'Українська', flag: 'UA' },
+    
+    // Asia
+    { code: 'zh', name: '中文', flag: 'CN' },
+    { code: 'ja', name: '日本語', flag: 'JP' },
+    { code: 'ko', name: '한국어', flag: 'KR' },
+    { code: 'hi', name: 'हिन्दी', flag: 'IN' },
+    { code: 'bn', name: 'বাংলা', flag: 'BD' },
+    { code: 'ur', name: 'اردو', flag: 'PK' },
+    { code: 'ar', name: 'العربية', flag: 'SA' },
+    { code: 'fa', name: 'فارسی', flag: 'IR' },
+    { code: 'he', name: 'עברית', flag: 'IL' },
+    { code: 'th', name: 'ไทย', flag: 'TH' },
+    { code: 'vi', name: 'Tiếng Việt', flag: 'VN' },
+    { code: 'id', name: 'Bahasa Indonesia', flag: 'ID' },
+    { code: 'ms', name: 'Bahasa Melayu', flag: 'MY' },
+    
+    // Africa
+    { code: 'sw', name: 'Kiswahili', flag: 'TZ' },
+    { code: 'am', name: 'አማርኛ', flag: 'ET' },
+    { code: 'ha', name: 'Hausa', flag: 'NG' },
+    { code: 'yo', name: 'Yorùbá', flag: 'NG' },
+    { code: 'zu', name: 'isiZulu', flag: 'ZA' },
+    { code: 'xh', name: 'isiXhosa', flag: 'ZA' },
+    { code: 'af', name: 'Afrikaans', flag: 'ZA' },
+    
+    // America
+    { code: 'en-us', name: 'English (US)', flag: 'US' },
+    { code: 'es-mx', name: 'Español (México)', flag: 'MX' },
+    { code: 'pt-br', name: 'Português (Brasil)', flag: 'BR' },
+    { code: 'es-ar', name: 'Español (Argentina)', flag: 'AR' },
+    { code: 'qu', name: 'Quechua', flag: 'PE' },
+    { code: 'ay', name: 'Aymara', flag: 'BO' },
+    { code: 'gn', name: 'Guaraní', flag: 'PY' }
   ]
 
   return (
@@ -117,54 +180,52 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
             )
           })}
 
-          <div className="relative group">
-            <motion.button 
-              className={clsx(
-                'px-3 py-1.5 rounded-md transition-all duration-300 text-base font-medium',
-                'relative overflow-hidden group text-white hover:text-[#4A5859]'
-              )}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="relative">
+            <button
+              className="flex items-center gap-2 px-3 py-2 text-sm hover:text-gray-700"
+              onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
             >
-              <motion.div
-                className="absolute inset-0 bg-gray-100 rounded-md -z-10"
-                initial={{ scale: 0, opacity: 0 }}
-                whileHover={{ scale: 1, opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-              {lang?.toUpperCase()}
-            </motion.button>
-            
-            <motion.div 
-              className="absolute right-0 mt-2 w-28 bg-white rounded-md shadow-lg opacity-0 invisible 
-                        group-hover:opacity-100 group-hover:visible transition-all duration-200
-                        border border-gray-100 overflow-hidden"
-              initial={{ y: 10, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.3, delay: 0.1 }}
-            >
-              {languages.map(language => (
-                <Link
-                  key={language.code}
-                  href={`/${language.code}${getCurrentRoute()}`}
-                  prefetch={false}
-                  className={clsx(
-                    'block px-4 py-2 text-sm transition-all duration-200 relative overflow-hidden',
-                    language.code === lang 
-                      ? 'bg-gray-50 text-gray-900 font-medium' 
-                      : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                  )}
-                >
-                  <motion.div
-                    className="absolute inset-0 bg-gray-50"
-                    initial={{ x: '-100%' }}
-                    whileHover={{ x: 0 }}
-                    transition={{ duration: 0.3 }}
-                  />
-                  <span className="relative z-10">{language.code.toUpperCase()}</span>
-                </Link>
-              ))}
-            </motion.div>
+              <div className="w-4 h-3 flex-shrink-0 overflow-hidden">
+                <Flag
+                  code={languages.find(l => l.code === lang)?.flag || 'GB'}
+                  className="w-full h-full object-cover rounded-sm"
+                />
+              </div>
+              <span>{languages.find(l => l.code === lang)?.name || 'English'}</span>
+              <svg
+                className={`h-4 w-4 transition-transform ${isLanguageMenuOpen ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 9l-7 7-7-7"
+                />
+              </svg>
+            </button>
+            {isLanguageMenuOpen && (
+              <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-xl max-h-96 overflow-y-auto">
+                {languages.map(language => (
+                  <Link
+                    key={language.code}
+                    href={`/${language.code}${getCurrentRoute()}`}
+                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                    onClick={() => setIsLanguageMenuOpen(false)}
+                  >
+                    <div className="w-4 h-3 flex-shrink-0 overflow-hidden">
+                      <Flag
+                        code={language.flag}
+                        className="w-full h-full object-cover rounded-sm"
+                      />
+                    </div>
+                    <span>{language.name}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>

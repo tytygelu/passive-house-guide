@@ -5,6 +5,11 @@ export const en: Dictionary = {
   home: {
     title: 'Passive House Guide',
     subtitle: 'Your comprehensive resource for sustainable building',
+    description: 'Discover the world of passive houses and sustainable architecture',
+    learnMore: 'Learn More',
+    readMore: 'Read More',
+    latestArticles: 'Latest Articles',
+    viewAll: 'View All',
     menu: {
       principles: 'Principles',
       materials: 'Materials',
@@ -34,35 +39,19 @@ export const en: Dictionary = {
         description: 'Real-world examples of passive house projects'
       },
       contact: {
-        title: 'Contact Us',
+        title: 'Contact',
         description: 'Get in touch with our team'
       }
     },
     features: {
       title: 'Key Features',
       items: [
-        'Superior energy efficiency',
-        'Excellent thermal comfort',
+        'Excellent energy efficiency',
+        'Exceptional thermal comfort',
         'High indoor air quality',
         'Sustainable construction'
       ]
     }
-  },
-  footer: {
-    about: {
-      title: 'About Us',
-      description: 'We are dedicated to promoting sustainable building practices through passive house principles.'
-    },
-    quickLinks: {
-      title: 'Quick Links',
-      privacy: 'Privacy Policy',
-      contact: 'Contact Us'
-    },
-    contact: {
-      title: 'Contact',
-      email: 'contact@passivehouseguide.com'
-    },
-    rights: 'All rights reserved.'
   },
   privacy: {
     title: 'Privacy Policy',
@@ -96,5 +85,21 @@ export const en: Dictionary = {
     description: 'We use cookies to enhance your experience.',
     accept: 'Accept',
     decline: 'Decline'
+  },
+  footer: {
+    about: {
+      title: 'About Us',
+      description: 'We are dedicated to promoting sustainable building practices through passive house principles.'
+    },
+    quickLinks: {
+      title: 'Quick Links',
+      privacy: 'Privacy Policy',
+      contact: 'Contact Us'
+    },
+    contact: {
+      title: 'Contact',
+      email: 'zero.energy.passive.house@gmail.com'
+    },
+    rights: 'All rights reserved.'
   }
 }

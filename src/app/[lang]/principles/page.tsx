@@ -3,6 +3,13 @@ import { PageProps } from '@/types/page'
 import { getAllPosts } from '@/lib/api'
 import Link from 'next/link'
 import Image from 'next/image'
+import { i18n } from '@/lib/i18n-config'
+
+export async function generateStaticParams() {
+  return i18n.locales.map((locale) => ({
+    lang: locale
+  }))
+}
 
 export default async function PrinciplesPage({ params }: PageProps) {
   const { lang } = await params
