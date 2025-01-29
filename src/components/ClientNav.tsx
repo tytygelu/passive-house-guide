@@ -99,6 +99,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
     { code: 'pl', name: 'Polski', flag: 'PL' },
     { code: 'pt', name: 'Português', flag: 'PT' },
     { code: 'qu', name: 'Quechua', flag: 'PE' },
+    { code: 'ru', name: 'Русский', flag: 'RU' },
     { code: 'sk', name: 'Slovenčina', flag: 'SK' },
     { code: 'sl', name: 'Slovenščina', flag: 'SI' },
     { code: 'sq', name: 'Shqip', flag: 'AL' },

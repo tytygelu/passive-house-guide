@@ -8,7 +8,7 @@ export const i18n = {
     'af', 'am', 'ar', 'ay', 'bg', 'bn', 'bs', 'cs', 'da', 'el', 'en-us', 'es-ar',
     'es-mx', 'et', 'fa', 'fi', 'ga', 'gn', 'ha', 'he', 'hi', 'hr', 'hu', 'id',
     'is', 'it', 'ja', 'ko', 'lb', 'lt', 'lv', 'mk', 'ms', 'mt', 'nl', 'no', 'pl',
-    'pt', 'qu', 'sk', 'sl', 'sq', 'sr', 'sv', 'sw', 'th', 'ua', 'ur', 'vi', 'xh',
+    'pt', 'qu', 'ru', 'sk', 'sl', 'sq', 'sr', 'sv', 'sw', 'th', 'ua', 'ur', 'vi', 'xh',
     'yo', 'zh', 'zu'
   ],
 } as const

@@ -31,6 +31,7 @@ import { mk } from './mk'
 import { sr } from './sr'
 import { bs } from './bs'
 import { ua } from './ua'
+import { ru } from './ru'
 
 // Asian languages
 import { zh } from './zh'
@@ -158,7 +159,7 @@ export type Dictionary = {
   }
 }
 
-type LocaleType = 'en' | 'ro' | 'de' | 'fr' | 'it' | 'es' | 'nl' | 'pl' | 'sv' | 'no' | 'da' | 'fi' | 'pt' | 'cs' | 'sk' | 'hu' | 'el' | 'bg' | 'hr' | 'sl' | 'et' | 'lv' | 'lt' | 'ga' | 'is' | 'mt' | 'lb' | 'sq' | 'mk' | 'sr' | 'bs' | 'ua' | 'zh' | 'ja' | 'ko' | 'hi' | 'bn' | 'ur' | 'ar' | 'fa' | 'he' | 'th' | 'vi' | 'id' | 'ms' | 'sw' | 'am' | 'ha' | 'yo' | 'zu' | 'xh' | 'af' | 'en-us' | 'es-mx' | 'pt-br' | 'es-ar' | 'qu' | 'ay' | 'gn';
+type LocaleType = 'en' | 'ro' | 'de' | 'fr' | 'it' | 'es' | 'nl' | 'pl' | 'sv' | 'no' | 'da' | 'fi' | 'pt' | 'cs' | 'sk' | 'hu' | 'el' | 'bg' | 'hr' | 'sl' | 'et' | 'lv' | 'lt' | 'ga' | 'is' | 'mt' | 'lb' | 'sq' | 'mk' | 'sr' | 'bs' | 'ua' | 'zh' | 'ja' | 'ko' | 'hi' | 'bn' | 'ur' | 'ar' | 'fa' | 'he' | 'th' | 'vi' | 'id' | 'ms' | 'sw' | 'am' | 'ha' | 'yo' | 'zu' | 'xh' | 'af' | 'en-us' | 'es-mx' | 'pt-br' | 'es-ar' | 'qu' | 'ay' | 'gn' | 'ru';
 
 const dictionaries: Record<LocaleType, Dictionary> = {
   en,
@@ -220,6 +221,7 @@ const dictionaries: Record<LocaleType, Dictionary> = {
   qu,
   ay,
   gn,
+  ru
 }
 
 export function getDictionary(locale: string) {
