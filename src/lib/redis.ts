@@ -1,8 +1,8 @@
-import { createClient } from 'redis';
+import { createClient, RedisClientType } from 'redis';
 
 const isEdge = process.env.NEXT_RUNTIME === 'edge';
 
-let redisClient;
+let redisClient: RedisClientType | null;
 
 if (isEdge) {
   // Do not initialize Redis client in the Edge runtime

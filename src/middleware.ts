@@ -17,7 +17,7 @@ async function detectBrowserLanguage(request: NextRequest) {
   log.info(`Detecting browser language for cache key: ${cacheKey}`);
 
   try {
-    const cached = await redisClient.get(`locale_cache:${cacheKey}`);
+    const cached = redisClient ? await redisClient.get(`locale_cache:${cacheKey}`) : null;
     if (cached) {
       const { value, timestamp } = JSON.parse(cached);
       if (Date.now() - timestamp < CACHE_TTL) {
@@ -37,12 +37,14 @@ async function detectBrowserLanguage(request: NextRequest) {
 
     if (supportedLocales.has(primaryLang)) {
       log.info(`Detected supported language: ${primaryLang}`);
-      await redisClient.set(`locale_cache:${cacheKey}`, JSON.stringify({
-        value: primaryLang,
-        timestamp: Date.now()
-      }), {
-        EX: Math.ceil(CACHE_TTL / 1000)
-      });
+      if (redisClient) {
+        await redisClient.set(`locale_cache:${cacheKey}`, JSON.stringify({
+          value: primaryLang,
+          timestamp: Date.now()
+        }), {
+          EX: Math.ceil(CACHE_TTL / 1000)
+        });
+      }
       return primaryLang;
     }
 
@@ -61,17 +63,19 @@ export async function middleware(request: NextRequest) {
   const key = `rate_limit:${ip}`;
 
   try {
-    const rateLimit = await redisClient.get(key);
-    const count = rateLimit ? JSON.parse(rateLimit).count : 0;
+    if (redisClient) {
+      const rateLimit = await redisClient.get(key);
+      const count = rateLimit ? JSON.parse(rateLimit).count : 0;
 
-    if (count >= RATE_LIMIT) {
-      log.warn(`Rate limit exceeded for IP: ${ip}`);
-      return new NextResponse('Too many requests', { status: 429 });
+      if (count >= RATE_LIMIT) {
+        log.warn(`Rate limit exceeded for IP: ${ip}`);
+        return new NextResponse('Too many requests', { status: 429 });
+      }
+
+      await redisClient.set(key, JSON.stringify({ count: count + 1, lastRequest: now }), {
+        EX: Math.ceil(RATE_LIMIT_WINDOW / 1000)
+      });
     }
-
-    await redisClient.set(key, JSON.stringify({ count: count + 1, lastRequest: now }), {
-      EX: Math.ceil(RATE_LIMIT_WINDOW / 1000)
-    });
   } catch (error) {
     log.error('Error in rate limiting:', error);
     return NextResponse.next();
