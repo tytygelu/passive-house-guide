@@ -1,7 +1,9 @@
+# *
 User-agent: *
 Allow: /
 
-Disallow: /admin/
-Disallow: /private/
+# Host
+Host: https://www.zeroenergy.casa
 
+# Sitemaps
 Sitemap: https://www.zeroenergy.casa/sitemap.xml
