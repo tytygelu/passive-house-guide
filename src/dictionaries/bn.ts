@@ -99,6 +99,9 @@ export const bn: Dictionary = {
       title: 'যোগাযোগ',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'সর্বস্বত্ব সংরক্ষিত।'
+    rights: 'সর্বস্বত্ব সংরক্ষিত।',
+  },
+  search: {
+    title: 'অনুসন্ধান'
   }
 }

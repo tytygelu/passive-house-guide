@@ -99,6 +99,9 @@ export const esMx: Dictionary = {
       title: 'Contacto',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Todos los derechos reservados.'
+    rights: 'Todos los derechos reservados.',
+  },
+  search: {
+    title: 'Buscar'
   }
 }

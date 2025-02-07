@@ -99,6 +99,9 @@ export const ja: Dictionary = {
       title: 'お問い合わせ',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: '全著作権所有。'
+    rights: '全著作権所有。',
+  },
+  search: {
+    title: '検索'
   }
 }

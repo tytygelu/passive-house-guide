@@ -100,6 +100,9 @@ export const lt: Dictionary = {
       title: 'Kontaktai',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Visos teisės saugomos.'
+    rights: 'Visos teisės saugomos.',
+  },
+  search: {
+    title: 'Ieškoti'
   }
 }

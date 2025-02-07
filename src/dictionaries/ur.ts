@@ -99,6 +99,9 @@ export const ur: Dictionary = {
       title: 'رابطہ',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'جملہ حقوق محفوظ ہیں۔'
+    rights: 'جملہ حقوق محفوظ ہیں۔',
+  },
+  search: {
+    title: 'تلاش'
   }
 }

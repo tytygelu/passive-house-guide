@@ -99,6 +99,9 @@ export const vi: Dictionary = {
       title: 'Liên hệ',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Bản quyền đã được bảo hộ.'
+    rights: 'Đã đăng ký bản quyền.',
+  },
+  search: {
+    title: 'Tìm kiếm'
   }
 }

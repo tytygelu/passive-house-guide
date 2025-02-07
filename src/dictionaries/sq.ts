@@ -100,6 +100,9 @@ export const sq: Dictionary = {
       title: 'Kontakti',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Të gjitha të drejtat e rezervuara.'
+    rights: 'Të gjitha të drejtat e rezervuara.',
+  },
+  search: {
+    title: 'Kërko'
   }
 }

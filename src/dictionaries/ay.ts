@@ -99,6 +99,9 @@ export const ay: Dictionary = {
       title: 'Jikxataña',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Taqpach derechonak jarkatawa.'
+    rights: 'Taqpach derechonak jarkatawa.',
+  },
+  search: {
+    title: "Ch'ama"
   }
 }

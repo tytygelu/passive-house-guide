@@ -100,6 +100,9 @@ export const mt: Dictionary = {
       title: 'Kuntatt',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Id-drittijiet kollha riżervati.'
+    rights: 'Id-drittijiet kollha riżervati.',
+  },
+  search: {
+    title: 'Fittex'
   }
 }

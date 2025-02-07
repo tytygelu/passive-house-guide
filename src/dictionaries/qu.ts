@@ -99,6 +99,9 @@ export const qu: Dictionary = {
       title: 'Willay',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Llapan derechokuna waqaychasqa.'
+    rights: 'Llapan derechokuna waqaychasqa.',
+  },
+  search: {
+    title: 'Rikuy'
   }
 }

@@ -99,6 +99,9 @@ export const yo: Dictionary = {
       title: 'Kan Si Wa',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Gbogbo ẹtọ ni a ti fi pamọ.'
+    rights: 'Gbogbo ẹtọ ni a ti fi pamọ.',
+  },
+  search: {
+    title: 'Wa'
   }
 }

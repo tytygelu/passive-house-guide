@@ -65,7 +65,7 @@ export const am: Dictionary = {
         'የእርስዎን ጉብኝቶች በተመለከተ መረጃ በGoogle Analytics',
         'የእርስዎ ምርጫዎችና ቅንብሮች',
         'ስለ መሣሪያዎና የበይነመረብ ግንኙነትዎ ቴክኒካዊ መረጃ',
-        'እኛን ሲያገኙን የሚሰጡት መረጃ'
+        'እባክዎ የሚሰጡት መረጃ'
       ]
     },
     cookies: {
@@ -100,5 +100,8 @@ export const am: Dictionary = {
       email: 'zero.energy.passive.house@gmail.com'
     },
     rights: 'መብቱ በሕግ የተጠበቀ ነው።'
+  },
+  search: {
+    title: 'ፈልግ'
   }
 }

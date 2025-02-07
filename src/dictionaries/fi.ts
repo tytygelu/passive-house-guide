@@ -100,6 +100,9 @@ export const fi: Dictionary = {
       title: 'Yhteystiedot',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Kaikki oikeudet pidätetään.'
+    rights: 'Kaikki oikeudet pidätetään.',
+  },
+  search: {
+    title: 'Hae'
   }
 }

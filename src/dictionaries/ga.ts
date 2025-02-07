@@ -99,6 +99,9 @@ export const ga: Dictionary = {
       title: 'Teagmháil',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Gach ceart ar cosaint.'
+    rights: 'Gach ceart ar cosaint.',
+  },
+  search: {
+    title: 'Cuardaigh'
   }
 }

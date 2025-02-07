@@ -100,6 +100,9 @@ export const et: Dictionary = {
       title: 'Kontakt',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Kõik õigused kaitstud.'
+    rights: 'Kõik õigused kaitstud.',
+  },
+  search: {
+    title: 'Otsing'
   }
 }

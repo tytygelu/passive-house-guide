@@ -30,8 +30,8 @@ import { sq } from './sq'
 import { mk } from './mk'
 import { sr } from './sr'
 import { bs } from './bs'
-import { ua } from './ua'
 import { ru } from './ru'
+import { uk } from './uk'
 
 // Asian languages
 import { zh } from './zh'
@@ -58,12 +58,21 @@ import { xh } from './xh'
 import { af } from './af'
 
 // American languages
-import { enUs } from './en-us'
 import { esMx } from './es-mx'
-import { ptBR as ptBr } from './pt-br'
+import { ptBr } from './pt-br'
 import { esAr } from './es-ar'
 import { qu } from './qu'
 import { ay } from './ay'
+import { az } from './az'
+import { eu } from './eu'
+import { lo } from './lo'
+import { ml } from './ml'
+import { mr } from './mr'
+import { pa } from './pa'
+import { si } from './si'
+import { ta } from './ta'
+import { te } from './te'
+import { tr } from './tr'
 import { gn } from './gn'
 
 export type Dictionary = {
@@ -157,71 +166,83 @@ export type Dictionary = {
     }
     rights: string
   }
+  search: {
+    title: string
+  }
 }
 
-type LocaleType = 'en' | 'ro' | 'de' | 'fr' | 'it' | 'es' | 'nl' | 'pl' | 'sv' | 'no' | 'da' | 'fi' | 'pt' | 'cs' | 'sk' | 'hu' | 'el' | 'bg' | 'hr' | 'sl' | 'et' | 'lv' | 'lt' | 'ga' | 'is' | 'mt' | 'lb' | 'sq' | 'mk' | 'sr' | 'bs' | 'ua' | 'zh' | 'ja' | 'ko' | 'hi' | 'bn' | 'ur' | 'ar' | 'fa' | 'he' | 'th' | 'vi' | 'id' | 'ms' | 'sw' | 'am' | 'ha' | 'yo' | 'zu' | 'xh' | 'af' | 'en-us' | 'es-mx' | 'pt-br' | 'es-ar' | 'qu' | 'ay' | 'gn' | 'ru';
+type LocaleType = 'af' | 'am' | 'ar' | 'ay' | 'az' | 'bg' | 'bn' | 'bs' | 'cs' | 'da' | 'de' | 'el' | 'en' | 'es' | 'es-ar' | 'es-mx' | 'et' | 'fa' | 'fi' | 'fr' | 'ga' | 'gn' | 'ha' | 'he' | 'hi' | 'hr' | 'hu' | 'id' | 'is' | 'it' | 'ja' | 'ko' | 'lb' | 'lo' | 'lt' | 'lv' | 'mk' | 'ml' | 'mr' | 'ms' | 'mt' | 'nl' | 'no' | 'pa' | 'pl' | 'pt' | 'pt-br' | 'qu' | 'ro' | 'ru' | 'si' | 'sk' | 'sl' | 'sq' | 'sr' | 'sv' | 'sw' | 'ta' | 'te' | 'th' | 'tr' | 'uk' | 'ur' | 'vi' | 'xh' | 'yo' | 'zh' | 'zu' | 'eu';
 
 const dictionaries: Record<LocaleType, Dictionary> = {
-  en,
-  ro,
-  de,
-  fr,
-  it,
-  es,
-  nl,
-  pl,
-  sv,
-  no,
-  da,
-  fi,
-  pt,
-  cs,
-  sk,
-  hu,
-  el,
+  af,
+  am,
+  ar,
+  ay,
+  az,
   bg,
-  hr,
-  sl,
-  et,
-  lv,
-  lt,
-  ga,
-  is,
-  mt,
-  lb,
-  sq,
-  mk,
-  sr,
+  bn,
   bs,
-  ua,
-  zh,
+  cs,
+  da,
+  de,
+  el,
+  en,
+  es,
+  'es-ar': esAr,
+  'es-mx': esMx,
+  et,
+  fa,
+  fi,
+  fr,
+  ga,
+  gn,
+  ha,
+  he,
+  hi,
+  hr,
+  hu,
+  id,
+  is,
+  it,
   ja,
   ko,
-  hi,
-  bn,
-  ur,
-  ar,
-  fa,
-  he,
-  th,
-  vi,
-  id,
+  lb,
+  lo,
+  lt,
+  lv,
+  mk,
+  ml,
+  mr,
   ms,
-  sw,
-  am,
-  ha,
-  yo,
-  zu,
-  xh,
-  af,
-  'en-us': enUs,
-  'es-mx': esMx,
+  mt,
+  nl,
+  no,
+  pa,
+  pl,
+  pt,
   'pt-br': ptBr,
-  'es-ar': esAr,
   qu,
-  ay,
-  gn,
-  ru
+  ro,
+  ru,
+  si,
+  sk,
+  sl,
+  sq,
+  sr,
+  sv,
+  sw,
+  ta,
+  te,
+  th,
+  tr,
+  uk,
+  ur,
+  vi,
+  xh,
+  yo,
+  zh,
+  zu,
+  eu
 }
 
 export function getDictionary(locale: string) {

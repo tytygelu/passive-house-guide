@@ -39,15 +39,21 @@ export function getPostSlugs(category: string, lang: string) {
 }
 
 export function getPostBySlug(category: string, lang: string, slug: string, fields: string[] = []) {
-  const realSlug = slug.replace(/\.mdx$/, '')
-  const fullPath = join(postsDirectory, category, lang, `${realSlug}.mdx`)
-  
-  // Check if file exists in requested language
-  const fileExists = fs.existsSync(fullPath)
-  const filePath = fileExists ? fullPath : join(postsDirectory, category, 'en', `${realSlug}.mdx`)
-  
-  if (!fs.existsSync(filePath)) {
-    throw new Error(`Post not found: ${fullPath}`)
+  const realSlug = slug.replace(/\.mdx$/, '').replace(/\.md$/, '');
+  const possibleLangPaths = [
+    join(postsDirectory, category, lang, `${realSlug}.mdx`),
+    join(postsDirectory, category, lang, `${realSlug}.md`)
+  ];
+  let filePath = possibleLangPaths.find(p => fs.existsSync(p));
+  if (!filePath) {
+    const fallbackPaths = [
+      join(postsDirectory, category, 'en', `${realSlug}.mdx`),
+      join(postsDirectory, category, 'en', `${realSlug}.md`)
+    ];
+    filePath = fallbackPaths.find(p => fs.existsSync(p));
+  }
+  if (!filePath) {
+    throw new Error(`Post not found for slug: ${slug}`);
   }
 
   const fileContents = fs.readFileSync(filePath, 'utf8')

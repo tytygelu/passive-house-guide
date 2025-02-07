@@ -15,7 +15,7 @@ export default async function Calculator({ params }: PageProps) {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="text-center py-16">
           <h1 className="text-4xl font-bold mb-4">{dict.home.sections.calculator.title}</h1>
           <p className="text-xl text-gray-600">{dict.home.sections.calculator.description}</p>

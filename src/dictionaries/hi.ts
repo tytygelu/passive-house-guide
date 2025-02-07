@@ -99,6 +99,9 @@ export const hi: Dictionary = {
       title: 'संपर्क',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'सर्वाधिकार सुरक्षित।'
+    rights: 'सर्वाधिकार सुरक्षित।',
+  },
+  search: {
+    title: 'खोजें'
   }
 }

@@ -100,6 +100,9 @@ export const pt: Dictionary = {
       title: 'Contacto',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Todos os direitos reservados.'
+    rights: 'Todos os direitos reservados.',
+  },
+  search: {
+    title: 'Pesquisar'
   }
 }

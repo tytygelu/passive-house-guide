@@ -99,6 +99,9 @@ export const ko: Dictionary = {
       title: '문의하기',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: '모든 권리 보유.'
+    rights: '모든 권리 보유.',
+  },
+  search: {
+    title: '검색'
   }
 }

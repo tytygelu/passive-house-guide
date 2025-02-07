@@ -99,6 +99,9 @@ export const zh: Dictionary = {
       title: '联系我们',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: '版权所有。'
+    rights: '版权所有.',
+  },
+  search: {
+    title: '搜索'
   }
 }

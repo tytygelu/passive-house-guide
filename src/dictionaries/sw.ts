@@ -99,6 +99,9 @@ export const sw: Dictionary = {
       title: 'Wasiliana',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Haki zote zimehifadhiwa.'
+    rights: 'Haki zote zimehifadhiwa.',
+  },
+  search: {
+    title: 'Tafuta'
   }
 }

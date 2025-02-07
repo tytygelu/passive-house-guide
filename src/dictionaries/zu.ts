@@ -99,6 +99,9 @@ export const zu: Dictionary = {
       title: 'Xhumana',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Wonke amalungelo agodliwe.'
+    rights: 'Wonke amalungelo agodliwe.',
+  },
+  search: {
+    title: 'Sesha'
   }
 }

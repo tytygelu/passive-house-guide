@@ -100,5 +100,8 @@ export const ms: Dictionary = {
       email: 'zero.energy.passive.house@gmail.com'
     },
     rights: 'Hak cipta terpelihara.'
+  },
+  search: {
+    title: 'Cari'
   }
 }

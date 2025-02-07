@@ -99,6 +99,9 @@ export const ha: Dictionary = {
       title: 'Tuntuɓi',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Duk haƙƙoƙi na musamman.'
+    rights: 'Duk haƙƙoƙi na musamman.',
+  },
+  search: {
+    title: 'Bincika'
   }
 }

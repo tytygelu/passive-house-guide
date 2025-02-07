@@ -99,6 +99,9 @@ export const xh: Dictionary = {
       title: 'Qhagamshelana',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Onke amalungelo agciniwe.'
+    rights: 'Onke amalungelo agciniwe.',
+  },
+  search: {
+    title: 'Khangela'
   }
 }

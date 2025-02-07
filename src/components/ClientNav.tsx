@@ -4,8 +4,9 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import clsx from 'clsx'
+import { Search } from 'lucide-react'
 import Flag from 'react-world-flags'
+import clsx from 'clsx'
 import { localeMetadata, type LocaleMetadata } from '../lib/locale-metadata'
 
 type ClientNavProps = {
@@ -17,6 +18,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
   const pathname = usePathname()
   const [isScrolled, setIsScrolled] = useState(false)
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
+  const [isSmallScreen, setIsSmallScreen] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,6 +28,15 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsSmallScreen(window.innerWidth < 990);
+    };
+    window.addEventListener('resize', handleResize);
+    handleResize(); // initial check
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const getRoute = (key: string) => {
     const routes: Record<string, string> = {
@@ -40,7 +51,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
 
   const getCurrentRoute = () => {
     // Split path by '/' and remove empty strings
-    const parts = pathname.split('/').filter(Boolean)
+    const parts = (pathname || '').split('/').filter(Boolean)
     
     // If we have at least 2 parts (lang and route)
     if (parts.length >= 2) {
@@ -52,6 +63,8 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
   }
 
   const languages = localeMetadata
+
+  const currentLanguage = languages.find((l: LocaleMetadata) => l.code === lang);
 
   return (
     <motion.nav
@@ -72,7 +85,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
           prefetch={false}
         >
           <AnimatePresence mode="wait">
-            {isScrolled ? (
+            {(isScrolled || isSmallScreen) ? (
               <motion.div
                 key="short"
                 className="font-bold text-xl relative"
@@ -123,18 +136,28 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
             )
           })}
 
+          <Link
+            href={`/${lang}/search`}
+            prefetch={false}
+            className="px-4 py-2 rounded-lg transition-all duration-300 text-base font-medium text-white hover:bg-white/20 hover:shadow-md"
+          >
+            <Search size={20} />
+          </Link>
+
           <div className="relative">
             <button
               className="flex items-center gap-2 px-3 py-2 text-sm hover:text-gray-700"
               onClick={() => setIsLanguageMenuOpen(!isLanguageMenuOpen)}
             >
               <div className="w-4 h-3 flex-shrink-0 overflow-hidden">
-                <Flag
-                  code={languages.find((l: LocaleMetadata) => l.code === lang)?.flag || 'GB'}
-                  className="w-full h-full object-cover rounded-sm"
-                />
+                { currentLanguage && currentLanguage.flag ? (
+                  <Flag
+                    code={currentLanguage.flag}
+                    className="w-full h-full object-cover rounded-sm"
+                  />
+                ) : null }
               </div>
-              <span>{languages.find((l: LocaleMetadata) => l.code === lang)?.name || 'English'}</span>
+              <span>{currentLanguage?.name || 'English'}</span>
               <svg
                 className={`h-4 w-4 transition-transform ${isLanguageMenuOpen ? 'rotate-180' : ''}`}
                 fill="none"
@@ -159,10 +182,12 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                     onClick={() => setIsLanguageMenuOpen(false)}
                   >
                     <div className="w-4 h-3 flex-shrink-0 overflow-hidden">
-                      <Flag
-                        code={language.flag}
-                        className="w-full h-full object-cover rounded-sm"
-                      />
+                      { language.flag && language.flag !== "" ? (
+                        <Flag
+                          code={language.flag}
+                          className="w-full h-full object-cover rounded-sm"
+                        />
+                      ) : null }
                     </div>
                     <span>{language.name}</span>
                   </Link>

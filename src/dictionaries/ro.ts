@@ -7,9 +7,9 @@ export const ro: Dictionary = {
     subtitle: 'Resursa ta completă pentru construcții sustenabile',
     description: 'Învață cum să construiești o casă pasivă eficientă și confortabilă',
     learnMore: 'Află Mai Multe',
-    readMore: 'Citește Mai Mult',
-    latestArticles: 'Ultimele Articole',
-    viewAll: 'Vezi Tot',
+    readMore: 'Citeste mai mult',
+    latestArticles: 'Articole recente',
+    viewAll: 'Vezi tot',
     menu: {
       principles: 'Principii',
       materials: 'Materiale',
@@ -101,5 +101,8 @@ export const ro: Dictionary = {
       email: 'zero.energy.passive.house@gmail.com'
     },
     rights: 'Toate drepturile rezervate.'
+  },
+  search: {
+    title: 'Căutare'
   }
 }

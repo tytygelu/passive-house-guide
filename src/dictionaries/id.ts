@@ -87,18 +87,21 @@ export const id: Dictionary = {
   },
   footer: {
     about: {
-      title: 'Tentang Kami',
-      description: 'Panduan lengkap Anda untuk membangun rumah pasif, membantu Anda membangun rumah yang berkelanjutan dan hemat energi.'
+      title: 'Tentang',
+      description: 'Pelajari lebih lanjut tentang inisiatif rumah pasif kami.'
     },
     quickLinks: {
       title: 'Tautan Cepat',
-      privacy: 'Privasi',
+      privacy: 'Kebijakan Privasi',
       contact: 'Kontak'
     },
     contact: {
       title: 'Kontak',
-      email: 'zero.energy.passive.house@gmail.com'
+      email: 'info@example.com'
     },
-    rights: 'Hak cipta dilindungi undang-undang.'
+    rights: 'Hak Cipta 2024. Semua hak dilindungi undang-undang.'
+  },
+  search: {
+    title: 'Pencarian'
   }
 }

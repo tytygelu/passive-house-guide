@@ -4,6 +4,7 @@ import { PageProps } from '@/types/page'
 import PageTransition from '@/components/PageTransition'
 import AdUnit from '@/components/AdUnit'
 import { i18n } from '@/lib/i18n-config'
+import Link from 'next/link'
 
 export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({
@@ -17,7 +18,7 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <PageTransition>
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen">
         <div className="text-center py-24">
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">{dict.home.subtitle}</p>
 
@@ -35,28 +36,36 @@ export default async function Page({ params }: PageProps) {
         <div className="container mx-auto px-4 py-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Principii */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.principles.title}</h2>
-              <p className="text-gray-600">{dict.home.sections.principles.description}</p>
-            </div>
+            <Link href={`/${lang}/principles`} className="block">
+              <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.principles.title}</h2>
+                <p className="text-gray-600">{dict.home.sections.principles.description}</p>
+              </div>
+            </Link>
 
             {/* Materiale */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.materials.title}</h2>
-              <p className="text-gray-600">{dict.home.sections.materials.description}</p>
-            </div>
+            <Link href={`/${lang}/materials`} className="block">
+              <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.materials.title}</h2>
+                <p className="text-gray-600">{dict.home.sections.materials.description}</p>
+              </div>
+            </Link>
 
             {/* Calculator */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.calculator.title}</h2>
-              <p className="text-gray-600">{dict.home.sections.calculator.description}</p>
-            </div>
+            <Link href={`/${lang}/calculator`} className="block">
+              <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.calculator.title}</h2>
+                <p className="text-gray-600">{dict.home.sections.calculator.description}</p>
+              </div>
+            </Link>
 
             {/* Certificare */}
-            <div className="bg-white p-6 rounded-lg shadow-lg">
-              <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.certification.title}</h2>
-              <p className="text-gray-600">{dict.home.sections.certification.description}</p>
-            </div>
+            <Link href={`/${lang}/certification`} className="block">
+              <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+                <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.certification.title}</h2>
+                <p className="text-gray-600">{dict.home.sections.certification.description}</p>
+              </div>
+            </Link>
           </div>
 
           {/* Reclamă orizontală jos */}

@@ -99,6 +99,9 @@ export const ar: Dictionary = {
       title: 'اتصل بنا',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'جميع الحقوق محفوظة.'
+    rights: 'جميع الحقوق محفوظة.',
+  },
+  search: {
+    title: 'بحث'
   }
 }

@@ -99,6 +99,9 @@ export const gn: Dictionary = {
       title: 'Ñe\'ẽ',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Derechos reservados opavave.'
+    rights: 'Derechos reservados opavave.',
+  },
+  search: {
+    title: 'Mbaʼapo'
   }
 }

@@ -100,6 +100,9 @@ export const el: Dictionary = {
       title: 'Επικοινωνία',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Με επιφύλαξη παντός δικαιώματος.'
+    rights: 'Με επιφύλαξη παντός δικαιώματος.',
+  },
+  search: {
+    title: 'Αναζήτηση'
   }
 }

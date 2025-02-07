@@ -100,6 +100,9 @@ export const fa: Dictionary = {
       title: 'تماس',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'تمامی حقوق محفوظ است.'
+    rights: 'تمامی حقوق محفوظ است.',
+  },
+  search: {
+    title: 'جستجو'
   }
 }

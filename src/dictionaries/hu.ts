@@ -100,6 +100,9 @@ export const hu: Dictionary = {
       title: 'Kapcsolat',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'Minden jog fenntartva.'
+    rights: 'Minden jog fenntartva.',
+  },
+  search: {
+    title: 'Keresés'
   }
 }

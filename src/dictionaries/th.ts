@@ -99,6 +99,9 @@ export const th: Dictionary = {
       title: 'ติดต่อ',
       email: 'zero.energy.passive.house@gmail.com'
     },
-    rights: 'สงวนลิขสิทธิ์'
+    rights: 'สงวนลิขสิทธิ์',
+  },
+  search: {
+    title: 'ค้นหา'
   }
 }
