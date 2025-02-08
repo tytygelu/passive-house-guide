@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search } from 'lucide-react'
+import { Calculator, Mail, Search } from 'lucide-react'
 import Flag from 'react-world-flags'
 import clsx from 'clsx'
 import { localeMetadata, type LocaleMetadata } from '../lib/locale-metadata'
@@ -131,7 +131,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                     : 'text-white hover:bg-white/20 hover:shadow-md'
                 )}
               >
-                {label}
+                {key === 'calculator' ? <Calculator size={20} /> : key === 'contact' ? <Mail size={20} /> : label}
               </Link>
             )
           })}
