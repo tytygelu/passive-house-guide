@@ -2,11 +2,22 @@
 'use client'
 
 import Script from 'next/script'
+import { useEffect } from 'react'
 
 export default function Analytics() {
   // Google Analytics Measurement ID
   const GA_MEASUREMENT_ID = 'G-5CJ5S8N1BD'
   
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'production') {
+      // Load AdSense script dynamically
+      const script = document.createElement('script')
+      script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4195148067095287'
+      script.crossOrigin = 'anonymous'
+      document.head.appendChild(script)
+    }
+  }, [])
+
   // Verificăm dacă suntem în producție
   if (process.env.NODE_ENV !== 'production') {
     return null
@@ -27,13 +38,6 @@ export default function Analytics() {
           gtag('config', '${GA_MEASUREMENT_ID}');
         `}
       </Script>
-
-      {/* Google AdSense */}
-      <Script
-        src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4195148067095287"
-        crossOrigin="anonymous"
-        strategy="afterInteractive"
-      />
     </>
   )
 }
