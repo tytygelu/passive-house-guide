@@ -5,7 +5,8 @@ import matter from 'gray-matter'
 const postsDirectory = join(process.cwd(), 'src/content')
 
 export function getPostSlugs(category: string, lang: string) {
-  const categoryPath = join(postsDirectory, category, lang)
+  const language = lang === 'ua' ? 'uk' : lang;
+  const categoryPath = join(postsDirectory, category, language)
   const enPath = join(postsDirectory, category, 'en')
 
   console.log('Looking for posts in:', { categoryPath, enPath })
@@ -26,7 +27,7 @@ export function getPostSlugs(category: string, lang: string) {
   console.log('Found posts in language directory:', langPosts)
 
   // If English is not the requested language, also get English posts that don't exist in the requested language
-  if (lang !== 'en' && fs.existsSync(enPath)) {
+  if (language !== 'en' && fs.existsSync(enPath)) {
     const enPosts = fs.readdirSync(enPath)
     console.log('Found English posts:', enPosts)
     const langPostsSet = new Set(langPosts)
