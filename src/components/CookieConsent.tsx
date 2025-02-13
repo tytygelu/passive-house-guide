@@ -75,12 +75,16 @@ export default function CookieConsent({ lang }: Props) {
             <div className="flex flex-row gap-3 w-full md:w-auto">
               <button
                 onClick={declineCookies}
+                id="decline-cookies"
+                name="decline-cookies"
                 className="flex-1 md:flex-initial min-w-[100px] px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
               >
                 {dict.cookies.decline}
               </button>
               <button
                 onClick={acceptCookies}
+                id="accept-cookies"
+                name="accept-cookies"
                 className="flex-1 md:flex-initial min-w-[100px] px-4 py-2 text-sm font-medium text-white bg-primary rounded-md hover:bg-primary/90 transition-colors"
               >
                 {dict.cookies.accept}
