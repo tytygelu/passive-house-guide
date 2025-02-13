@@ -58,14 +58,6 @@ export default async function Page({ params }: PageProps) {
                 <p className="text-gray-600">{dict.home.sections.calculator.description}</p>
               </div>
             </Link>
-
-            {/* Certificare */}
-            <Link href={`/${lang}/certification`} className="block">
-              <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
-                <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.certification.title}</h2>
-                <p className="text-gray-600">{dict.home.sections.certification.description}</p>
-              </div>
-            </Link>
           </div>
 
           {/* Reclamă orizontală jos */}

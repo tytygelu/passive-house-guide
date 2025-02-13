@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Calculator, Mail, Search } from 'lucide-react'
-import Flag from 'react-world-flags'
 import clsx from 'clsx'
+import Flag from 'react-world-flags'
+import { MagnifyingGlassIcon, CalculatorIcon } from '@heroicons/react/24/outline'
 import { localeMetadata, type LocaleMetadata } from '../lib/locale-metadata'
 
 type ClientNavProps = {
@@ -131,7 +131,11 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                     : 'text-white hover:bg-white/20 hover:shadow-md'
                 )}
               >
-                {key === 'calculator' ? <Calculator size={20} /> : key === 'contact' ? <Mail size={20} /> : label}
+                {key.toLowerCase() === 'calculator' ? (
+                  <CalculatorIcon className={clsx("w-5 h-5", pathname === `/${lang}/calculator` ? "text-black" : "text-white")} />
+                ) : (
+                  label
+                )}
               </Link>
             )
           })}
@@ -141,7 +145,7 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
             prefetch={false}
             className="px-4 py-2 rounded-lg transition-all duration-300 text-base font-medium text-white hover:bg-white/20 hover:shadow-md"
           >
-            <Search size={20} />
+            <MagnifyingGlassIcon className="w-5 h-5" />
           </Link>
 
           <div className="relative">

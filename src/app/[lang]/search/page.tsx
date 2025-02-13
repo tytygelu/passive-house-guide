@@ -31,7 +31,7 @@ export default async function SearchPage({ params }: { params: Promise<{ lang: s
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-6">{dict?.search?.title || 'Search'}</h1>
+      <h1 className="text-4xl font-bold mb-6">{ dict?.search?.title || 'Search' }</h1>
       <SearchComponent posts={posts} lang={lang} />
     </div>
   );
