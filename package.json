@@ -3,10 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
-    "build": "next build",
-    "postbuild": "next-sitemap",
-    "start": "next start",
+    "dev": "NODE_OPTIONS='--no-deprecation' next dev --turbopack",
+    "build": "NODE_OPTIONS='--no-deprecation' next build",
+    "postbuild": "NODE_OPTIONS='--no-deprecation' next-sitemap",
+    "start": "NODE_OPTIONS='--no-deprecation' next start",
     "lint": "next lint"
   },
   "dependencies": {
