@@ -86,10 +86,12 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
 export function getAllPosts(category: string, lang: string, fields: string[] = []) {
   const slugs = getPostSlugs(category, lang)
   console.log('Found slugs:', slugs)
+  // Always include date in the fields array if not already present
+  const fieldsWithDate = fields.includes('date') ? fields : [...fields, 'date']
   const posts = slugs
     .map((slug) => {
       try {
-        const post = getPostBySlug(category, lang, slug, fields)
+        const post = getPostBySlug(category, lang, slug, fieldsWithDate)
         console.log('Processing post:', { slug, date: post.date })
         return post
       } catch (error) {
@@ -98,8 +100,12 @@ export function getAllPosts(category: string, lang: string, fields: string[] = [
       }
     })
     .filter((post): post is NonNullable<typeof post> => post !== null)
-    // sort posts by date in descending order
-    .sort((post1, post2) => (post1.date > post2.date ? -1 : 1))
+    // sort posts by date in descending order, handling undefined dates
+    .sort((post1, post2) => {
+      if (!post1.date) return 1
+      if (!post2.date) return -1
+      return post1.date > post2.date ? -1 : 1
+    })
   console.log('Final sorted posts:', posts.map(p => ({ slug: p.slug, date: p.date })))
   return posts
 }
