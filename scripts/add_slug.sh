@@ -4,7 +4,7 @@
 # and, for each that doesn't already have a line starting with "slug:", it inserts one
 # immediately after the first line that starts with "title:".
 
-find src/content -type f -name '*.mdx' -print0 | while IFS= read -r -d '' file; do
+find /Users/adrianmoalea/passive-house-guide/src/content -type f -name '*.mdx' -print0 | while IFS= read -r -d '' file; do
     echo "Processing $file"
     if ! grep -q '^slug:' "$file"; then
         slug=$(basename "$file" .mdx)

@@ -1,8 +1,10 @@
+// Install slugify library by running npm install slugify or yarn add slugify
 const fs = require('fs/promises');
 const path = require('path');
 const util = require('util');
 const nodeFetch = require('node-fetch');
 const fetch = nodeFetch.default ? nodeFetch.default : nodeFetch;
+const slugify = require('slugify');
 
 // Helper function to recursively walk through a directory and list .md/.mdx files
 async function walkDir(dir) {
@@ -92,8 +94,20 @@ async function translateArticle(lang, articlePath, group) {
     if (skip) return;
 
     const content = await fs.readFile(articlePath, 'utf8');
-    const chunks = splitContent(content);
-    let translatedContent = '';
+    
+    // Split content into frontmatter and body
+    const parts = content.split('---\n');
+    if (parts.length < 3) {
+      throw new Error('Invalid frontmatter format');
+    }
+
+    // Keep the frontmatter as is, but translate the body
+    const frontmatter = parts[1];
+    const body = parts.slice(2).join('---\n');
+
+    // Split body into chunks and translate
+    const chunks = splitContent(body);
+    let translatedBody = '';
     const langMapping = {
       "en": "English",
       "ro": "Romanian",
@@ -127,64 +141,64 @@ async function translateArticle(lang, articlePath, group) {
       "lo": "Lao"
     };
 
-    for (const [index, chunk] of chunks.entries()) {
-      const langFull = langMapping[lang] || lang;
-      const prompt = `Translate this MARKDOWN from English to ${langFull} (section ${index + 1}/${chunks.length}). PRESERVE MARKDOWN FORMATTING AND HEADER LEVELS:\n\n${chunk}`;
-      let success = false;
-      const maxAttempts = 3;
-      for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-        try {
-          console.log('Translating with prompt:', prompt);
-          const openaiApiKey = process.env.OPENAI_API_KEY;
-          if (!openaiApiKey) {
-            throw new Error('Missing OpenAI API key in OPENAI_API_KEY environment variable.');
-          }
-          const apiUrl = 'https://api.openai.com/v1/chat/completions';
-          const requestBody = {
-            model: 'gpt-4o-mini',
+    const excludedFields = ['author', 'date', 'image', 'image_alt', 'image_caption', 'image_credit', 'image_license', 'image_source', 'image_source_url', 'image_source_url_text', 'image_source_license', 'slug', 'coverImage', 'url'];
+
+    // For each chunk
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      console.log(`Translating chunk ${i + 1}/${chunks.length} for ${relativePath} in ${lang}`);
+      
+      try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "gpt-4",
             messages: [
-              { role: 'system', content: 'You are an AI translation assistant. Translate the following markdown text from English to the specified target language while preserving markdown formatting and header levels.' },
-              { role: 'user', content: `Translate the following markdown text from English to ${langFull}:\n\n${prompt}` }
+              {
+                role: "system",
+                content: `You are a professional translator. Translate the following text from English to ${langMapping[lang] || lang}. Preserve all Markdown formatting, links, and code blocks exactly as they are. Do not translate text within code blocks or URLs.`
+              },
+              {
+                role: "user",
+                content: chunk
+              }
             ],
-            max_tokens: 1000,
-            temperature: 0.3,
-            top_p: 1,
-            frequency_penalty: 0,
-            presence_penalty: 0
-          };
-          const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${openaiApiKey}`
-            },
-            body: JSON.stringify(requestBody)
-          });
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          }
-          const data = await response.json();
-          if (!data.choices || data.choices.length === 0) {
-            throw new Error('No completion choices returned by OpenAI.');
-          }
-          const translatedText = data.choices[0].message.content.trim();
-          translatedContent += translatedText + '\n\n';
-          console.log(`Translated chunk ${index + 1}/${chunks.length} for ${path.basename(articlePath)}`);
-          success = true;
-          break;
-        } catch (error) {
-          console.error(`[${lang}] Error chunk ${index + 1} (attempt ${attempt}): ${error.message.slice(0,200)}`);
-          await new Promise(resolve => setTimeout(resolve, 5000 * attempt));
+            temperature: 0.3
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`Translation API returned ${response.status}`);
         }
-      }
-      if (!success) {
-        translatedContent += `<!-- TRANSLATION FAILED AFTER 3 RETRIES -->\n\n`;
+
+        const data = await response.json();
+        if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+          throw new Error('Invalid response from translation API');
+        }
+
+        translatedBody += data.choices[0].message.content + '\n';
+        
+        // Wait a bit to avoid rate limiting
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      } catch (error) {
+        console.error(`Error translating chunk ${i + 1} for ${relativePath} in ${lang}:`, error);
+        throw error;
       }
     }
-    await fs.writeFile(outputPath, translatedContent.trim());
-    console.log(`Translation for ${group}/${relativePath} in ${lang} saved to ${outputPath}`);
+
+    // Combine frontmatter with translated body
+    const translatedContent = `---\n${frontmatter}---\n${translatedBody}`;
+    
+    // Write the translated content
+    await fs.writeFile(outputPath, translatedContent);
+    console.log(`Successfully translated ${group}/${relativePath} to ${lang}`);
   } catch (error) {
-    console.error(`Translation failed for ${lang}:`, error.message);
+    console.error(`Error translating ${articlePath} to ${lang}:`, error);
+    throw error;
   }
 }
 

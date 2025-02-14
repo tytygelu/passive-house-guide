@@ -11,6 +11,13 @@ interface MinimalPost {
   category?: string;
 }
 
+interface RawPost {
+  slug?: string;
+  title?: string;
+  excerpt?: string;
+  date?: string;
+}
+
 export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({
     lang: locale
@@ -22,10 +29,38 @@ export default async function SearchPage({ params }: { params: Promise<{ lang: s
   const dict = await getDictionary(lang);
   
   // Get posts from both materials and principles and add a category field
-  const materialsRaw = getAllPosts('materials', lang, ['slug', 'title', 'excerpt', 'date']);
-  const principlesRaw = getAllPosts('principles', lang, ['slug', 'title', 'excerpt', 'date']);
-  const materialsPosts: MinimalPost[] = Array.isArray(materialsRaw) ? (materialsRaw.map((post) => ({ ...post, category: 'materials' })) as MinimalPost[]) : [];
-  const principlesPosts: MinimalPost[] = Array.isArray(principlesRaw) ? (principlesRaw.map((post) => ({ ...post, category: 'principles' })) as MinimalPost[]) : [];
+  const materialsRaw: RawPost[] = getAllPosts('materials', lang, ['slug', 'title', 'excerpt', 'date']) || [];
+  const principlesRaw: RawPost[] = getAllPosts('principles', lang, ['slug', 'title', 'excerpt', 'date']) || [];
+  
+  const materialsPosts: MinimalPost[] = materialsRaw
+    .filter((post): post is RawPost & Required<Pick<RawPost, 'slug' | 'title' | 'excerpt' | 'date'>> => 
+      post?.slug !== undefined && 
+      post?.title !== undefined && 
+      post?.excerpt !== undefined && 
+      post?.date !== undefined
+    )
+    .map(post => ({
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      date: post.date,
+      category: 'materials'
+    }));
+    
+  const principlesPosts: MinimalPost[] = principlesRaw
+    .filter((post): post is RawPost & Required<Pick<RawPost, 'slug' | 'title' | 'excerpt' | 'date'>> => 
+      post?.slug !== undefined && 
+      post?.title !== undefined && 
+      post?.excerpt !== undefined && 
+      post?.date !== undefined
+    )
+    .map(post => ({
+      slug: post.slug,
+      title: post.title,
+      excerpt: post.excerpt,
+      date: post.date,
+      category: 'principles'
+    }));
 
   const posts = [...materialsPosts, ...principlesPosts];
 
