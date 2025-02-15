@@ -1,9 +1,10 @@
-import { getPostBySlug } from '@/lib/api'
+import { getPostBySlug, getSimilarPosts } from '@/lib/api'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { PageProps } from '@/types/page'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import PreloadCoverImage from '@/components/PreloadCoverImage'
+import RelatedPosts from '@/components/RelatedPosts'
 
 export default async function Post({ params }: PageProps) {
   const { lang, slug } = await params
@@ -26,7 +27,7 @@ export default async function Post({ params }: PageProps) {
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
             <div className="text-gray-600 mb-8">
-              {new Date(post.date).toLocaleDateString(lang, {
+              {post.date && new Date(post.date).toLocaleDateString(lang, {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -45,8 +46,13 @@ export default async function Post({ params }: PageProps) {
           </div>
           
           <div className="prose prose-lg max-w-none">
-            <MDXRemote source={post.content} />
+            {post.content && <MDXRemote source={post.content} />}
           </div>
+          <RelatedPosts 
+            posts={getSimilarPosts('principles', lang, slug)} 
+            lang={lang} 
+            category="principles"
+          />
         </article>
       </>
     )

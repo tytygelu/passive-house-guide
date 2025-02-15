@@ -48,7 +48,7 @@ export default async function PrinciplesPage({ params }: PageProps) {
                   {post.excerpt}
                 </p>
                 <div className="mt-4 text-sm text-gray-500">
-                  {new Date(post.date).toLocaleDateString(lang, {
+                  {post.date && new Date(post.date).toLocaleDateString(lang, {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric'

@@ -1,6 +1,7 @@
 import fs from 'fs'
 import { join } from 'path'
 import matter from 'gray-matter'
+import { Post } from '@/types/post'
 
 const postsDirectory = join(process.cwd(), 'src/content')
 
@@ -39,7 +40,7 @@ export function getPostSlugs(category: string, lang: string) {
   return langPosts
 }
 
-export function getPostBySlug(category: string, lang: string, slug: string, fields: string[] = []) {
+export function getPostBySlug(category: string, lang: string, slug: string, fields: string[] = []): Post {
   const realSlug = slug.replace(/\.mdx$/, '').replace(/\.md$/, '');
   const possibleLangPaths = [
     join(postsDirectory, category, lang, `${realSlug}.mdx`),
@@ -60,30 +61,36 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
   const fileContents = fs.readFileSync(filePath, 'utf8')
   const { data, content } = matter(fileContents)
 
-  type Items = {
-    [key: string]: string
-  }
-
-  const items: Items = {}
+  const items = {} as Post
 
   // Ensure only the minimal needed data is exposed
   fields.forEach((field) => {
-    if (field === 'slug') {
-      items[field] = realSlug
-    }
-    if (field === 'content') {
-      items[field] = content
-    }
-
-    if (typeof data[field] !== 'undefined') {
-      items[field] = data[field]
+    switch (field) {
+      case 'slug':
+        items.slug = realSlug
+        break
+      case 'content':
+        items.content = content
+        break
+      case 'date':
+        items.date = data.date
+        break
+      case 'title':
+        items.title = data.title
+        break
+      case 'excerpt':
+        items.excerpt = data.excerpt
+        break
+      case 'coverImage':
+        items.coverImage = data.coverImage
+        break
     }
   })
 
   return items
 }
 
-export function getAllPosts(category: string, lang: string, fields: string[] = []) {
+export function getAllPosts(category: string, lang: string, fields: string[] = []): Post[] {
   const slugs = getPostSlugs(category, lang)
   console.log('Found slugs:', slugs)
   // Always include date in the fields array if not already present
@@ -108,4 +115,11 @@ export function getAllPosts(category: string, lang: string, fields: string[] = [
     })
   console.log('Final sorted posts:', posts.map(p => ({ slug: p.slug, date: p.date })))
   return posts
+}
+
+export function getSimilarPosts(category: string, lang: string, currentSlug: string): Post[] {
+  const allPosts = getAllPosts(category, lang, ['slug', 'title', 'excerpt', 'coverImage'])
+  return allPosts
+    .filter(post => post.slug !== currentSlug)
+    .slice(0, 3)
 }

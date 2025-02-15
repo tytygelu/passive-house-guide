@@ -2,10 +2,11 @@
 
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { getPostBySlug, getAllPosts } from '@/lib/api'
+import { getPostBySlug, getAllPosts, getSimilarPosts } from '@/lib/api'
 import PageTransition from '@/components/PageTransition'
 import Image from 'next/image'
 import PreloadCoverImage from '@/components/PreloadCoverImage'
+import RelatedPosts from '@/components/RelatedPosts'
 // If you are using MDX, you might import a MDX component; adjust based on your setup
 import { MDXRemote } from 'next-mdx-remote/rsc'
 
@@ -42,7 +43,7 @@ export default async function MaterialPostPage({ params }: any) {
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
             <div className="text-gray-600 mb-8">
-              {new Date(post.date).toLocaleDateString(lang, {
+              {post.date && new Date(post.date).toLocaleDateString(lang, {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
@@ -54,15 +55,21 @@ export default async function MaterialPostPage({ params }: any) {
                   src={post.coverImage}
                   alt={post.title}
                   fill
-                  sizes="100vw"
+                  sizes="(max-width: 768px) 100vw, 768px"
                   className="object-cover rounded-lg"
+                  priority
                 />
               </div>
             )}
           </div>
           <div className="prose prose-lg max-w-none">
-            <MDXRemote source={post.content} />
+            {post.content && <MDXRemote source={post.content} />}
           </div>
+          <RelatedPosts 
+            posts={getSimilarPosts('materials', lang, slug)} 
+            lang={lang} 
+            category="materials"
+          />
         </article>
       </PageTransition>
     </>
