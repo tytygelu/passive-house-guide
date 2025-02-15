@@ -118,8 +118,22 @@ export function getAllPosts(category: string, lang: string, fields: string[] = [
 }
 
 export function getSimilarPosts(category: string, lang: string, currentSlug: string): Post[] {
-  const allPosts = getAllPosts(category, lang, ['slug', 'title', 'excerpt', 'coverImage'])
-  return allPosts
+  const fields = ['slug', 'title', 'excerpt', 'coverImage']
+  // Get posts from current category
+  const sameCategoryPosts = getAllPosts(category, lang, fields)
     .filter(post => post.slug !== currentSlug)
     .slice(0, 3)
+
+  // If we have enough posts from the same category, return them
+  if (sameCategoryPosts.length >= 3) {
+    return sameCategoryPosts
+  }
+
+  // Otherwise, get posts from the other category
+  const otherCategory = category === 'materials' ? 'principles' : 'materials'
+  const otherCategoryPosts = getAllPosts(otherCategory, lang, fields)
+    .slice(0, 3 - sameCategoryPosts.length)
+
+  // Combine posts from both categories
+  return [...sameCategoryPosts, ...otherCategoryPosts]
 }
