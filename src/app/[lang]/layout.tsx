@@ -5,42 +5,28 @@ import Footer from '@/components/Footer'
 import { LayoutProps } from '@/types/page'
 import CookieConsent from '@/components/CookieConsent'
 import Analytics from '@/components/Analytics'
+import { Metadata } from 'next'
+import { languages } from '@/config/languages'
 
 export async function generateStaticParams() {
-  return [
-    { lang: 'en' },
-    { lang: 'ro' },
-    { lang: 'de' },
-    { lang: 'fr' },
-    { lang: 'it' },
-    { lang: 'es' },
-    { lang: 'nl' },
-    { lang: 'pl' },
-    { lang: 'sv' },
-    { lang: 'no' },
-    { lang: 'da' },
-    { lang: 'fi' },
-    { lang: 'pt' },
-    { lang: 'cs' },
-    { lang: 'sk' },
-    { lang: 'hu' },
-    { lang: 'el' },
-    { lang: 'bg' },
-    { lang: 'hr' },
-    { lang: 'sl' },
-    { lang: 'et' },
-    { lang: 'lv' },
-    { lang: 'lt' },
-    { lang: 'ga' },
-    { lang: 'is' },
-    { lang: 'mt' },
-    { lang: 'lb' },
-    { lang: 'sq' },
-    { lang: 'mk' },
-    { lang: 'sr' },
-    { lang: 'bs' },
-    { lang: 'ua' },
-  ]
+  return languages.map(lang => ({ lang }))
+}
+
+export const metadata: Metadata = {
+  alternates: {
+    types: {
+      'application/rss+xml': [
+        {
+          title: 'Zero Energy Casa - Materials RSS Feed',
+          url: '/api/feed/materials',
+        },
+        {
+          title: 'Zero Energy Casa - Principles RSS Feed',
+          url: '/api/feed/principles',
+        },
+      ],
+    },
+  },
 }
 
 export default async function LanguageLayout({

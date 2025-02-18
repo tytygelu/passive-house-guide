@@ -36,6 +36,62 @@ export default async function Footer({ lang }: { lang: string }) {
                   {dict.footer.quickLinks.contact}
                 </Link>
               </li>
+              <li>
+                <div className="flex space-x-2">
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a 
+                    href="/api/feed/materials/rss" 
+                    className="text-gray-300 hover:text-[#D9B391] transition-colors duration-200 text-sm"
+                    title="Materials RSS Feed"
+                  >
+                    RSS
+                  </a>
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a 
+                    href="/api/feed/materials/atom" 
+                    className="text-gray-300 hover:text-[#D9B391] transition-colors duration-200 text-sm"
+                    title="Materials Atom Feed"
+                  >
+                    Atom
+                  </a>
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a 
+                    href="/api/feed/materials/json" 
+                    className="text-gray-300 hover:text-[#D9B391] transition-colors duration-200 text-sm"
+                    title="Materials JSON Feed"
+                  >
+                    JSON
+                  </a>
+                </div>
+              </li>
+              <li>
+                <div className="flex space-x-2">
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a 
+                    href="/api/feed/principles/rss" 
+                    className="text-gray-300 hover:text-[#D9B391] transition-colors duration-200 text-sm"
+                    title="Principles RSS Feed"
+                  >
+                    RSS
+                  </a>
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a 
+                    href="/api/feed/principles/atom" 
+                    className="text-gray-300 hover:text-[#D9B391] transition-colors duration-200 text-sm"
+                    title="Principles Atom Feed"
+                  >
+                    Atom
+                  </a>
+                  {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+                  <a 
+                    href="/api/feed/principles/json" 
+                    className="text-gray-300 hover:text-[#D9B391] transition-colors duration-200 text-sm"
+                    title="Principles JSON Feed"
+                  >
+                    JSON
+                  </a>
+                </div>
+              </li>
             </ul>
           </div>
 

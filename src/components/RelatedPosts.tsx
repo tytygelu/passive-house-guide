@@ -1,18 +1,21 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Post } from '@/types/post'
+import { getSimilarPosts } from '@/lib/api'
 
 interface RelatedPostsProps {
-  posts: Post[]
+  currentSlug: string
   lang: string
   category: 'materials' | 'principles'
+  className?: string
 }
 
-const RelatedPosts = ({ posts, lang, category }: RelatedPostsProps) => {
-  if (posts.length === 0) return null
+const RelatedPosts = ({ currentSlug, lang, category, className = '' }: RelatedPostsProps) => {
+  const posts = getSimilarPosts(category, lang, currentSlug)
+  
+  if (!posts || posts.length === 0) return null
 
   return (
-    <div className="mt-16">
+    <div className={`mt-16 ${className}`}>
       <div className="h-px w-full bg-gradient-to-r from-[#A5B9B9] via-gray-300 to-[#A5B9B9] mb-8" />
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -31,6 +34,7 @@ const RelatedPosts = ({ posts, lang, category }: RelatedPostsProps) => {
                   src={post.coverImage}
                   alt={post.title}
                   fill
+                  sizes="(min-width: 1280px) 384px, (min-width: 768px) 50vw, 100vw"
                   className="object-cover transition-transform duration-300 group-hover:scale-105"
                 />
               </div>

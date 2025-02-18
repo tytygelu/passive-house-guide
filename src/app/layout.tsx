@@ -40,6 +40,47 @@ export default async function RootLayout({
         <link rel="icon" type="image/svg+xml" href="/icon.svg" />
         <link rel="shortcut icon" href="/favicon.ico" />
         <link rel="apple-touch-icon" href="/apple-icon.png" />
+        
+        {/* RSS Feeds */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Passive House Guide - Materials RSS Feed"
+          href="/api/feed/materials/rss"
+        />
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          title="Passive House Guide - Materials Atom Feed"
+          href="/api/feed/materials/atom"
+        />
+        <link
+          rel="alternate"
+          type="application/json"
+          title="Passive House Guide - Materials JSON Feed"
+          href="/api/feed/materials/json"
+        />
+        
+        {/* Principles Feeds */}
+        <link
+          rel="alternate"
+          type="application/rss+xml"
+          title="Passive House Guide - Principles RSS Feed"
+          href="/api/feed/principles/rss"
+        />
+        <link
+          rel="alternate"
+          type="application/atom+xml"
+          title="Passive House Guide - Principles Atom Feed"
+          href="/api/feed/principles/atom"
+        />
+        <link
+          rel="alternate"
+          type="application/json"
+          title="Passive House Guide - Principles JSON Feed"
+          href="/api/feed/principles/json"
+        />
+        
         <Analytics />
       </head>
       <body className={inter.className}>
