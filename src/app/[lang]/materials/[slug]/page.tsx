@@ -65,7 +65,7 @@ export default async function MaterialPostPage({ params }: PageProps) {
               fill
               sizes="(min-width: 1024px) 896px, 100vw"
               className="object-cover rounded-lg"
-              priority
+              loading="eager"
             />
           </div>
         </div>

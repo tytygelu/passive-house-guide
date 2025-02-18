@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import RelatedPosts from '@/components/RelatedPosts'
 
-export default async function Post({ params }: PageProps & { params: Promise<{ lang: string; slug: string }> }) {
+export default async function Post({ params }: PageProps) {
   const { lang, slug } = await params;
   
   try {
@@ -41,7 +41,7 @@ export default async function Post({ params }: PageProps & { params: Promise<{ l
               fill
               sizes="(min-width: 1024px) 896px, 100vw"
               className="object-cover rounded-lg"
-              priority
+              loading="eager"
             />
           </div>
         </div>
