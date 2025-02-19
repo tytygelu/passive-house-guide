@@ -101,13 +101,10 @@ async function translateArticle(lang, articlePath, group) {
       throw new Error('Invalid frontmatter format');
     }
 
-    // Keep the frontmatter as is, but translate the body
     const frontmatter = parts[1];
-    const body = parts.slice(2).join('---\n');
-
-    // Split body into chunks and translate
-    const chunks = splitContent(body);
-    let translatedBody = '';
+    // Translate frontmatter
+    const frontmatterLines = frontmatter.split('\n');
+    let translatedFrontmatter = '';
     const langMapping = {
       "en": "English",
       "ro": "Romanian",
@@ -140,23 +137,52 @@ async function translateArticle(lang, articlePath, group) {
       "ay": "Aymara",
       "lo": "Lao"
     };
+    for (const line of frontmatterLines) {
+      if (line.trim() === '' || line.trim().startsWith('author:') || line.trim().startsWith('slug:') || 
+          line.trim().startsWith('ogImage:') || line.trim().startsWith('coverImage:') || 
+          line.trim().startsWith('date:')) {
+        translatedFrontmatter += line + '\n';
+      } else {
+        // Extract the field name and value
+        const [fieldName, ...fieldValueParts] = line.split(':');
+        const fieldValue = fieldValueParts.join(':').trim();
 
-    const excludedFields = ['author', 'date', 'image', 'image_alt', 'image_caption', 'image_credit', 'image_license', 'image_source', 'image_source_url', 'image_source_url_text', 'image_source_license', 'slug', 'coverImage', 'url'];
+        // Skip empty values
+        if (!fieldValue) {
+          translatedFrontmatter += line + '\n';
+          continue;
+        }
 
+        // Translate the field value
+        const translatedFieldValue = await translateText(fieldValue, langMapping[lang] || lang);
+
+        translatedFrontmatter += `${fieldName}: ${translatedFieldValue}\n`;
+      }
+    }
+
+    if (!translatedFrontmatter.includes('tags:')) {
+      translatedFrontmatter += "\ntags: [\"heating\", \"net-zero\", \"hydronic\", \"energy-efficiency\"]";
+    }
+
+    const body = parts.slice(2).join('---\n');
+
+    // Split body into chunks and translate
+    const chunks = splitContent(body);
+    let translatedBody = '';
     // For each chunk
     for (let i = 0; i < chunks.length; i++) {
       const chunk = chunks[i];
       console.log(`Translating chunk ${i + 1}/${chunks.length} for ${relativePath} in ${lang}`);
       
       try {
-        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        const response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
           },
           body: JSON.stringify({
-            model: "gpt-4",
+            model: "gpt-4-mini",
             messages: [
               {
                 role: "system",
@@ -191,7 +217,7 @@ async function translateArticle(lang, articlePath, group) {
     }
 
     // Combine frontmatter with translated body
-    const translatedContent = `---\n${frontmatter}---\n${translatedBody}`;
+    const translatedContent = `---\n${translatedFrontmatter}---\n${translatedBody}`;
     
     // Write the translated content
     await fs.writeFile(outputPath, translatedContent);
@@ -217,5 +243,67 @@ const splitContent = (content, chunkSize = 1000) => {
   if (currentChunk) chunks.push(currentChunk.trim());
   return chunks;
 };
+
+async function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+async function fetchWithRetry(url, options, maxRetries = 3, delay = 2000) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      if (!response.ok) {
+        throw new Error(`Translation API returned ${response.status}`);
+      }
+      return response;
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      console.log(`Attempt ${i + 1} failed, retrying after ${delay}ms...`);
+      await sleep(delay);
+      // Increase delay for next retry
+      delay *= 2;
+    }
+  }
+}
+
+async function translateText(text, targetLanguage) {
+  try {
+    const response = await fetchWithRetry('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4-mini",
+        messages: [
+          {
+            role: "system",
+            content: `You are a professional translator. Translate the following text from English to ${targetLanguage}. Preserve all Markdown formatting, links, and code blocks exactly as they are. Do not translate text within code blocks or URLs.`
+          },
+          {
+            role: "user",
+            content: text
+          }
+        ],
+        temperature: 0.3
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Translation API returned ${response.status}`);
+    }
+
+    const data = await response.json();
+    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+      throw new Error('Invalid response from translation API');
+    }
+
+    return data.choices[0].message.content;
+  } catch (error) {
+    console.error('Error translating text:', error);
+    throw error;
+  }
+}
 
 main();
