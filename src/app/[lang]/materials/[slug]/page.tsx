@@ -3,22 +3,35 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { getPostBySlug, getAllPosts } from '@/lib/api'
 import { MDXRemote } from 'next-mdx-remote/rsc'
-import Image from 'next/image'
+import { CoverImage } from '@/components/CoverImage'
 import RelatedPosts from '@/components/RelatedPosts'
 import Tags from '@/components/Tags'
 
-interface GenerateParams {
-  params: {
-    lang: string;
-  };
-}
+const languages = [
+  'af', 'am', 'ar', 'az', 'be', 'bg', 'bn', 'bs', 'ca', 'cs', 'cy', 'da', 'de', 'el', 'en',
+  'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gd', 'gl', 'gu', 'ha', 'he', 'hi', 'hr', 'hu',
+  'hy', 'id', 'ig', 'is', 'it', 'ja', 'ka', 'kk', 'km', 'kn', 'ko', 'ku', 'ky', 'lb', 'lo',
+  'lt', 'lv', 'mg', 'mi', 'mk', 'ml', 'mn', 'mr', 'ms', 'mt', 'my', 'nb', 'ne', 'nl', 'nn',
+  'no', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'ro', 'ru', 'sd', 'si', 'sk', 'sl', 'sm', 'sn',
+  'so', 'sq', 'sr', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'tk', 'tr', 'tt', 'ug', 'uk', 'ur',
+  'uz', 'vi', 'yi', 'yo', 'zh', 'zu'
+];
 
-export async function generateStaticParams({ params }: GenerateParams) {
-  const { lang } = params;
-  const posts = getAllPosts('materials', lang, ['slug']);
-  return posts.map((post) => ({
-    slug: post.slug,
-  }));
+export async function generateStaticParams() {
+  const params = [];
+  // Get all posts in English first
+  const enPosts = getAllPosts('materials', 'en', ['slug']);
+  
+  // Generate params for all languages using English posts as base
+  for (const lang of languages) {
+    for (const post of enPosts) {
+      params.push({
+        lang,
+        slug: post.slug,
+      });
+    }
+  }
+  return params;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -45,6 +58,8 @@ export default async function MaterialPostPage({ params }: PageProps) {
       'tags',
     ]);
 
+    console.log('Post data:', { title: post?.title, tags: post?.tags });
+
     if (!post) {
       notFound();
     }
@@ -60,21 +75,19 @@ export default async function MaterialPostPage({ params }: PageProps) {
               day: 'numeric',
             })}
           </div>
-          <div className="relative aspect-video mb-8">
-            <Image
-              src={post.coverImage}
-              alt={post.title}
-              fill
-              sizes="(min-width: 1024px) 896px, 100vw"
-              className="object-cover rounded-lg"
-              loading="eager"
-            />
+          <div className="mb-8 text-lg">
+            {post.excerpt}
           </div>
-          {post.tags && <Tags tags={post.tags} className="mb-8" />}
+          <CoverImage 
+            title={post.title}
+            src={post.coverImage}
+            className="mb-8"
+          />
         </div>
         <div className="prose prose-lg max-w-none">
           {post.content && <MDXRemote source={post.content} />}
         </div>
+        {post.tags && <Tags tags={post.tags} className="mt-8 mb-8" lang={lang} />}
         <RelatedPosts 
           currentSlug={post.slug}
           lang={lang}

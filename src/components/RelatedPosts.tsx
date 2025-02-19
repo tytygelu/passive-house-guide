@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { getSimilarPosts } from '@/lib/api'
+import { CoverImage } from '@/components/CoverImage'
 
 interface RelatedPostsProps {
   currentSlug: string
@@ -29,15 +29,12 @@ const RelatedPosts = ({ currentSlug, lang, category, className = '' }: RelatedPo
               href={`/${lang}/${postCategory}/${post.slug}`}
               className="group"
             >
-              <div className="relative aspect-video mb-4 overflow-hidden rounded-lg">
-                <Image
-                  src={post.coverImage}
-                  alt={post.title}
-                  fill
-                  sizes="(min-width: 1280px) 384px, (min-width: 768px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              </div>
+              <CoverImage
+                title={post.title}
+                src={post.coverImage}
+                className="mb-4 overflow-hidden rounded-lg"
+                sizes="(min-width: 1280px) 384px, (min-width: 768px) 50vw, 100vw"
+              />
               <h3 className="text-xl font-semibold mb-2 group-hover:text-[#A5B9B9] transition-colors">
                 {post.title}
               </h3>

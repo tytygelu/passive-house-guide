@@ -153,15 +153,28 @@ async function translateArticle(lang, articlePath, group) {
           continue;
         }
 
+        // Special handling for tags array
+        if (fieldName.trim() === 'tags') {
+          try {
+            // Parse the tags array
+            const tags = JSON.parse(fieldValue.replace(/'/g, '"'));
+            // Translate each tag
+            const translatedTags = await Promise.all(
+              tags.map(tag => translateText(tag, langMapping[lang] || lang))
+            );
+            translatedFrontmatter += `${fieldName}: ${JSON.stringify(translatedTags)}\n`;
+          } catch (error) {
+            console.error('Error translating tags:', error);
+            translatedFrontmatter += line + '\n';
+          }
+          continue;
+        }
+
         // Translate the field value
         const translatedFieldValue = await translateText(fieldValue, langMapping[lang] || lang);
 
         translatedFrontmatter += `${fieldName}: ${translatedFieldValue}\n`;
       }
-    }
-
-    if (!translatedFrontmatter.includes('tags:')) {
-      translatedFrontmatter += "\ntags: [\"heating\", \"net-zero\", \"hydronic\", \"energy-efficiency\"]";
     }
 
     const body = parts.slice(2).join('---\n');

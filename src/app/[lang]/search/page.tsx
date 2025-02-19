@@ -9,6 +9,7 @@ interface MinimalPost {
   excerpt: string;
   date: string;
   category?: string;
+  tags?: string[];
 }
 
 interface RawPost {
@@ -16,6 +17,7 @@ interface RawPost {
   title?: string;
   excerpt?: string;
   date?: string;
+  tags?: string[];
 }
 
 export async function generateStaticParams() {
@@ -29,8 +31,8 @@ export default async function SearchPage({ params }: { params: Promise<{ lang: s
   const dict = await getDictionary(lang);
   
   // Get posts from both materials and principles and add a category field
-  const materialsRaw: RawPost[] = getAllPosts('materials', lang, ['slug', 'title', 'excerpt', 'date']) || [];
-  const principlesRaw: RawPost[] = getAllPosts('principles', lang, ['slug', 'title', 'excerpt', 'date']) || [];
+  const materialsRaw: RawPost[] = getAllPosts('materials', lang, ['slug', 'title', 'excerpt', 'date', 'tags']) || [];
+  const principlesRaw: RawPost[] = getAllPosts('principles', lang, ['slug', 'title', 'excerpt', 'date', 'tags']) || [];
   
   const materialsPosts: MinimalPost[] = materialsRaw
     .filter((post): post is RawPost & Required<Pick<RawPost, 'slug' | 'title' | 'excerpt' | 'date'>> => 
@@ -44,7 +46,8 @@ export default async function SearchPage({ params }: { params: Promise<{ lang: s
       title: post.title,
       excerpt: post.excerpt,
       date: post.date,
-      category: 'materials'
+      category: 'materials',
+      tags: post.tags
     }));
     
   const principlesPosts: MinimalPost[] = principlesRaw
@@ -59,7 +62,8 @@ export default async function SearchPage({ params }: { params: Promise<{ lang: s
       title: post.title,
       excerpt: post.excerpt,
       date: post.date,
-      category: 'principles'
+      category: 'principles',
+      tags: post.tags
     }));
 
   const posts = [...materialsPosts, ...principlesPosts];

@@ -1,7 +1,7 @@
 import { getPostBySlug } from '@/lib/api'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { PageProps } from '@/types/page'
-import Image from 'next/image'
+import { CoverImage } from '@/components/CoverImage'
 import { notFound } from 'next/navigation'
 import RelatedPosts from '@/components/RelatedPosts'
 
@@ -34,16 +34,14 @@ export default async function Post({ params }: PageProps) {
               day: 'numeric',
             })}
           </div>
-          <div className="relative aspect-video mb-8">
-            <Image
-              src={post.coverImage}
-              alt={post.title}
-              fill
-              sizes="(min-width: 1024px) 896px, 100vw"
-              className="object-cover rounded-lg"
-              loading="eager"
-            />
+          <div className="mb-8 text-lg">
+            {post.excerpt}
           </div>
+          <CoverImage 
+            title={post.title}
+            src={post.coverImage}
+            className="mb-8"
+          />
         </div>
         
         <div className="prose prose-lg max-w-none">

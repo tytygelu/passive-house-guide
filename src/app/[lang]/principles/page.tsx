@@ -2,7 +2,7 @@ import { getDictionary } from '@/dictionaries/dictionaries'
 import { PageProps } from '@/types/page'
 import { getAllPosts } from '@/lib/api'
 import Link from 'next/link'
-import Image from 'next/image'
+import { CoverImage } from '@/components/CoverImage'
 import { i18n } from '@/lib/i18n-config'
 
 export async function generateStaticParams() {
@@ -22,7 +22,7 @@ export default async function PrinciplesPage({ params }: PageProps) {
       <p className="text-xl text-gray-600 mb-12">{dict.home.sections.principles.description}</p>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {posts.map((post, index) => (
+        {posts.map((post) => (
           <Link 
             key={post.slug}
             href={`/${lang}/principles/${post.slug}`}
@@ -30,16 +30,13 @@ export default async function PrinciplesPage({ params }: PageProps) {
             prefetch={false}
           >
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
-              <div className="relative h-48 w-full">
-                <Image
-                  src={post.coverImage}
-                  alt={post.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                  priority={index === 0}
-                />
-              </div>
+              <CoverImage
+                title={post.title}
+                src={post.coverImage}
+                className="mb-4"
+                sizes="(min-width: 1024px) 384px, (min-width: 768px) 288px, 100vw"
+                priority={post.slug === 'ventilation'}
+              />
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-3 group-hover:text-gray-700 transition-colors">
                   {post.title}

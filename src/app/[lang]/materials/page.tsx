@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import Image from 'next/image'
 import { getDictionary } from '@/dictionaries/dictionaries'
 import { getAllPosts } from '@/lib/api'
 import { PageProps } from '@/types/page'
 import { i18n } from '@/lib/i18n-config'
+import { CoverImage } from '@/components/CoverImage'
 
 export async function generateStaticParams() {
   return i18n.locales.map((locale) => ({
@@ -24,19 +24,15 @@ export default async function Materials({ params }: PageProps) {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {posts.map((post, index) => (
+        {posts.map((post) => (
           <Link key={post.slug} href={`/${lang}/materials/${post.slug}`} className="group" prefetch={false}>
             <div className="bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
-              <div className="relative h-48 w-full">
-                <Image
-                  src={post.coverImage}
-                  alt={post.title}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover"
-                  priority={index === 0}
-                />
-              </div>
+              <CoverImage
+                title={post.title}
+                src={post.coverImage}
+                className="mb-4"
+                sizes="(min-width: 1024px) 384px, (min-width: 768px) 288px, 100vw"
+              />
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-3 group-hover:text-gray-700 transition-colors">
                   {post.title}

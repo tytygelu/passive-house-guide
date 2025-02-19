@@ -61,6 +61,8 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
   const fileContents = fs.readFileSync(filePath, 'utf8')
   const { data, content } = matter(fileContents)
 
+  console.log('Frontmatter data:', { path: filePath, data });
+
   const items = {} as Post
 
   // Ensure only the minimal needed data is exposed
