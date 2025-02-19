@@ -84,6 +84,9 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
       case 'coverImage':
         items.coverImage = data.coverImage
         break
+      case 'tags':
+        items.tags = data.tags
+        break
     }
   })
 

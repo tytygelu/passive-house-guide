@@ -5,6 +5,7 @@ import { getPostBySlug, getAllPosts } from '@/lib/api'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Image from 'next/image'
 import RelatedPosts from '@/components/RelatedPosts'
+import Tags from '@/components/Tags'
 
 interface GenerateParams {
   params: {
@@ -41,6 +42,7 @@ export default async function MaterialPostPage({ params }: PageProps) {
       'content',
       'coverImage',
       'excerpt',
+      'tags',
     ]);
 
     if (!post) {
@@ -68,6 +70,7 @@ export default async function MaterialPostPage({ params }: PageProps) {
               loading="eager"
             />
           </div>
+          {post.tags && <Tags tags={post.tags} className="mb-8" />}
         </div>
         <div className="prose prose-lg max-w-none">
           {post.content && <MDXRemote source={post.content} />}

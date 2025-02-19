@@ -5,4 +5,5 @@ export interface Post {
   coverImage: string
   date?: string
   content?: string
+  tags?: string[]
 }
