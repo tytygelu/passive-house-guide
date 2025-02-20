@@ -15,7 +15,7 @@ declare global {
   }
 }
 
-export default function AdUnit({ slot, format = 'auto', responsive = true, style }: AdUnitProps) {
+export default function AdUnit({ slot = '1379423050', format = 'auto', responsive = true, style }: AdUnitProps) {
   useEffect(() => {
     try {
       (window.adsbygoogle = window.adsbygoogle || []).push({})

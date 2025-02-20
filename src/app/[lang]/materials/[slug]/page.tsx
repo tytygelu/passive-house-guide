@@ -6,6 +6,7 @@ import { MDXRemote } from 'next-mdx-remote/rsc'
 import { CoverImage } from '@/components/CoverImage'
 import RelatedPosts from '@/components/RelatedPosts'
 import Tags from '@/components/Tags'
+import AdUnit from '@/components/AdUnit'
 
 const languages = [
   'af', 'am', 'ar', 'az', 'be', 'bg', 'bn', 'bs', 'ca', 'cs', 'cy', 'da', 'de', 'el', 'en',
@@ -86,6 +87,7 @@ export default async function MaterialPostPage({ params }: PageProps) {
         </div>
         <div className="prose prose-lg max-w-none">
           {post.content && <MDXRemote source={post.content} />}
+          <AdUnit />
         </div>
         {post.tags && <Tags tags={post.tags} className="mt-8 mb-8" lang={lang} />}
         <RelatedPosts 

@@ -5,6 +5,7 @@ const util = require('util');
 const nodeFetch = require('node-fetch');
 const fetch = nodeFetch.default ? nodeFetch.default : nodeFetch;
 const slugify = require('slugify');
+const yaml = require('js-yaml');
 
 // Helper function to recursively walk through a directory and list .md/.mdx files
 async function walkDir(dir) {
@@ -101,81 +102,12 @@ async function translateArticle(lang, articlePath, group) {
       throw new Error('Invalid frontmatter format');
     }
 
-    const frontmatter = parts[1];
+    const frontmatter = yaml.load(parts[1]);
+    const cleanedFrontmatter = validateAndCleanFrontmatter(frontmatter);
+
     // Translate frontmatter
-    const frontmatterLines = frontmatter.split('\n');
-    let translatedFrontmatter = '';
-    const langMapping = {
-      "en": "English",
-      "ro": "Romanian",
-      "tr": "Turkish",
-      "he": "Hebrew",
-      "hi": "Hindi",
-      "fr": "French",
-      "de": "German",
-      "es": "Spanish",
-      "es-ar": "Argentine Spanish",
-      "es-mx": "Mexican Spanish",
-      "it": "Italian",
-      "nl": "Dutch",
-      "pt": "Portuguese",
-      "pt-br": "Brazilian Portuguese",
-      "ru": "Russian",
-      "ja": "Japanese",
-      "ko": "Korean",
-      "zu": "Zulu",
-      "yo": "Yoruba",
-      "xh": "Xhosa",
-      "sq": "Albanian",
-      "qu": "Quechua",
-      "mt": "Maltese",
-      "lb": "Luxembourgish",
-      "ha": "Hausa",
-      "gn": "Guarani",
-      "ga": "Irish",
-      "bs": "Bosnian",
-      "ay": "Aymara",
-      "lo": "Lao"
-    };
-    for (const line of frontmatterLines) {
-      if (line.trim() === '' || line.trim().startsWith('author:') || line.trim().startsWith('slug:') || 
-          line.trim().startsWith('ogImage:') || line.trim().startsWith('coverImage:') || 
-          line.trim().startsWith('date:')) {
-        translatedFrontmatter += line + '\n';
-      } else {
-        // Extract the field name and value
-        const [fieldName, ...fieldValueParts] = line.split(':');
-        const fieldValue = fieldValueParts.join(':').trim();
-
-        // Skip empty values
-        if (!fieldValue) {
-          translatedFrontmatter += line + '\n';
-          continue;
-        }
-
-        // Special handling for tags array
-        if (fieldName.trim() === 'tags') {
-          try {
-            // Parse the tags array
-            const tags = JSON.parse(fieldValue.replace(/'/g, '"'));
-            // Translate each tag
-            const translatedTags = await Promise.all(
-              tags.map(tag => translateText(tag, langMapping[lang] || lang))
-            );
-            translatedFrontmatter += `${fieldName}: ${JSON.stringify(translatedTags)}\n`;
-          } catch (error) {
-            console.error('Error translating tags:', error);
-            translatedFrontmatter += line + '\n';
-          }
-          continue;
-        }
-
-        // Translate the field value
-        const translatedFieldValue = await translateText(fieldValue, langMapping[lang] || lang);
-
-        translatedFrontmatter += `${fieldName}: ${translatedFieldValue}\n`;
-      }
-    }
+    const translatedTitle = await translateText(cleanedFrontmatter.title, lang);
+    const translatedExcerpt = await translateText(cleanedFrontmatter.excerpt, lang);
 
     const body = parts.slice(2).join('---\n');
 
@@ -199,7 +131,7 @@ async function translateArticle(lang, articlePath, group) {
             messages: [
               {
                 role: "system",
-                content: `You are a professional translator. Translate the following text from English to ${langMapping[lang] || lang}. Preserve all Markdown formatting, links, and code blocks exactly as they are. Do not translate text within code blocks or URLs.`
+                content: `You are a professional translator. Translate the following text from English to ${lang}. Preserve all Markdown formatting, links, and code blocks exactly as they are. Do not translate text within code blocks or URLs.`
               },
               {
                 role: "user",
@@ -229,16 +161,87 @@ async function translateArticle(lang, articlePath, group) {
       }
     }
 
+    const validatedContent = validateTranslatedText(translatedBody);
+
     // Combine frontmatter with translated body
-    const translatedContent = `---\n${translatedFrontmatter}---\n${translatedBody}`;
+    const newFrontmatter = {
+      ...cleanedFrontmatter,
+      title: translatedTitle,
+      excerpt: translatedExcerpt
+    };
+
+    const translatedFileContent = [
+      '---',
+      yaml.dump(newFrontmatter, { lineWidth: -1 }), // Force single line for strings
+      '---',
+      validatedContent
+    ].join('\n');
     
     // Write the translated content
-    await fs.writeFile(outputPath, translatedContent);
+    await fs.writeFile(outputPath, translatedFileContent, 'utf8');
     console.log(`Successfully translated ${group}/${relativePath} to ${lang}`);
   } catch (error) {
     console.error(`Error translating ${articlePath} to ${lang}:`, error);
     throw error;
   }
+}
+
+function validateAndCleanFrontmatter(frontmatter) {
+  const cleaned = { ...frontmatter };
+  
+  // Fields that should not contain newlines
+  const singleLineFields = ['title', 'slug', 'excerpt'];
+  
+  for (const field of singleLineFields) {
+    if (cleaned[field] && typeof cleaned[field] === 'string') {
+      // Replace multiple spaces with a single space
+      cleaned[field] = cleaned[field].replace(/\s+/g, ' ').trim();
+      
+      // Replace any remaining newlines with spaces
+      cleaned[field] = cleaned[field].replace(/[\r\n]+/g, ' ');
+    }
+  }
+  
+  // Validate the structure is correct
+  if (!cleaned.title || typeof cleaned.title !== 'string') {
+    throw new Error('Invalid or missing title in frontmatter');
+  }
+  
+  if (!cleaned.slug || typeof cleaned.slug !== 'string') {
+    throw new Error('Invalid or missing slug in frontmatter');
+  }
+  
+  if (!cleaned.excerpt || typeof cleaned.excerpt !== 'string') {
+    throw new Error('Invalid or missing excerpt in frontmatter');
+  }
+  
+  // Ensure arrays are properly formatted
+  if (cleaned.tags && Array.isArray(cleaned.tags)) {
+    cleaned.tags = cleaned.tags.map(tag => 
+      typeof tag === 'string' ? tag.trim() : String(tag).trim()
+    );
+  }
+  
+  return cleaned;
+}
+
+function validateTranslatedText(text) {
+  // Check for obviously broken markdown
+  if ((text.match(/\`/g) || []).length % 2 !== 0) {
+    throw new Error('Unmatched backticks in translated text');
+  }
+  
+  if ((text.match(/\*\*/g) || []).length % 2 !== 0) {
+    throw new Error('Unmatched bold markers in translated text');
+  }
+  
+  // Check for broken links
+  const brokenLinks = text.match(/\[([^\]]+)\]\s*\([^\)]*$/g);
+  if (brokenLinks) {
+    throw new Error('Found broken markdown links in translated text');
+  }
+  
+  return text;
 }
 
 const splitContent = (content, chunkSize = 1000) => {
