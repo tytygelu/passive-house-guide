@@ -18,7 +18,12 @@ declare global {
 export default function AdUnit({ slot = '1379423050', format = 'auto', responsive = true, style }: AdUnitProps) {
   useEffect(() => {
     try {
-      (window.adsbygoogle = window.adsbygoogle || []).push({})
+      if (typeof window !== 'undefined') {
+        if (!window.adsbygoogle) {
+          window.adsbygoogle = []
+        }
+        window.adsbygoogle.push({})
+      }
     } catch (err) {
       console.error('Error loading AdSense ad:', err)
     }

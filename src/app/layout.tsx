@@ -81,6 +81,13 @@ export default async function RootLayout({
           href="/api/feed/principles/json"
         />
         
+        {/* Google AdSense */}
+        <script 
+          async 
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4195148067095287"
+          crossOrigin="anonymous"
+        />
+        
         <Analytics />
       </head>
       <body className={inter.className}>
