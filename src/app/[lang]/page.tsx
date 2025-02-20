@@ -20,6 +20,9 @@ export default async function Page({ params }: PageProps) {
     <PageTransition>
       <div className="min-h-screen">
         <div className="text-center py-24">
+          <h1 className="text-4xl font-bold mb-6">{dict.home.title}</h1>
+          <p className="text-xl text-gray-600 mb-12">{dict.home.description}</p>
+          <AdUnit slot="1379423050" />
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">{dict.home.subtitle}</p>
 
           {/* Reclamă orizontală sus */}
@@ -40,6 +43,7 @@ export default async function Page({ params }: PageProps) {
               <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.principles.title}</h2>
                 <p className="text-gray-600">{dict.home.sections.principles.description}</p>
+                <AdUnit slot="1379423050" />
               </div>
             </Link>
 
@@ -48,6 +52,7 @@ export default async function Page({ params }: PageProps) {
               <div className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
                 <h2 className="text-2xl font-semibold mb-4">{dict.home.sections.materials.title}</h2>
                 <p className="text-gray-600">{dict.home.sections.materials.description}</p>
+                <AdUnit slot="1379423050" />
               </div>
             </Link>
 

@@ -87,7 +87,7 @@ export default async function MaterialPostPage({ params }: PageProps) {
         </div>
         <div className="prose prose-lg max-w-none">
           {post.content && <MDXRemote source={post.content} />}
-          <AdUnit />
+          <AdUnit slot="1379423050" />
         </div>
         {post.tags && <Tags tags={post.tags} className="mt-8 mb-8" lang={lang} />}
         <RelatedPosts 

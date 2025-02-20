@@ -4,6 +4,7 @@ import { PageProps } from '@/types/page'
 import { CoverImage } from '@/components/CoverImage'
 import { notFound } from 'next/navigation'
 import RelatedPosts from '@/components/RelatedPosts'
+import AdUnit from '@/components/AdUnit'
 
 export default async function Post({ params }: PageProps) {
   const { lang, slug } = await params;
@@ -46,6 +47,7 @@ export default async function Post({ params }: PageProps) {
         
         <div className="prose prose-lg max-w-none">
           {post.content && <MDXRemote source={post.content} />}
+          <AdUnit slot="1379423050" />
         </div>
         <RelatedPosts 
           currentSlug={post.slug}

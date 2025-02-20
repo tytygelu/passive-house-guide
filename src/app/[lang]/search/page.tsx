@@ -1,7 +1,7 @@
 import { getAllPosts } from '@/lib/api';
 import { i18n } from '@/lib/i18n-config';
-import { getDictionary } from '@/dictionaries/dictionaries';
 import SearchComponent from '@/components/SearchComponent';
+import AdUnit from '@/components/AdUnit';
 
 interface MinimalPost {
   slug: string;
@@ -28,7 +28,6 @@ export async function generateStaticParams() {
 
 export default async function SearchPage({ params }: { params: Promise<{ lang: string }> }) {
   const { lang } = await params;
-  const dict = await getDictionary(lang);
   
   // Get posts from both materials and principles and add a category field
   const materialsRaw: RawPost[] = getAllPosts('materials', lang, ['slug', 'title', 'excerpt', 'date', 'tags']) || [];
@@ -70,8 +69,15 @@ export default async function SearchPage({ params }: { params: Promise<{ lang: s
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-      <h1 className="text-4xl font-bold mb-6">{ dict?.search?.title || 'Search' }</h1>
-      <SearchComponent posts={posts} lang={lang} />
+      <div className="text-center py-16">
+        <h1 className="text-4xl font-bold mb-6">Search</h1>
+        <p className="text-xl text-gray-600 mb-12">Search our content</p>
+        <AdUnit slot="1379423050" />
+      </div>
+      <div className="max-w-4xl mx-auto px-4">
+        <SearchComponent posts={posts} lang={lang} />
+        <AdUnit slot="1379423050" />
+      </div>
     </div>
   );
 }

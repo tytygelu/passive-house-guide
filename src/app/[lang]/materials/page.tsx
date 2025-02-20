@@ -21,7 +21,7 @@ export default async function Materials({ params }: PageProps) {
     <div className="max-w-7xl mx-auto px-4 py-12">
       <div className="text-center py-16">
         <h1 className="text-4xl font-bold mb-6">{dict.home.sections.materials.title}</h1>
-        <AdUnit />
+        <AdUnit slot="1379423050" />
         <p className="text-xl text-gray-600 mb-12">{dict.home.sections.materials.description}</p>
       </div>
 
