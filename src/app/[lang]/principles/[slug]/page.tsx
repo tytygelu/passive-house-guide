@@ -42,6 +42,7 @@ export default async function Post({ params }: PageProps) {
             title={post.title}
             src={post.coverImage}
             className="mb-8"
+            priority={true}
           />
         </div>
         

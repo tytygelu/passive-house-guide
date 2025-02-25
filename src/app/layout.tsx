@@ -88,9 +88,14 @@ export default async function RootLayout({
           crossOrigin="anonymous"
         ></script>
         
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        
         <Analytics />
       </head>
       <body className={inter.className}>
+        <script>
+          window.adsbygoogle = window.adsbygoogle || [];
+        </script>
         {children}
         <CookieConsent lang={lang} />
       </body>

@@ -34,6 +34,7 @@ export default async function Materials({ params }: PageProps) {
                 src={post.coverImage}
                 className="mb-4"
                 sizes="(min-width: 1024px) 384px, (min-width: 768px) 288px, 100vw"
+                priority={/^\/images\/.*\.(jpg|jpeg|png|webp)$/i.test(post.coverImage ?? '')}
               />
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-3 group-hover:text-gray-700 transition-colors">

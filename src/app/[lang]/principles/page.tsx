@@ -35,7 +35,7 @@ export default async function PrinciplesPage({ params }: PageProps) {
                 src={post.coverImage}
                 className="mb-4"
                 sizes="(min-width: 1024px) 384px, (min-width: 768px) 288px, 100vw"
-                priority={post.slug === 'ventilation'}
+                priority={post.slug === 'ventilation' || post.slug === 'passive-house-pioneering-energy-efficiency-and-sustainable-comfort'}
               />
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-3 group-hover:text-gray-700 transition-colors">

@@ -82,6 +82,7 @@ export default async function MaterialPostPage({ params }: PageProps) {
           <CoverImage 
             title={post.title}
             src={post.coverImage}
+            priority={post.slug === 'hydronic-heating-net-zero-buildings'}
             className="mb-8"
           />
         </div>

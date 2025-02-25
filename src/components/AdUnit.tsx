@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 
 type AdUnitProps = {
   slot: string
@@ -16,22 +16,18 @@ declare global {
 }
 
 export default function AdUnit({ slot = '1379423050', format = 'auto', responsive = true, style }: AdUnitProps) {
+  const adRef = useRef<HTMLModElement>(null);
+
   useEffect(() => {
-    try {
-      if (typeof window !== 'undefined') {
-        if (!window.adsbygoogle) {
-          window.adsbygoogle = []
-        }
-        window.adsbygoogle.push({})
-      }
-    } catch (err) {
-      console.error('Error loading AdSense ad:', err)
+    if (adRef.current && adRef.current.childElementCount === 0) {
+      window.adsbygoogle.push({});
     }
-  }, [])
+  }, []);
 
   return (
     <div className="ad-container my-4" style={style}>
       <ins
+        ref={adRef}
         className="adsbygoogle"
         style={{
           display: 'block',
@@ -42,6 +38,7 @@ export default function AdUnit({ slot = '1379423050', format = 'auto', responsiv
         data-ad-slot={slot}
         data-ad-format={format}
         data-full-width-responsive={responsive}
+        data-adtest="on"
       />
     </div>
   )
