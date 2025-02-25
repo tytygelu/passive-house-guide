@@ -1,0 +1,157 @@
+{
+  "en": {
+    "title": "Page Not Found",
+    "description": "Sorry, the page you are looking for does not exist.",
+    "homeButton": "Return Home"
+  },
+  "ro": {
+    "title": "Pagina nu a fost găsită",
+    "description": "Ne pare rău, dar pagina pe care o căutați nu există.",
+    "homeButton": "Înapoi la pagina principală"
+  },
+  "de": {
+    "title": "Seite nicht gefunden",
+    "description": "Es tut uns leid, die gesuchte Seite existiert nicht.",
+    "homeButton": "Zurück zur Startseite"
+  },
+  "fr": {
+    "title": "Page non trouvée",
+    "description": "Désolé, la page que vous recherchez n'existe pas.",
+    "homeButton": "Retour à l'accueil"
+  },
+  "it": {
+    "title": "Pagina non trovata",
+    "description": "Ci dispiace, la pagina che stai cercando non esiste.",
+    "homeButton": "Torna alla home"
+  },
+  "es": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que estás buscando no existe.",
+    "homeButton": "Volver al inicio"
+  },
+  "nl": {
+    "title": "Pagina niet gevonden",
+    "description": "Sorry, de pagina die je zoekt bestaat niet.",
+    "homeButton": "Terug naar home"
+  },
+  "pl": {
+    "title": "Strona nie znaleziona",
+    "description": "Przepraszamy, strona której szukasz nie istnieje.",
+    "homeButton": "Powrót do strony głównej"
+  },
+  "pt": {
+    "title": "Página não encontrada",
+    "description": "Desculpe, a página que procura não existe.",
+    "homeButton": "Voltar ao início"
+  },
+  "ru": {
+    "title": "Страница не найдена",
+    "description": "Извините, страница, которую вы ищете, не существует.",
+    "homeButton": "Вернуться на главную"
+  },
+  "zh": {
+    "title": "页面未找到",
+    "description": "抱歉，您要查找的页面不存在。",
+    "homeButton": "返回首页"
+  },
+  "ja": {
+    "title": "ページが見つかりません",
+    "description": "申し訳ありませんが、お探しのページは存在しません。",
+    "homeButton": "ホームに戻る"
+  },
+  "ar": {
+    "title": "الصفحة غير موجودة",
+    "description": "عذراً، الصفحة التي تبحث عنها غير موجودة.",
+    "homeButton": "العودة إلى الصفحة الرئيسية"
+  },
+  "hi": {
+    "title": "पृष्ठ नहीं मिला",
+    "description": "क्षमा करें, आप जिस पृष्ठ की तलाश कर रहे हैं वह मौजूद नहीं है।",
+    "homeButton": "होम पर वापस जाएं"
+  },
+  "am": {
+    "title": "ገጹ አልተገኘም",
+    "description": "ይቅርታ፣ እርስዎ የሚፈልጉት ገጽ የለም።",
+    "homeButton": "ወደ መነሻ ገጽ ይመለሱ"
+  },
+  "tr": {
+    "title": "Sayfa Bulunamadı",
+    "description": "Üzgünüz, aradığınız sayfa mevcut değil.",
+    "homeButton": "Ana Sayfaya Dön"
+  },
+  "ko": {
+    "title": "페이지를 찾을 수 없습니다",
+    "description": "죄송합니다. 찾으시는 페이지가 존재하지 않습니다.",
+    "homeButton": "홈으로 돌아가기"
+  },
+  "sv": {
+    "title": "Sidan hittades inte",
+    "description": "Tyvärr, sidan du letar efter existerar inte.",
+    "homeButton": "Tillbaka till startsidan"
+  },
+  "da": {
+    "title": "Siden blev ikke fundet",
+    "description": "Beklager, siden du leder efter findes ikke.",
+    "homeButton": "Tilbage til forsiden"
+  },
+  "fi": {
+    "title": "Sivua ei löydy",
+    "description": "Valitettavasti etsimääsi sivua ei ole olemassa.",
+    "homeButton": "Palaa etusivulle"
+  },
+  "uk": {
+    "title": "Сторінку не знайдено",
+    "description": "Вибачте, сторінка, яку ви шукаєте, не існує.",
+    "homeButton": "Повернутися на головну"
+  },
+  "vi": {
+    "title": "Không tìm thấy trang",
+    "description": "Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
+    "homeButton": "Trở về trang chủ"
+  },
+  "th": {
+    "title": "ไม่พบหน้าที่ต้องการ",
+    "description": "ขออภัย ไม่พบหน้าที่คุณกำลังค้นหา",
+    "homeButton": "กลับสู่หน้าหลัก"
+  },
+  "id": {
+    "title": "Halaman Tidak Ditemukan",
+    "description": "Maaf, halaman yang Anda cari tidak ada.",
+    "homeButton": "Kembali ke Beranda"
+  },
+  "cs": {
+    "title": "Stránka nenalezena",
+    "description": "Omlouváme se, hledaná stránka neexistuje.",
+    "homeButton": "Zpět na úvodní stránku"
+  },
+  "sk": {
+    "title": "Stránka nebola nájdená",
+    "description": "Ľutujeme, stránka, ktorú hľadáte, neexistuje.",
+    "homeButton": "Späť na domovskú stránku"
+  },
+  "hu": {
+    "title": "Az oldal nem található",
+    "description": "Sajnáljuk, a keresett oldal nem létezik.",
+    "homeButton": "Vissza a főoldalra"
+  },
+  "el": {
+    "title": "Η σελίδα δεν βρέθηκε",
+    "description": "Συγνώμη, η σελίδα που αναζητάτε δεν υπάρχει.",
+    "homeButton": "Επιστροφή στην αρχική σελίδα"
+  },
+  "bg": {
+    "title": "Страницата не е намерена",
+    "description": "Съжаляваме, страницата, която търсите, не съществува.",
+    "homeButton": "Обратно към началната страница"
+  },
+  "hr": {
+    "title": "Stranica nije pronađena",
+    "description": "Žao nam je, stranica koju tražite ne postoji.",
+    "homeButton": "Povratak na početnu stranicu"
+  },
+  "sr": {
+    "title": "Страница није пронађена",
+    "description": "Жао нам је, страница коју тражите не постоји.",
+    "homeButton": "Повратак на почетну страницу"
+  }
+}

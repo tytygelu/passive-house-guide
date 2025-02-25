@@ -3,11 +3,11 @@ import { getDictionary } from '@/dictionaries/dictionaries'
 import { PageProps } from '@/types/page'
 import PageTransition from '@/components/PageTransition'
 import AdUnit from '@/components/AdUnit'
-import { i18n } from '@/lib/i18n-config'
 import Link from 'next/link'
 
 export async function generateStaticParams() {
-  return i18n.locales.map((locale) => ({
+  // Folosim doar limbile pentru care avem conținut real
+  return ['en', 'ro', 'am'].map((locale) => ({
     lang: locale
   }))
 }

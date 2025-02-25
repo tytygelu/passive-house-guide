@@ -6,10 +6,12 @@ import { LayoutProps } from '@/types/page'
 import CookieConsent from '@/components/CookieConsent'
 import Analytics from '@/components/Analytics'
 import { Metadata } from 'next'
-import { languages } from '@/config/languages'
 
 export async function generateStaticParams() {
-  return languages.map(lang => ({ lang }))
+  // Folosim doar limbile pentru care avem conținut real
+  return ['en', 'ro', 'am'].map((locale) => ({
+    lang: locale
+  }))
 }
 
 export const metadata: Metadata = {

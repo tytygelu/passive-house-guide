@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Passive House Guide',
   description: 'Your guide to building passive houses',
+  metadataBase: new URL('https://www.zeroenergy.casa'),
   icons: {
     icon: [
       { url: '/icon.png', sizes: '32x32' },

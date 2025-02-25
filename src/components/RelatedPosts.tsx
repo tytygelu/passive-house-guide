@@ -5,7 +5,7 @@ import { CoverImage } from '@/components/CoverImage'
 interface RelatedPostsProps {
   currentSlug: string
   lang: string
-  category: 'materials' | 'principles'
+  category: string
   className?: string
 }
 
@@ -19,14 +19,11 @@ const RelatedPosts = ({ currentSlug, lang, category, className = '' }: RelatedPo
       <div className="h-px w-full bg-gradient-to-r from-[#A5B9B9] via-gray-300 to-[#A5B9B9] mb-8" />
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {posts.map((post, index) => {
-          // Determine the category for this post based on the number of posts from the same category
-          const postCategory = index < posts.length - (3 - posts.length) ? category : (category === 'materials' ? 'principles' : 'materials')
-          
+        {posts.map((post) => {
           return (
             <Link
               key={post.slug}
-              href={`/${lang}/${postCategory}/${post.slug}`}
+              href={`/${lang}/${post.slug}`}
               className="group"
             >
               <CoverImage
@@ -34,6 +31,7 @@ const RelatedPosts = ({ currentSlug, lang, category, className = '' }: RelatedPo
                 src={post.coverImage}
                 className="mb-4 overflow-hidden rounded-lg"
                 sizes="(min-width: 1280px) 384px, (min-width: 768px) 50vw, 100vw"
+                priority={false}
               />
               <h3 className="text-xl font-semibold mb-2 group-hover:text-[#A5B9B9] transition-colors">
                 {post.title}

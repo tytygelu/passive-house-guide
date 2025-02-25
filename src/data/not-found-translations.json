@@ -1,0 +1,347 @@
+{
+  "en": {
+    "title": "Page Not Found",
+    "description": "Sorry, the page you are looking for does not exist.",
+    "homeButton": "Return Home"
+  },
+  "ro": {
+    "title": "Pagina nu a fost găsită",
+    "description": "Ne pare rău, dar pagina pe care o căutați nu există.",
+    "homeButton": "Înapoi la pagina principală"
+  },
+  "de": {
+    "title": "Seite nicht gefunden",
+    "description": "Es tut uns leid, die gesuchte Seite existiert nicht.",
+    "homeButton": "Zurück zur Startseite"
+  },
+  "fr": {
+    "title": "Page non trouvée",
+    "description": "Désolé, la page que vous recherchez n'existe pas.",
+    "homeButton": "Retour à l'accueil"
+  },
+  "it": {
+    "title": "Pagina non trovata",
+    "description": "Ci dispiace, la pagina che stai cercando non esiste.",
+    "homeButton": "Torna alla home"
+  },
+  "es": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que estás buscando no existe.",
+    "homeButton": "Volver al inicio"
+  },
+  "nl": {
+    "title": "Pagina niet gevonden",
+    "description": "Sorry, de pagina die je zoekt bestaat niet.",
+    "homeButton": "Terug naar home"
+  },
+  "pl": {
+    "title": "Strona nie znaleziona",
+    "description": "Przepraszamy, strona której szukasz nie istnieje.",
+    "homeButton": "Powrót do strony głównej"
+  },
+  "sv": {
+    "title": "Sidan hittades inte",
+    "description": "Tyvärr, sidan du letar efter existerar inte.",
+    "homeButton": "Tillbaka till startsidan"
+  },
+  "no": {
+    "title": "Siden ble ikke funnet",
+    "description": "Beklager, siden du leter etter eksisterer ikke.",
+    "homeButton": "Tilbake til hjemmesiden"
+  },
+  "da": {
+    "title": "Siden blev ikke fundet",
+    "description": "Beklager, siden du leder efter findes ikke.",
+    "homeButton": "Tilbage til forsiden"
+  },
+  "fi": {
+    "title": "Sivua ei löydy",
+    "description": "Valitettavasti etsimääsi sivua ei ole olemassa.",
+    "homeButton": "Palaa etusivulle"
+  },
+  "pt": {
+    "title": "Página não encontrada",
+    "description": "Desculpe, a página que procura não existe.",
+    "homeButton": "Voltar ao início"
+  },
+  "cs": {
+    "title": "Stránka nenalezena",
+    "description": "Omlouváme se, hledaná stránka neexistuje.",
+    "homeButton": "Zpět na úvodní stránku"
+  },
+  "sk": {
+    "title": "Stránka nebola nájdená",
+    "description": "Ľutujeme, stránka, ktorú hľadáte, neexistuje.",
+    "homeButton": "Späť na domovskú stránku"
+  },
+  "hu": {
+    "title": "Az oldal nem található",
+    "description": "Sajnáljuk, a keresett oldal nem létezik.",
+    "homeButton": "Vissza a főoldalra"
+  },
+  "el": {
+    "title": "Η σελίδα δεν βρέθηκε",
+    "description": "Συγνώμη, η σελίδα που αναζητάτε δεν υπάρχει.",
+    "homeButton": "Επιστροφή στην αρχική σελίδα"
+  },
+  "bg": {
+    "title": "Страницата не е намерена",
+    "description": "Съжаляваме, страницата, която търсите, не съществува.",
+    "homeButton": "Обратно към началната страница"
+  },
+  "hr": {
+    "title": "Stranica nije pronađena",
+    "description": "Žao nam je, stranica koju tražite ne postoji.",
+    "homeButton": "Povratak na početnu stranicu"
+  },
+  "sl": {
+    "title": "Stran ni bila najdena",
+    "description": "Oprostite, stran, ki jo iščete, ne obstaja.",
+    "homeButton": "Nazaj na domačo stran"
+  },
+  "et": {
+    "title": "Lehekülge ei leitud",
+    "description": "Vabandame, otsitavat lehekülge ei eksisteeri.",
+    "homeButton": "Tagasi avalehele"
+  },
+  "lv": {
+    "title": "Lapa nav atrasta",
+    "description": "Atvainojiet, meklētā lapa neeksistē.",
+    "homeButton": "Atgriezties uz sākumlapu"
+  },
+  "lt": {
+    "title": "Puslapis nerastas",
+    "description": "Atsiprašome, jūsų ieškomas puslapis neegzistuoja.",
+    "homeButton": "Grįžti į pagrindinį puslapį"
+  },
+  "ga": {
+    "title": "Níor Aimsíodh an Leathanach",
+    "description": "Tá brón orainn, níl an leathanach atá á lorg agat ann.",
+    "homeButton": "Fill ar an Leathanach Baile"
+  },
+  "is": {
+    "title": "Síðan fannst ekki",
+    "description": "Því miður, síðan sem þú ert að leita að er ekki til.",
+    "homeButton": "Til baka á forsíðu"
+  },
+  "mt": {
+    "title": "Paġna Mhux Misjuba",
+    "description": "Jiddispjaċina, il-paġna li qed tfittex ma teżistix.",
+    "homeButton": "Irritorna għall-Paġna Ewlenija"
+  },
+  "lb": {
+    "title": "Säit net fonnt",
+    "description": "Et deet eis Leed, d'Säit déi Dir sicht existéiert net.",
+    "homeButton": "Zréck op d'Startsäit"
+  },
+  "sq": {
+    "title": "Faqja nuk u gjet",
+    "description": "Na vjen keq, faqja që po kërkoni nuk ekziston.",
+    "homeButton": "Kthehu në faqen kryesore"
+  },
+  "mk": {
+    "title": "Страницата не е пронајдена",
+    "description": "Жалиме, страницата што ја барате не постои.",
+    "homeButton": "Врати се на почетната страница"
+  },
+  "sr": {
+    "title": "Страница није пронађена",
+    "description": "Жао нам је, страница коју тражите не постоји.",
+    "homeButton": "Повратак на почетну страницу"
+  },
+  "bs": {
+    "title": "Stranica nije pronađena",
+    "description": "Žao nam je, stranica koju tražite ne postoji.",
+    "homeButton": "Povratak na početnu stranicu"
+  },
+  "ru": {
+    "title": "Страница не найдена",
+    "description": "Извините, страница, которую вы ищете, не существует.",
+    "homeButton": "Вернуться на главную"
+  },
+  "uk": {
+    "title": "Сторінку не знайдено",
+    "description": "Вибачте, сторінка, яку ви шукаєте, не існує.",
+    "homeButton": "Повернутися на головну"
+  },
+  "zh": {
+    "title": "页面未找到",
+    "description": "抱歉，您要查找的页面不存在。",
+    "homeButton": "返回首页"
+  },
+  "ja": {
+    "title": "ページが見つかりません",
+    "description": "申し訳ありませんが、お探しのページは存在しません。",
+    "homeButton": "ホームに戻る"
+  },
+  "ko": {
+    "title": "페이지를 찾을 수 없습니다",
+    "description": "죄송합니다. 찾으시는 페이지가 존재하지 않습니다.",
+    "homeButton": "홈으로 돌아가기"
+  },
+  "hi": {
+    "title": "पृष्ठ नहीं मिला",
+    "description": "क्षमा करें, आप जिस पृष्ठ की तलाश कर रहे हैं वह मौजूद नहीं है।",
+    "homeButton": "होम पर वापस जाएं"
+  },
+  "bn": {
+    "title": "পৃষ্ঠা পাওয়া যায়নি",
+    "description": "দুঃখিত, আপনি যে পৃষ্ঠাটি খুঁজছেন তা বিদ্যমান নেই।",
+    "homeButton": "হোমে ফিরে যান"
+  },
+  "ur": {
+    "title": "صفحہ نہیں ملا",
+    "description": "معذرت، آپ جس صفحے کی تلاش کر رہے ہیں وہ موجود نہیں ہے۔",
+    "homeButton": "ہوم پیج پر واپس جائیں"
+  },
+  "ar": {
+    "title": "الصفحة غير موجودة",
+    "description": "عذراً، الصفحة التي تبحث عنها غير موجودة.",
+    "homeButton": "العودة إلى الصفحة الرئيسية"
+  },
+  "fa": {
+    "title": "صفحه پیدا نشد",
+    "description": "متأسفیم، صفحه‌ای که به دنبال آن هستید وجود ندارد.",
+    "homeButton": "بازگشت به خانه"
+  },
+  "he": {
+    "title": "הדף לא נמצא",
+    "description": "מצטערים, הדף שאתה מחפש אינו קיים.",
+    "homeButton": "חזרה לדף הבית"
+  },
+  "th": {
+    "title": "ไม่พบหน้าที่ต้องการ",
+    "description": "ขออภัย ไม่พบหน้าที่คุณกำลังค้นหา",
+    "homeButton": "กลับสู่หน้าหลัก"
+  },
+  "vi": {
+    "title": "Không tìm thấy trang",
+    "description": "Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
+    "homeButton": "Trở về trang chủ"
+  },
+  "id": {
+    "title": "Halaman Tidak Ditemukan",
+    "description": "Maaf, halaman yang Anda cari tidak ada.",
+    "homeButton": "Kembali ke Beranda"
+  },
+  "ms": {
+    "title": "Halaman Tidak Dijumpai",
+    "description": "Maaf, halaman yang anda cari tidak wujud.",
+    "homeButton": "Kembali ke Laman Utama"
+  },
+  "sw": {
+    "title": "Ukurasa Haukupatikana",
+    "description": "Samahani, ukurasa unaoutafuta haupo.",
+    "homeButton": "Rudi Mwanzo"
+  },
+  "am": {
+    "title": "ገጹ አልተገኘም",
+    "description": "ይቅርታ፣ እርስዎ የሚፈልጉት ገጽ የለም።",
+    "homeButton": "ወደ መነሻ ገጽ ይመለሱ"
+  },
+  "ha": {
+    "title": "Ba a Sami Shafin Ba",
+    "description": "Yi hakuri, shafin da kake nema baya samuwa.",
+    "homeButton": "Koma Gida"
+  },
+  "yo": {
+    "title": "Oju Iwe Ko Si",
+    "description": "E ma binu, oju iwe ti e n wa ko si.",
+    "homeButton": "Pada si Ile"
+  },
+  "zu": {
+    "title": "Ikhasi Alitholakali",
+    "description": "Uxolo, ikhasi olufunayo alikho.",
+    "homeButton": "Buyela Ekhaya"
+  },
+  "xh": {
+    "title": "Iphepha Alifumaneki",
+    "description": "Uxolo, iphepha olifunayo alikho.",
+    "homeButton": "Buyela Ekhaya"
+  },
+  "af": {
+    "title": "Bladsy Nie Gevind Nie",
+    "description": "Jammer, die bladsy wat jy soek bestaan nie.",
+    "homeButton": "Terug na Tuisblad"
+  },
+  "es-mx": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que estás buscando no existe.",
+    "homeButton": "Regresar al inicio"
+  },
+  "pt-br": {
+    "title": "Página não encontrada",
+    "description": "Desculpe, a página que você está procurando não existe.",
+    "homeButton": "Voltar para a página inicial"
+  },
+  "es-ar": {
+    "title": "Página no encontrada",
+    "description": "Lo sentimos, la página que estás buscando no existe.",
+    "homeButton": "Volver al inicio"
+  },
+  "qu": {
+    "title": "Panka Mana Tarisqachu",
+    "description": "Pampachaykuway, maskasqayki panka mana kanchu.",
+    "homeButton": "Qallariy Pankaman Kutiy"
+  },
+  "ay": {
+    "title": "Laphi Janiw Jikiskiti",
+    "description": "Janiw munata, thaqhaskamax janiw utjkiti.",
+    "homeButton": "Qallta laphi tuqiru kutinima"
+  },
+  "az": {
+    "title": "Səhifə Tapılmadı",
+    "description": "Üzr istəyirik, axtardığınız səhifə mövcud deyil.",
+    "homeButton": "Ana Səhifəyə Qayıt"
+  },
+  "eu": {
+    "title": "Orria Ez Da Aurkitu",
+    "description": "Sentitzen dugu, bilatzen ari zaren orria ez da existitzen.",
+    "homeButton": "Itzuli Hasierara"
+  },
+  "lo": {
+    "title": "ບໍ່ພົບໜ້າ",
+    "description": "ຂໍອະໄພ, ໜ້າທີ່ທ່ານກຳລັງຊອກຫາບໍ່ມີ.",
+    "homeButton": "ກັບໄປໜ້າຫຼັກ"
+  },
+  "ml": {
+    "title": "പേജ് കണ്ടെത്തിയില്ല",
+    "description": "ക്ഷമിക്കണം, നിങ്ങൾ തിരയുന്ന പേജ് നിലവിലില്ല.",
+    "homeButton": "ഹോമിലേക്ക് മടങ്ങുക"
+  },
+  "mr": {
+    "title": "पृष्ठ सापडले नाही",
+    "description": "क्षमस्व, आपण शोधत असलेले पृष्ठ अस्तित्वात नाही.",
+    "homeButton": "मुख्यपृष्ठावर परत जा"
+  },
+  "pa": {
+    "title": "ਪੰਨਾ ਨਹੀਂ ਮਿਲਿਆ",
+    "description": "ਮਾਫ ਕਰਨਾ, ਤੁਸੀਂ ਜਿਸ ਪੰਨੇ ਦੀ ਭਾਲ ਕਰ ਰਹੇ ਹੋ ਉਹ ਮੌਜੂਦ ਨਹੀਂ ਹੈ।",
+    "homeButton": "ਮੁੱਖ ਪੰਨੇ 'ਤੇ ਵਾਪਸ ਜਾਓ"
+  },
+  "si": {
+    "title": "පිටුව හමු නොවීය",
+    "description": "සමාවන්න, ඔබ සොයන පිටුව නොපවතී.",
+    "homeButton": "මුල් පිටුවට ආපසු යන්න"
+  },
+  "ta": {
+    "title": "பக்கம் கிடைக்கவில்லை",
+    "description": "மன்னிக்கவும், நீங்கள் தேடும் பக்கம் இல்லை.",
+    "homeButton": "முகப்புக்கு திரும்பு"
+  },
+  "te": {
+    "title": "పేజీ కనబడలేదు",
+    "description": "క్షమించండి, మీరు వెతుకుతున్న పేజీ లేదు.",
+    "homeButton": "హోమ్‌కి తిరిగి వెళ్ళండి"
+  },
+  "tr": {
+    "title": "Sayfa Bulunamadı",
+    "description": "Üzgünüz, aradığınız sayfa mevcut değil.",
+    "homeButton": "Ana Sayfaya Dön"
+  },
+  "gn": {
+    "title": "Togue Ndojejuhúi",
+    "description": "Rombyasy, pe togue rehekáva ndaipóri.",
+    "homeButton": "Ejevy Ñepyrũhápe"
+  }
+}

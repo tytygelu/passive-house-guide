@@ -53,46 +53,50 @@ export function getPostBySlug(category: string, lang: string, slug: string, fiel
       join(postsDirectory, category, 'en', `${realSlug}.md`)
     ];
     filePath = fallbackPaths.find(p => fs.existsSync(p));
+    if (!filePath) {
+      throw new Error(`Could not find post for slug: ${slug} in language: ${lang}`);
+    }
   }
-  if (!filePath) {
-    throw new Error(`Post not found for slug: ${slug}`);
-  }
 
-  const fileContents = fs.readFileSync(filePath, 'utf8')
-  const { data, content } = matter(fileContents)
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+  const { data, content } = matter(fileContents);
 
-  console.log('Frontmatter data:', { path: filePath, data });
-
-  const items = {} as Post
+  const items = {
+    slug: realSlug,
+  } as Post;
 
   // Ensure only the minimal needed data is exposed
   fields.forEach((field) => {
-    switch (field) {
-      case 'slug':
-        items.slug = realSlug
-        break
-      case 'content':
-        items.content = content
-        break
-      case 'date':
-        items.date = data.date
-        break
-      case 'title':
-        items.title = data.title
-        break
-      case 'excerpt':
-        items.excerpt = data.excerpt
-        break
-      case 'coverImage':
-        items.coverImage = data.coverImage
-        break
-      case 'tags':
-        items.tags = data.tags
-        break
+    if (field === 'slug') {
+      items.slug = realSlug;
     }
-  })
+    if (field === 'content') {
+      items.content = content;
+    }
 
-  return items
+    if (typeof data[field] !== 'undefined') {
+      // Type assertion to allow dynamic property assignment
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (items as any)[field] = data[field];
+    }
+  });
+
+  return items;
+}
+
+export function findPostAcrossCategories(lang: string, slug: string, fields: string[] = []): { post: Post, category: string } {
+  const categories = ['materials', 'principles'];
+  
+  for (const category of categories) {
+    try {
+      const post = getPostBySlug(category, lang, slug, fields);
+      return { post, category };
+    } catch {
+      // Continue to the next category
+    }
+  }
+  
+  throw new Error(`Could not find post for slug: ${slug} in any category for language: ${lang}`);
 }
 
 export function getAllPosts(category: string, lang: string, fields: string[] = []): Post[] {

@@ -1,10 +1,55 @@
-import { getPostBySlug } from '@/lib/api'
+import { getPostBySlug, getAllPosts } from '@/lib/api'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import { PageProps } from '@/types/page'
 import { CoverImage } from '@/components/CoverImage'
 import { notFound } from 'next/navigation'
 import RelatedPosts from '@/components/RelatedPosts'
 import AdUnit from '@/components/AdUnit'
+import { Metadata } from 'next'
+
+export async function generateStaticParams() {
+  // Folosim doar limbile pentru care avem conținut real
+  const languages = ['en', 'ro', 'am']; // Adaugă alte limbi doar dacă există conținut pentru ele
+  
+  const paths = [];
+  
+  for (const lang of languages) {
+    // Get all posts from principles category
+    const posts = getAllPosts('principles', lang, ['slug']);
+    
+    // Create paths for each post
+    for (const post of posts) {
+      paths.push({
+        lang,
+        slug: post.slug,
+      });
+    }
+  }
+
+  return paths;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { lang, slug } = await params;
+  
+  try {
+    const post = getPostBySlug('principles', lang, slug, ['title', 'excerpt', 'coverImage']);
+    
+    return {
+      title: post.title,
+      description: post.excerpt,
+      openGraph: {
+        title: post.title,
+        description: post.excerpt,
+        images: [post.coverImage],
+      },
+    };
+  } catch {
+    return {
+      title: 'Post not found',
+    };
+  }
+}
 
 export default async function Post({ params }: PageProps) {
   const { lang, slug } = await params;

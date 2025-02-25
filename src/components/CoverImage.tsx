@@ -11,7 +11,7 @@ interface CoverImageProps {
 export function CoverImage({ 
   title, 
   src, 
-  priority = true,
+  priority = false,
   className = '',
   sizes = "(min-width: 1024px) 896px, 100vw"
 }: CoverImageProps) {

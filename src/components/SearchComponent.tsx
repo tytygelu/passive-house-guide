@@ -49,7 +49,7 @@ function SearchContent({ posts, lang }: SearchComponentProps) {
           {filteredPosts.map((post) => (
             <li key={post.slug} className="mb-4">
               <Link
-                href={`/${lang}/${post.category}/${post.slug}`}
+                href={`/${lang}/${post.slug}`}
                 prefetch={false}
                 className="text-blue-500 hover:underline"
               >

@@ -8,41 +8,48 @@ import RelatedPosts from '@/components/RelatedPosts'
 import Tags from '@/components/Tags'
 import AdUnit from '@/components/AdUnit'
 
-const languages = [
-  'af', 'am', 'ar', 'az', 'be', 'bg', 'bn', 'bs', 'ca', 'cs', 'cy', 'da', 'de', 'el', 'en',
-  'es', 'et', 'eu', 'fa', 'fi', 'fr', 'ga', 'gd', 'gl', 'gu', 'ha', 'he', 'hi', 'hr', 'hu',
-  'hy', 'id', 'ig', 'is', 'it', 'ja', 'ka', 'kk', 'km', 'kn', 'ko', 'ku', 'ky', 'lb', 'lo',
-  'lt', 'lv', 'mg', 'mi', 'mk', 'ml', 'mn', 'mr', 'ms', 'mt', 'my', 'nb', 'ne', 'nl', 'nn',
-  'no', 'om', 'or', 'pa', 'pl', 'ps', 'pt', 'ro', 'ru', 'sd', 'si', 'sk', 'sl', 'sm', 'sn',
-  'so', 'sq', 'sr', 'sv', 'sw', 'ta', 'te', 'tg', 'th', 'tk', 'tr', 'tt', 'ug', 'uk', 'ur',
-  'uz', 'vi', 'yi', 'yo', 'zh', 'zu'
-];
-
 export async function generateStaticParams() {
-  const params = [];
-  // Get all posts in English first
-  const enPosts = getAllPosts('materials', 'en', ['slug']);
+  // Folosim doar limbile pentru care avem conținut real
+  const languages = ['en', 'ro', 'am']; // Adaugă alte limbi doar dacă există conținut pentru ele
   
-  // Generate params for all languages using English posts as base
+  const paths = [];
+  
   for (const lang of languages) {
-    for (const post of enPosts) {
-      params.push({
+    // Get all posts from materials category
+    const posts = getAllPosts('materials', lang, ['slug']);
+    
+    // Create paths for each post
+    for (const post of posts) {
+      paths.push({
         lang,
         slug: post.slug,
       });
     }
   }
-  return params;
+
+  return paths;
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { lang, slug } = await params;
-  const post = getPostBySlug('materials', lang, slug, ['title', 'excerpt']);
-
-  return {
-    title: post?.title,
-    description: post?.excerpt,
-  };
+  
+  try {
+    const post = getPostBySlug('materials', lang, slug, ['title', 'excerpt', 'coverImage']);
+    
+    return {
+      title: post.title,
+      description: post.excerpt,
+      openGraph: {
+        title: post.title,
+        description: post.excerpt,
+        images: [post.coverImage],
+      },
+    };
+  } catch {
+    return {
+      title: 'Post not found',
+    };
+  }
 }
 
 export default async function MaterialPostPage({ params }: PageProps) {
@@ -82,7 +89,7 @@ export default async function MaterialPostPage({ params }: PageProps) {
           <CoverImage 
             title={post.title}
             src={post.coverImage}
-            priority={post.slug === 'hydronic-heating-net-zero-buildings'}
+            priority={true} // Main article image should have priority
             className="mb-8"
           />
         </div>

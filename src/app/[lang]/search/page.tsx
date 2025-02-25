@@ -1,5 +1,4 @@
 import { getAllPosts } from '@/lib/api';
-import { i18n } from '@/lib/i18n-config';
 import SearchComponent from '@/components/SearchComponent';
 import AdUnit from '@/components/AdUnit';
 
@@ -21,7 +20,8 @@ interface RawPost {
 }
 
 export async function generateStaticParams() {
-  return i18n.locales.map((locale) => ({
+  // Folosim doar limbile pentru care avem conținut real
+  return ['en', 'ro', 'am'].map((locale) => ({
     lang: locale
   }));
 }
