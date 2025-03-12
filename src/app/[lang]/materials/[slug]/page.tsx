@@ -10,7 +10,7 @@ import AdUnit from '@/components/AdUnit'
 
 export async function generateStaticParams() {
   // Folosim doar limbile pentru care avem conținut real
-  const languages = ['en', 'ro', 'am']; // Adaugă alte limbi doar dacă există conținut pentru ele
+  const languages = ['en']; // Adaugă alte limbi doar dacă există conținut pentru ele
   
   const paths = [];
   

@@ -8,7 +8,7 @@ import Tags from '@/components/Tags'
 
 export async function generateStaticParams() {
   // Folosim doar limbile pentru care avem conținut real
-  return ['en', 'ro', 'am'].map((locale) => ({
+  return ['en', 'ro'].map((locale) => ({
     lang: locale
   }))
 }
