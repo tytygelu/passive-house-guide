@@ -16,28 +16,177 @@ const CACHE_TTL = 1000 * 60 * 5 // 5 minutes
 // Map of countries to languages
 const COUNTRY_LOCALE_MAP: Record<string, string> = {
   // English-speaking countries
-  US: 'en', UK: 'en', CA: 'en', AU: 'en', NZ: 'en', IE: 'en', 
+  US: 'en', UK: 'en', GB: 'en', CA: 'en', AU: 'en', NZ: 'en', IE: 'en', JM: 'en', ZA: 'en',
   // Spanish-speaking countries
-  ES: 'es', MX: 'es-mx', AR: 'es-ar', CL: 'es', CO: 'es', PE: 'es', VE: 'es',
+  ES: 'es', MX: 'es-mx', AR: 'es-ar', CL: 'es', CO: 'es', PE: 'es', VE: 'es', EC: 'es', GT: 'es', 
+  CU: 'es', DO: 'es', BO: 'es', SV: 'es', HN: 'es', PY: 'es', NI: 'es', CR: 'es', PA: 'es', UY: 'es',
   // French-speaking countries
-  FR: 'fr', BE: 'fr', LU: 'fr', MC: 'fr',
+  FR: 'fr', BE: 'fr', LU: 'fr', MC: 'fr', HT: 'fr', CI: 'fr', CM: 'fr', CD: 'fr', MG: 'fr', 
+  SN: 'fr', BF: 'fr', NE: 'fr', ML: 'fr', GA: 'fr', BJ: 'fr', TD: 'fr', DJ: 'fr',
   // German-speaking countries
   DE: 'de', AT: 'de', CH: 'de', LI: 'de',
   // Portuguese-speaking countries
-  PT: 'pt', BR: 'pt-br',
+  PT: 'pt', BR: 'pt-br', AO: 'pt', MZ: 'pt', GW: 'pt', TL: 'pt', CV: 'pt', ST: 'pt',
   // Romanian-speaking countries
   RO: 'ro', MD: 'ro',
   // Italian-speaking countries
-  IT: 'it', SM: 'it',
-  // Other major countries with specific languages
-  JP: 'ja', CN: 'zh', TW: 'zh', HK: 'zh', KR: 'ko',
-  IN: 'hi', RU: 'ru', NL: 'nl', SE: 'sv', NO: 'no',
-  FI: 'fi', DK: 'da', PL: 'pl', CZ: 'cs', HU: 'hu',
-  GR: 'el', TR: 'tr', IL: 'he', SA: 'ar', AE: 'ar',
-  TH: 'th', VN: 'vi', ID: 'id', MY: 'ms', PH: 'en'
+  IT: 'it', SM: 'it', VA: 'it',
+  // Chinese-speaking countries/regions
+  CN: 'zh', TW: 'zh', HK: 'zh', SG: 'zh', MO: 'zh',
+  // Japanese
+  JP: 'ja',
+  // Korean
+  KR: 'ko', KP: 'ko',
+  // Russian
+  RU: 'ru', BY: 'ru', KZ: 'ru', KG: 'ru',
+  // Arabic-speaking countries
+  SA: 'ar', AE: 'ar', QA: 'ar', BH: 'ar', KW: 'ar', OM: 'ar', JO: 'ar', PS: 'ar', LB: 'ar', 
+  IQ: 'ar', SY: 'ar', YE: 'ar', EG: 'ar', SD: 'ar', LY: 'ar', TN: 'ar', DZ: 'ar', MA: 'ar', MR: 'ar',
+  // Hindi
+  IN: 'hi',
+  // Urdu
+  PK: 'ur',
+  // Bengali
+  BD: 'bn',
+  // Turkish
+  TR: 'tr',
+  // Vietnamese
+  VN: 'vi',
+  // Thai
+  TH: 'th',
+  // Indonesian
+  ID: 'id',
+  // Malay
+  MY: 'ms', BN: 'ms',
+  // Filipino/Tagalog
+  PH: 'tl',
+  // Dutch
+  NL: 'nl', SR: 'nl', AW: 'nl', CW: 'nl',
+  // Swedish
+  SE: 'sv',
+  // Norwegian
+  NO: 'no',
+  // Danish
+  DK: 'da',
+  // Finnish
+  FI: 'fi',
+  // Polish
+  PL: 'pl',
+  // Czech
+  CZ: 'cs',
+  // Slovak
+  SK: 'sk',
+  // Hungarian
+  HU: 'hu',
+  // Greek
+  GR: 'el', CY: 'el',
+  // Bulgarian
+  BG: 'bg',
+  // Ukrainian
+  UA: 'uk',
+  // Hebrew
+  IL: 'he',
+  // Croatian
+  HR: 'hr',
+  // Serbian
+  RS: 'sr', ME: 'sr',
+  // Slovenian
+  SI: 'sl',
+  // Lithuanian
+  LT: 'lt',
+  // Latvian
+  LV: 'lv',
+  // Estonian
+  EE: 'et',
+  // Albanian
+  AL: 'sq', XK: 'sq',
+  // Macedonian
+  MK: 'mk',
+  // Amharic
+  ET: 'am',
+  // Swahili
+  TZ: 'sw', KE: 'sw', UG: 'sw',
+  // Azerbaijani
+  AZ: 'az',
+  // Georgian
+  GE: 'ka',
+  // Armenian
+  AM: 'hy',
+  // Basque region
+  ES_BASQUE: 'eu',
+  // Catalan region
+  ES_CATALAN: 'ca',
+  // Galician region
+  ES_GALICIAN: 'ga',
+  // Irish
+  IE_IRISH: 'ga',
+  // Icelandic
+  IS: 'is',
+  // Maltese
+  MT: 'mt',
+  // Luxembourgish
+  LU_LUX: 'lb',
+  // Zulu
+  ZA_ZULU: 'zu',
+  // Xhosa
+  ZA_XHOSA: 'xh',
+  // Yoruba
+  NG: 'yo',
+  // Hausa
+  NG_HAUSA: 'ha',
+  // Punjabi regions
+  IN_PUNJAB: 'pa', PK_PUNJAB: 'pa',
+  // Gujarati regions
+  IN_GUJARAT: 'gu',
+  // Marathi regions
+  IN_MAHARASHTRA: 'mr',
+  // Malayalam regions
+  IN_KERALA: 'ml',
+  // Tamil regions
+  IN_TAMIL: 'ta', LK_TAMIL: 'ta',
+  // Telugu regions
+  IN_ANDHRA: 'te', IN_TELANGANA: 'te',
+  // Kannada regions
+  IN_KARNATAKA: 'kn',
+  // Sinhala
+  LK: 'si',
+  // Farsi/Persian
+  IR: 'fa', AF_DARI: 'fa',
+  // Pashto
+  AF: 'ps',
+  // Khmer
+  KH: 'km',
+  // Lao
+  LA: 'lo',
+  // Burmese
+  MM: 'my',
+  // Mongolian
+  MN: 'mn',
+  // Quechua regions
+  PE_QUECHUA: 'qu', BO_QUECHUA: 'qu', EC_QUECHUA: 'qu',
+  // Aymara regions
+  BO_AYMARA: 'ay', PE_AYMARA: 'ay',
+  // Guarani regions
+  PY_GUARANI: 'gn',
+  // Bosnian
+  BA: 'bs',
 };
 
-async function detectUserLocale(request: NextRequest) {
+// Helper function to get locale from country code
+async function getLocaleFromCountry(country: string | null): Promise<string | null> {
+  if (!country) return null;
+  
+  // Special case for regional languages
+  if (country.includes('_')) {
+    const locale = COUNTRY_LOCALE_MAP[country];
+    if (locale) return locale;
+  }
+  
+  // Standard country code mapping
+  return COUNTRY_LOCALE_MAP[country] || null;
+}
+
+async function detectUserLocale(request: NextRequest, locale: string | undefined): Promise<string> {
   const cacheKey = `${request.headers.get('x-forwarded-for') || 'unknown'}_${request.headers.get('Accept-Language') || 'unknown'}`;
   log.info(`Detecting user locale for cache key: ${cacheKey}`);
 
@@ -56,8 +205,8 @@ async function detectUserLocale(request: NextRequest) {
       const { country } = geolocation(request);
       log.info(`Detected country from IP: ${country}`);
       
-      if (country && COUNTRY_LOCALE_MAP[country]) {
-        const localeFromCountry = COUNTRY_LOCALE_MAP[country];
+      const localeFromCountry = await getLocaleFromCountry(country || null);
+      if (localeFromCountry) {
         log.info(`Found locale from country: ${localeFromCountry}`);
         
         // Cache result
@@ -81,7 +230,7 @@ async function detectUserLocale(request: NextRequest) {
     const acceptLang = request.headers.get('Accept-Language');
     if (!acceptLang) {
       log.info('No Accept-Language header found');
-      return null;
+      return locale ?? localeSchema.Values.en;
     }
     log.info(`Accept-Language header: ${acceptLang}`);
 
@@ -102,10 +251,10 @@ async function detectUserLocale(request: NextRequest) {
     }
 
     log.info(`Primary language ${primaryLang} is not supported`);
-    return null;
+    return locale ?? localeSchema.Values.en;
   } catch (error) {
     log.error('Error detecting user locale:', error, { request });
-    return null;
+    return locale ?? localeSchema.Values.en;
   }
 }
 
@@ -151,7 +300,7 @@ export async function middleware(request: NextRequest) {
   // Detect user locale based on IP and browser language
   const detectedLocale = validatedLocale.success ? validatedLocale.data 
     : cookieLocale ? cookieLocale 
-    : await detectUserLocale(request) ?? localeSchema.Values.en
+    : await detectUserLocale(request, localeSchema.Values.en) ?? localeSchema.Values.en
 
   // Redirect to default locale if invalid locale in path
   if (!validatedLocale.success) {
