@@ -15,6 +15,7 @@
     "@mdx-js/react": "^3.1.0",
     "@next/mdx": "^15.1.6",
     "@tailwindcss/typography": "^0.5.16",
+    "@vercel/edge": "^1.2.1",
     "clsx": "^2.1.1",
     "country-flag-icons": "^1.5.14",
     "date-fns": "^4.1.0",
