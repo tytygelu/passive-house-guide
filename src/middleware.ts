@@ -247,23 +247,26 @@ function getLocaleFromCountry(country: string | null): Locale | null {
   
   log.info(`Getting locale for country: ${country}`);
   
+  // Ensure country code is uppercase for matching
+  const countryUpper = country.toUpperCase();
+  
   // Special case for regional languages
-  if (country.includes('_')) {
-    const locale = COUNTRY_LOCALE_MAP[country] as Locale;
+  if (countryUpper.includes('_')) {
+    const locale = COUNTRY_LOCALE_MAP[countryUpper] as Locale;
     if (locale && i18n.locales.includes(locale)) {
-      log.info(`Found locale for special region ${country}: ${locale}`);
+      log.info(`Found locale for special region ${countryUpper}: ${locale}`);
       return locale;
     }
   }
   
   // Standard country code mapping
-  const mappedLocale = COUNTRY_LOCALE_MAP[country] as Locale;
+  const mappedLocale = COUNTRY_LOCALE_MAP[countryUpper] as Locale;
   if (mappedLocale && i18n.locales.includes(mappedLocale)) {
-    log.info(`Country ${country} maps to locale: ${mappedLocale}`);
+    log.info(`Country ${countryUpper} maps to locale: ${mappedLocale}`);
     return mappedLocale;
   }
   
-  log.info(`No locale mapping found for country: ${country}`);
+  log.info(`No locale mapping found for country: ${countryUpper}`);
   return null;
 }
 
@@ -279,8 +282,9 @@ function parseAcceptLanguage(acceptLanguage: string): Array<string> {
 
 async function detectUserLocale(request: NextRequest): Promise<Locale> {
   const ip = request.headers.get('x-forwarded-for') || 'unknown';
-  const cacheKey = `${ip}_${request.headers.get('Accept-Language') || 'unknown'}`;
-  log.info(`Detecting user locale for IP: ${ip}, cache key: ${cacheKey}`);
+  const acceptLanguageHeader = request.headers.get('Accept-Language') || 'unknown';
+  const cacheKey = `${ip}_${acceptLanguageHeader}`;
+  log.info(`Detecting user locale for IP: ${ip}, Accept-Language: ${acceptLanguageHeader}, cache key: ${cacheKey}`);
 
   try {
     // Check if we have a cached result
@@ -427,16 +431,24 @@ export async function middleware(request: NextRequest) {
 
   log.info('Processing locale redirection for', { pathname });
   
-  // Add special debug for geolocation to diagnose country detection
+  // Add special debug for geolocation to check country and mapped locale
   try {
     const { country } = geolocation(request);
-    log.info('Geolocation debug info:', { 
+    const mappedLocale = country ? (COUNTRY_LOCALE_MAP[country] as Locale) || 'not mapped' : 'no country detected';
+    
+    log.info('Geolocation and language detection debug:', { 
       ip,
       country,
-      mappedLocale: country ? COUNTRY_LOCALE_MAP[country] || 'not mapped' : 'no country detected'
+      mappedLocale,
+      acceptLanguageHeader: request.headers.get('Accept-Language') || 'unknown',
+      cookieLocale: request.cookies.get(LOCALE_COOKIE)?.value,
+      pathnameHasLocale: i18n.locales.some(
+        locale => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+      ),
+      countryLocale: country ? getLocaleFromCountry(country) : 'no country detected',
     });
   } catch (error) {
-    log.error('Error getting geolocation debug info:', error);
+    log.error('Error getting detailed language debug info:', error);
   }
 
   // Check if path already contains a locale
@@ -455,6 +467,9 @@ export async function middleware(request: NextRequest) {
     // Detect user locale based on IP and browser language
     const detectedLocale = (cookieLocale as Locale) || await detectUserLocale(request);
     log.info('Final detected locale for redirect:', { detectedLocale });
+    
+    // Force cache refresh on this request to ensure we get fresh geolocation data
+    request.headers.delete('if-none-match');
     
     // Create redirect URL
     const redirectPathname = pathname === '/' 
