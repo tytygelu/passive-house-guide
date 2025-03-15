@@ -426,7 +426,9 @@ export async function middleware(request: NextRequest) {
     pathname.includes('.') // Handling static files
   ) {
     log.info('Skipping middleware for non-HTML route', { pathname });
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set('x-middleware-cache', 'no-cache');
+    return response;
   }
   
   // Rate limiting
@@ -456,7 +458,9 @@ export async function middleware(request: NextRequest) {
         // Rate limit exceeded
         else {
           log.warn(`Rate limit exceeded for IP: ${ip}`);
-          return new NextResponse('Too Many Requests', { status: 429 });
+          const response = new NextResponse('Too Many Requests', { status: 429 });
+          response.headers.set('x-middleware-cache', 'no-cache');
+          return response;
         }
       } else {
         // First request
@@ -524,10 +528,12 @@ export async function middleware(request: NextRequest) {
       ? `/${detectedLocale}` 
       : pathnameHasLocale 
         ? pathname.replace(`/${currentLocale}`, `/${detectedLocale}`) 
-        : `/${detectedLocale}${pathname}`;
+        : `/${detectedLocale}${pathname === '/' ? '' : pathname}`;
       
     log.info(`Redirecting to: ${redirectPathname}`);
-    return NextResponse.redirect(new URL(redirectPathname + searchParamsSuffix, request.url));
+    const response = NextResponse.redirect(new URL(redirectPathname + searchParamsSuffix, request.url));
+    response.headers.set('x-middleware-cache', 'no-cache');
+    return response;
   }
 
   // Extract locale from pathname
@@ -547,8 +553,12 @@ export async function middleware(request: NextRequest) {
     const newPathname = pathname.replace(/^\/[^/]+/, `/${detectedLocale}`);
     
     log.info(`Redirecting invalid locale to: ${newPathname}`);
-    return NextResponse.redirect(new URL(newPathname + searchParamsSuffix, request.url));
+    const response = NextResponse.redirect(new URL(newPathname + searchParamsSuffix, request.url));
+    response.headers.set('x-middleware-cache', 'no-cache');
+    return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set('x-middleware-cache', 'no-cache');
+  return response;
 }
