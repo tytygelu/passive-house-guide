@@ -481,13 +481,21 @@ export async function middleware(request: NextRequest) {
   const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
   log.info('Cookie locale:', { cookieLocale });
 
-  // If pathname is missing locale, redirect to appropriate locale
-  if (!pathnameHasLocale) {
-    log.info('No locale in pathname, detecting user locale');
-    
-    // Detect user locale based on IP and browser language
-    const detectedLocale = (cookieLocale as Locale) || await detectUserLocale(request);
-    log.info('Final detected locale for redirect:', { detectedLocale });
+  // Extract current locale from pathname (if any)
+  const currentLocale = pathnameHasLocale ? pathname.split('/')[1] as Locale : null;
+  
+  // Detect user preferred locale based on IP and browser language
+  const detectedLocale = (cookieLocale as Locale) || await detectUserLocale(request);
+  log.info('Detected locale:', { detectedLocale, currentLocale, cookieLocale });
+
+  // If path doesn't have locale OR detected locale differs from current and no cookie is set
+  if (!pathnameHasLocale || (currentLocale !== detectedLocale && !cookieLocale)) {
+    log.info('Redirecting to detected locale', { 
+      pathnameHasLocale, 
+      currentLocale, 
+      detectedLocale, 
+      cookieLocale 
+    });
     
     // Force cache refresh on this request to ensure we get fresh geolocation data
     request.headers.delete('if-none-match');
@@ -495,7 +503,9 @@ export async function middleware(request: NextRequest) {
     // Create redirect URL
     const redirectPathname = pathname === '/' 
       ? `/${detectedLocale}` 
-      : `/${detectedLocale}${pathname}`;
+      : pathnameHasLocale 
+        ? pathname.replace(`/${currentLocale}`, `/${detectedLocale}`) 
+        : `/${detectedLocale}${pathname}`;
       
     log.info(`Redirecting to: ${redirectPathname}`);
     return NextResponse.redirect(new URL(redirectPathname + searchParamsSuffix, request.url));
