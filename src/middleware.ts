@@ -313,13 +313,35 @@ async function detectUserLocale(request: NextRequest): Promise<Locale> {
     let detectedLocale: Locale | null = null;
     
     // STEP 1: Try direct Vercel geolocation headers (most reliable)
-    const country = request.headers.get('x-vercel-ip-country') || 
-                   request.headers.get('x-vercel-ip-country-region');
+    const vercelCountry = request.headers.get('x-vercel-ip-country');
+    const vercelRegion = request.headers.get('x-vercel-ip-country-region');
+    const ip = request.headers.get('x-forwarded-for') || 
+              request.headers.get('x-real-ip') || 
+              'unknown';
+    
+    // SPECIAL HANDLING: Force Romania locale for Romanian IPs
+    // Check for Romanian IPs by common prefixes used in Romania
+    const isRomanianIP = 
+      vercelCountry === 'RO' || 
+      ip.startsWith('109.163.') || // Common Romanian IP range
+      ip.startsWith('193.231.') || // Common Romanian IP range
+      ip.includes('193.231'); // Alternative check in case of proxy format
+    
+    if (isRomanianIP) {
+      log.info(`Romanian IP detected for ${ip}, forcing 'ro' locale`);
+      await setRedisValue(cacheKey, 'ro', 300);
+      return 'ro';
+    }
+    
+    // Standard country detection
+    const country = vercelCountry || vercelRegion;
     
     log.info(`Geolocation headers:`, { 
-      'x-vercel-ip-country': request.headers.get('x-vercel-ip-country'),
-      'x-vercel-ip-country-region': request.headers.get('x-vercel-ip-country-region'),
-      detectedCountry: country
+      ip,
+      'x-vercel-ip-country': vercelCountry,
+      'x-vercel-ip-country-region': vercelRegion,
+      detectedCountry: country,
+      isRomanianIP
     });
     
     if (country) {
