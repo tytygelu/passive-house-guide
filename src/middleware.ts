@@ -69,9 +69,6 @@ const COUNTRY_LOCALE_MAP: Record<string, string> = {
   ET: 'am'
 };
 
-// Lista țărilor care ar trebui redirecționate către limba română
-const ROMANIAN_COUNTRIES = ['RO', 'MD'];
-
 // Helper function for Redis operations
 async function getRedisValue(key: string): Promise<string | null> {
   if (!redisClient) return null;
@@ -166,17 +163,6 @@ export async function middleware(request: NextRequest) {
       log.info(`Using cached locale for IP ${ip}: ${cachedLocale}`);
       const detectedLocale = cachedLocale as Locale;
       
-      // SPECIAL CASE: Force Romanian for Romanian IPs regardless of cache
-      const geo = geolocation(request);
-      const country = geo?.country || null;
-      const isRomanianIP = country ? ROMANIAN_COUNTRIES.includes(country) : false;
-      
-      if (isRomanianIP && detectedLocale !== 'ro') {
-        log.info(`Romanian IP detected, overriding cached locale to 'ro'`);
-        await setRedisValue(cacheKey, 'ro', 3600); // Update cache
-        return handleRedirection(request, 'ro', pathname, timestamp);
-      }
-      
       return handleRedirection(request, detectedLocale, pathname, timestamp);
     }
     
@@ -194,56 +180,48 @@ export async function middleware(request: NextRequest) {
     // DETECTĂM LOCALUL CORECT BAZAT PE ȚARĂ
     let detectedLocale: Locale | null = null;
     
-    // Verificăm cazul special pentru IP-urile românești
-    const isRomanianIP = country ? ROMANIAN_COUNTRIES.includes(country) : false;
-    if (isRomanianIP) {
-      detectedLocale = 'ro';
-      log.info(`Romanian IP detected, forcing locale to: ro`);
-      await setRedisValue(cacheKey, 'ro', 3600); // Cache for 1 hour
-    } else {
-      // Obținem locale bazat pe țară
-      if (country) {
-        detectedLocale = getLocaleFromCountry(country);
-        log.info(`Country ${country} maps to locale: ${detectedLocale || 'none'}`);
-      }
+    // Obținem locale bazat pe țară
+    if (country) {
+      detectedLocale = getLocaleFromCountry(country);
+      log.info(`Country ${country} maps to locale: ${detectedLocale || 'none'}`);
+    }
+    
+    // Dacă nu am putut detecta o limbă bazată pe țară, folosim limba browserului
+    if (!detectedLocale) {
+      const acceptLanguage = request.headers.get('accept-language');
       
-      // Dacă nu am putut detecta o limbă bazată pe țară, folosim limba browserului
-      if (!detectedLocale) {
-        const acceptLanguage = request.headers.get('accept-language');
+      if (acceptLanguage) {
+        const browserLanguages = parseAcceptLanguage(acceptLanguage);
+        log.info(`Browser languages: ${browserLanguages.join(', ')}`);
         
-        if (acceptLanguage) {
-          const browserLanguages = parseAcceptLanguage(acceptLanguage);
-          log.info(`Browser languages: ${browserLanguages.join(', ')}`);
+        // Găsim primul locale suportat din preferințele browserului
+        for (const lang of browserLanguages) {
+          const languageCode = lang.toLowerCase().split('-')[0];
           
-          // Găsim primul locale suportat din preferințele browserului
-          for (const lang of browserLanguages) {
-            const languageCode = lang.toLowerCase().split('-')[0];
-            
-            if (i18n.locales.includes(lang as Locale)) {
-              detectedLocale = lang as Locale;
-              log.info(`Found exact match for browser language: ${lang}`);
-              break;
-            }
-            
-            if (i18n.locales.includes(languageCode as Locale)) {
-              detectedLocale = languageCode as Locale;
-              log.info(`Found base language match for browser language: ${languageCode}`);
-              break;
-            }
+          if (i18n.locales.includes(lang as Locale)) {
+            detectedLocale = lang as Locale;
+            log.info(`Found exact match for browser language: ${lang}`);
+            break;
+          }
+          
+          if (i18n.locales.includes(languageCode as Locale)) {
+            detectedLocale = languageCode as Locale;
+            log.info(`Found base language match for browser language: ${languageCode}`);
+            break;
           }
         }
       }
-      
-      // Dacă tot nu am găsit un locale, folosim valoarea implicită
-      if (!detectedLocale) {
-        detectedLocale = i18n.defaultLocale;
-        log.info(`Using default locale: ${detectedLocale}`);
-      }
-      
-      // Cache the detected locale for this IP
-      if (detectedLocale) {
-        await setRedisValue(cacheKey, detectedLocale, 3600); // Cache for 1 hour
-      }
+    }
+    
+    // Dacă tot nu am găsit un locale, folosim valoarea implicită
+    if (!detectedLocale) {
+      detectedLocale = i18n.defaultLocale;
+      log.info(`Using default locale: ${detectedLocale}`);
+    }
+    
+    // Cache the detected locale for this IP
+    if (detectedLocale) {
+      await setRedisValue(cacheKey, detectedLocale, 3600); // Cache for 1 hour
     }
     
     return handleRedirection(request, detectedLocale, pathname, timestamp);
