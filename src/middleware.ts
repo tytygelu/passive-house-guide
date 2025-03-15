@@ -1,243 +1,107 @@
 // src/middleware.ts
-import { NextRequest, NextResponse } from 'next/server'
-import { i18n, Locale } from './lib/i18n-config'
+import { NextRequest, NextResponse } from 'next/server';
+import { geolocation } from '@vercel/functions';
+import { i18n } from './lib/i18n-config';
+import type { Locale } from './lib/i18n-config';
 import redisClient from './lib/redis';
-import { geolocation } from '@vercel/edge';
 
-// Rate limiting constants
-const RATE_LIMIT = 100; // Max requests per window
-const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute window in ms
-const LOCALE_COOKIE = 'NEXT_LOCALE';
-const CACHE_TTL = 300 * 1000; // 5 minutes in ms
-
-// Initialize logger
+// Logging utilities
 const log = {
-  info: (message: string, data?: Record<string, unknown>) => console.log(`[INFO] ${message}`, data ? JSON.stringify(data) : ''),
-  error: (message: string, error?: unknown, data?: Record<string, unknown>) => console.error(`[ERROR] ${message}`, error, data ? JSON.stringify(data) : ''),
-  warn: (message: string, data?: Record<string, unknown>) => console.warn(`[WARN] ${message}`, data ? JSON.stringify(data) : '')
+  info(message: string, data?: Record<string, unknown>) {
+    console.log(`[INFO] ${message}`, data ? JSON.stringify(data) : '');
+  },
+  error(message: string, error?: unknown, data?: Record<string, unknown>) {
+    console.error(`[ERROR] ${message}`, error, data ? JSON.stringify(data) : '');
+  },
+  warn(message: string, data?: Record<string, unknown>) {
+    console.warn(`[WARN] ${message}`, data ? JSON.stringify(data) : '');
+  }
 };
 
 /**
  * Comprehensive mapping of countries to their primary language locales.
  * This covers all 73 supported languages.
- * 
- * Format: CountryCode: LocaleCode
  */
-const COUNTRY_LOCALE_MAP: Record<string, Locale> = {
-  // --- Primary English-speaking countries ---
-  US: 'en-us', UK: 'en', GB: 'en', CA: 'en', AU: 'en', NZ: 'en', IE: 'en', JM: 'en', ZA: 'en',
-  
-  // --- Spanish-speaking countries ---
-  ES: 'es', MX: 'es-mx', AR: 'es-ar', CL: 'es', CO: 'es', PE: 'es', VE: 'es', EC: 'es', GT: 'es', 
-  CU: 'es', DO: 'es', BO: 'es', SV: 'es', HN: 'es', PY: 'es', NI: 'es', CR: 'es', PA: 'es', UY: 'es',
-  
-  // --- French-speaking countries ---
-  FR: 'fr', BE: 'fr', LU: 'fr', MC: 'fr', HT: 'fr', CI: 'fr', CM: 'fr', CD: 'fr', MG: 'fr', 
-  SN: 'fr', BF: 'fr', NE: 'fr', ML: 'fr', GA: 'fr', BJ: 'fr', TD: 'fr', DJ: 'fr',
-  
-  // --- German-speaking countries ---
-  DE: 'de', AT: 'de', CH: 'de', LI: 'de',
-  
-  // --- Portuguese-speaking countries ---
-  PT: 'pt', BR: 'pt-br', AO: 'pt', MZ: 'pt', GW: 'pt', TL: 'pt', CV: 'pt', ST: 'pt',
-  
-  // --- Romanian-speaking countries ---
-  RO: 'ro', MD: 'ro',
-  
-  // --- Italian-speaking countries ---
+const COUNTRY_LOCALE_MAP: Record<string, string> = {
+  // Default English-speaking countries
+  US: 'en', UK: 'en', CA: 'en', AU: 'en', NZ: 'en', ZA: 'en', IE: 'en', 
+  // Spanish-speaking countries
+  ES: 'es', MX: 'es-mx', AR: 'es', CL: 'es', CO: 'es', PE: 'es', VE: 'es', EC: 'es', GT: 'es', CU: 'es', BO: 'es', DO: 'es', HN: 'es', PY: 'es', SV: 'es', NI: 'es', CR: 'es', PA: 'es', UY: 'es',
+  // French-speaking countries
+  FR: 'fr', BE: 'fr', CH_FR: 'fr', LU: 'fr', MC: 'fr', CD: 'fr', CI: 'fr', MG: 'fr', CM: 'fr', SN: 'fr', NE: 'fr', BF: 'fr', ML: 'fr', TD: 'fr', GN: 'fr', RW: 'fr', HT: 'fr',
+  // Portuguese-speaking countries
+  PT: 'pt', BR: 'pt', AO: 'pt', MZ: 'pt', GW: 'pt', CV: 'pt', ST: 'pt', TL: 'pt',
+  // German-speaking countries
+  DE: 'de', AT: 'de', CH: 'de', LI: 'de', LU_DE: 'de',
+  // Italian-speaking countries
   IT: 'it', SM: 'it', VA: 'it',
-  
-  // --- Chinese-speaking countries/regions ---
-  CN: 'zh', TW: 'zh', HK: 'zh', SG: 'zh', MO: 'zh',
-  
-  // --- Japanese ---
-  JP: 'ja',
-  
-  // --- Korean ---
-  KR: 'ko', KP: 'ko',
-  
-  // --- Russian ---
+  // Dutch-speaking countries
+  NL: 'nl', BE_NL: 'nl', SR: 'nl', CW: 'nl', AW: 'nl', SX: 'nl',
+  // Romanian-speaking countries
+  RO: 'ro', MD: 'ro',
+  // Russian-speaking countries
   RU: 'ru', BY: 'ru', KZ: 'ru', KG: 'ru',
-  
-  // --- Arabic-speaking countries ---
-  SA: 'ar', AE: 'ar', QA: 'ar', BH: 'ar', KW: 'ar', OM: 'ar', JO: 'ar', PS: 'ar', LB: 'ar', 
-  IQ: 'ar', SY: 'ar', YE: 'ar', EG: 'ar', SD: 'ar', LY: 'ar', TN: 'ar', DZ: 'ar', MA: 'ar', MR: 'ar',
-  
-  // --- Hindi ---
-  IN: 'hi',
-  
-  // --- Urdu ---
-  PK: 'ur',
-  
-  // --- Bengali ---
-  BD: 'bn',
-  
-  // --- Turkish ---
-  TR: 'tr',
-  
-  // --- Vietnamese ---
+  // Arabic-speaking countries
+  SA: 'ar', EG: 'ar', DZ: 'ar', SD: 'ar', IQ: 'ar', MA: 'ar', YE: 'ar', SY: 'ar', TN: 'ar', JO: 'ar', LY: 'ar', LB: 'ar', OM: 'ar', AE: 'ar', KW: 'ar', QA: 'ar', BH: 'ar',
+  // Chinese-speaking countries
+  CN: 'zh', TW: 'zh', HK: 'zh', MO: 'zh', SG_ZH: 'zh',
+  // Japanese-speaking countries
+  JP: 'ja',
+  // Korean-speaking countries
+  KR: 'ko', KP: 'ko',
+  // Turkish-speaking countries
+  TR: 'tr', CY_TR: 'tr',
+  // Vietnamese-speaking countries
   VN: 'vi',
-  
-  // --- Thai ---
-  TH: 'th',
-  
-  // --- Indonesian ---
-  ID: 'id',
-  
-  // --- Malay ---
-  MY: 'ms', BN: 'ms',
-  
-  // --- Filipino/Tagalog --- (Using 'en' as fallback since 'tl' is not supported)
-  PH: 'en',
-  
-  // --- Dutch ---
-  NL: 'nl', SR: 'nl', AW: 'nl', CW: 'nl',
-  
-  // --- Swedish ---
-  SE: 'sv',
-  
-  // --- Norwegian ---
-  NO: 'no',
-  
-  // --- Danish ---
-  DK: 'da',
-  
-  // --- Finnish ---
-  FI: 'fi',
-  
-  // --- Polish ---
+  // Polish-speaking countries
   PL: 'pl',
-  
-  // --- Czech ---
-  CZ: 'cs',
-  
-  // --- Slovak ---
-  SK: 'sk',
-  
-  // --- Hungarian ---
-  HU: 'hu',
-  
-  // --- Greek ---
-  GR: 'el', CY: 'el',
-  
-  // --- Bulgarian ---
-  BG: 'bg',
-  
-  // --- Ukrainian ---
+  // Ukrainian-speaking countries
   UA: 'uk',
-  
-  // --- Hebrew ---
-  IL: 'he',
-  
-  // --- Croatian ---
-  HR: 'hr',
-  
-  // --- Serbian ---
-  RS: 'sr', ME: 'sr',
-  
-  // --- Slovenian ---
-  SI: 'sl',
-  
-  // --- Lithuanian ---
-  LT: 'lt',
-  
-  // --- Latvian ---
-  LV: 'lv',
-  
-  // --- Estonian ---
-  EE: 'et',
-  
-  // --- Albanian ---
-  AL: 'sq', XK: 'sq',
-  
-  // --- Macedonian ---
-  MK: 'mk',
-  
-  // --- African languages ---
-  ET: 'am',  // Amharic - Ethiopia
-  TZ: 'sw', KE: 'sw', UG: 'sw',  // Swahili
-  NG: 'yo',  // Yoruba - Nigeria
-  ZA_ZULU: 'zu',  // Zulu - South Africa
-  ZA_XHOSA: 'xh',  // Xhosa - South Africa
-  NG_HAUSA: 'ha',  // Hausa - Nigeria
-  ZA_AFRIKAANS: 'af',  // Afrikaans - South Africa
-  
-  // --- Central Asian languages ---
-  AZ: 'az',  // Azerbaijani
-  GE: 'en',  // Georgian (using English fallback as 'ka' is not supported)
-  AM: 'ru',  // Armenian (using Russian fallback as 'hy' is not supported)
-  
-  // --- European regional languages ---
-  ES_BASQUE: 'eu',  // Basque
-  ES_CATALAN: 'ca',  // Catalan
-  ES_GALICIAN: 'ga',  // Galician
-  IE_IRISH: 'ga',  // Irish
-  IS: 'is',  // Icelandic
-  MT: 'mt',  // Maltese
-  LU_LUX: 'lb',  // Luxembourgish
-  
-  // --- Indian subcontinent languages ---
-  IN_PUNJAB: 'pa', PK_PUNJAB: 'pa',  // Punjabi
-  IN_GUJARAT: 'gu',  // Gujarati
-  IN_MAHARASHTRA: 'mr',  // Marathi
-  IN_KERALA: 'ml',  // Malayalam
-  IN_TAMIL: 'ta', LK_TAMIL: 'ta',  // Tamil
-  IN_ANDHRA: 'te', IN_TELANGANA: 'te',  // Telugu
-  IN_KARNATAKA: 'kn',  // Kannada
-  LK: 'si',  // Sinhala - Sri Lanka
-  
-  // --- Middle Eastern/Central Asian languages ---
-  IR: 'fa', AF_DARI: 'fa',  // Farsi/Persian
-  AF: 'fa',  // Pashto - Afghanistan (using Farsi fallback as 'ps' is not supported)
-  
-  // --- Southeast Asian languages ---
-  KH: 'km',  // Khmer - Cambodia
-  LA: 'lo',  // Lao
-  MM: 'th',  // Burmese - Myanmar (using Thai fallback as 'my' is not supported)
-  
-  // --- East Asian languages ---
-  MN: 'zh',  // Mongolian (using Chinese fallback as 'mn' is not supported)
-  
-  // --- Indigenous American languages ---
-  PE_QUECHUA: 'qu', BO_QUECHUA: 'qu', EC_QUECHUA: 'qu',  // Quechua
-  BO_AYMARA: 'ay', PE_AYMARA: 'ay',  // Aymara
-  PY_GUARANI: 'gn',  // Guarani
-  
-  // --- Balkan languages ---
-  BA: 'bs'  // Bosnian
+  // Swedish-speaking countries
+  SE: 'sv', FI_SV: 'sv',
+  // Greek-speaking countries
+  GR: 'el', CY: 'el',
+  // Hindi-speaking countries
+  IN_HI: 'hi',
+  // Bengali-speaking countries
+  BD: 'bn', IN_BN: 'bn',
+  // Amharic-speaking countries
+  ET: 'am'
 };
+
+// Lista țărilor care ar trebui redirecționate către limba română
+const ROMANIAN_COUNTRIES = ['RO', 'MD'];
 
 // Helper function for Redis operations
 async function getRedisValue(key: string): Promise<string | null> {
   if (!redisClient) return null;
   
   try {
-    const cached = await redisClient.get(`locale_cache:${key}`);
-    if (cached) {
-      const { value, timestamp } = JSON.parse(cached);
-      if (Date.now() - timestamp < CACHE_TTL) {
-        return value;
-      }
+    // Inițializăm conexiunea Redis dacă nu este deja inițializată
+    if (!redisClient.isReady) {
+      await redisClient.connect();
     }
+    // Obținem valoarea din Redis
+    return await redisClient.get(key);
   } catch (error) {
-    log.error(`Error getting Redis value: ${error}`);
+    log.error('Error getting value from Redis', error);
+    return null;
   }
-  
-  return null;
 }
 
+// Helper function for Redis operations
 async function setRedisValue(key: string, value: string, ttlSeconds: number): Promise<void> {
   if (!redisClient) return;
   
   try {
-    await redisClient.set(`locale_cache:${key}`, JSON.stringify({
-      value,
-      timestamp: Date.now()
-    }), {
-      EX: ttlSeconds
-    });
+    // Inițializăm conexiunea Redis dacă nu este deja inițializată
+    if (!redisClient.isReady) {
+      await redisClient.connect();
+    }
+    // Setăm valoarea în Redis cu un TTL
+    await redisClient.set(key, value, { EX: ttlSeconds });
   } catch (error) {
-    log.error(`Error setting Redis value: ${error}`);
+    log.error('Error setting value in Redis', error);
   }
 }
 
@@ -245,396 +109,229 @@ async function setRedisValue(key: string, value: string, ttlSeconds: number): Pr
 function getLocaleFromCountry(country: string | null): Locale | null {
   if (!country) return null;
   
-  log.info(`Getting locale for country: ${country}`);
+  // Convert country code to uppercase for consistency
+  const countryCode = country.toUpperCase();
   
-  // Ensure country code is uppercase for matching
-  const countryUpper = country.toUpperCase();
-  
-  // Special case for regional languages
-  if (countryUpper.includes('_')) {
-    const locale = COUNTRY_LOCALE_MAP[countryUpper] as Locale;
-    if (locale && i18n.locales.includes(locale)) {
-      log.info(`Found locale for special region ${countryUpper}: ${locale}`);
-      return locale;
+  // Check if country code exists in our mapping
+  if (countryCode in COUNTRY_LOCALE_MAP) {
+    const locale = COUNTRY_LOCALE_MAP[countryCode];
+    
+    // Ensure the locale exists in our supported locales
+    if (i18n.locales.includes(locale as Locale)) {
+      return locale as Locale;
     }
   }
   
-  // Standard country code mapping
-  const mappedLocale = COUNTRY_LOCALE_MAP[countryUpper] as Locale;
-  if (mappedLocale && i18n.locales.includes(mappedLocale)) {
-    log.info(`Country ${countryUpper} maps to locale: ${mappedLocale}`);
-    return mappedLocale;
-  }
-  
-  log.info(`No locale mapping found for country: ${countryUpper}`);
   return null;
 }
 
 // Parse Accept-Language header without external dependencies
 function parseAcceptLanguage(acceptLanguage: string): Array<string> {
-  // Simple parser that extracts languages from Accept-Language header
+  // Split on commas and remove spaces
   return acceptLanguage
     .split(',')
-    .map(lang => lang.split(';')[0].trim())
-    .filter(Boolean)
-    .map(lang => lang.toLowerCase());
-}
-
-async function detectUserLocale(request: NextRequest): Promise<Locale> {
-  // Collect all headers for debugging
-  const allHeaders: Record<string, string> = {};
-  request.headers.forEach((value, key) => {
-    allHeaders[key] = value;
-  });
-  
-  const ip = request.headers.get('x-forwarded-for') || 
-             request.headers.get('x-real-ip') || 
-             'unknown';
-  const acceptLanguageHeader = request.headers.get('Accept-Language') || 'unknown';
-  const cacheKey = `${ip}_${acceptLanguageHeader}`;
-  
-  // Enhanced logging for debugging
-  log.info(`DETAILED LOCALE DETECTION - START`, {
-    ip,
-    acceptLanguageHeader,
-    allHeaders,
-    url: request.url,
-    cacheKey
-  });
-
-  try {
-    // Check if we have a cached result
-    const cached = await getRedisValue(cacheKey);
-    if (cached && i18n.locales.includes(cached as Locale)) {
-      log.info(`Found cached locale: ${cached}`);
-      return cached as Locale;
-    }
-
-    let detectedLocale: Locale | null = null;
-    
-    // STEP 1: Try direct Vercel geolocation headers (most reliable)
-    const vercelCountry = request.headers.get('x-vercel-ip-country');
-    const vercelRegion = request.headers.get('x-vercel-ip-country-region');
-    const ip = request.headers.get('x-forwarded-for') || 
-              request.headers.get('x-real-ip') || 
-              'unknown';
-    
-    // SPECIAL HANDLING: Force Romania locale for Romanian IPs
-    // Check for Romanian IPs by common prefixes used in Romania
-    const isRomanianIP = 
-      vercelCountry === 'RO' || 
-      ip.startsWith('109.163.') || // Common Romanian IP range
-      ip.startsWith('193.231.') || // Common Romanian IP range
-      ip.includes('193.231'); // Alternative check in case of proxy format
-    
-    if (isRomanianIP) {
-      log.info(`Romanian IP detected for ${ip}, forcing 'ro' locale`);
-      await setRedisValue(cacheKey, 'ro', 300);
-      return 'ro';
-    }
-    
-    // Standard country detection
-    const country = vercelCountry || vercelRegion;
-    
-    log.info(`Geolocation headers:`, { 
-      ip,
-      'x-vercel-ip-country': vercelCountry,
-      'x-vercel-ip-country-region': vercelRegion,
-      detectedCountry: country,
-      isRomanianIP
-    });
-    
-    if (country) {
-      log.info(`Detected country from headers: ${country}`);
-      detectedLocale = getLocaleFromCountry(country);
-      
-      if (detectedLocale) {
-        log.info(`Successfully mapped country ${country} to locale: ${detectedLocale}`);
-        await setRedisValue(cacheKey, detectedLocale, 300);
-        return detectedLocale;
-      } else {
-        log.info(`Country ${country} could not be mapped to a locale`);
-      }
-    } else {
-      log.info(`No country code detected from headers`);
-    }
-    
-    // STEP 2: Try browser language as fallback
-    if (acceptLanguageHeader && acceptLanguageHeader !== 'unknown') {
-      log.info(`Using Accept-Language header: ${acceptLanguageHeader}`);
-      
-      const languages = parseAcceptLanguage(acceptLanguageHeader);
-      log.info(`Parsed languages from header: ${JSON.stringify(languages)}`);
-      
-      // Try to match against our supported locales
-      for (const lang of languages) {
-        // Direct match
-        if (i18n.locales.includes(lang as Locale)) {
-          log.info(`Found direct locale match: ${lang}`);
-          await setRedisValue(cacheKey, lang, 300);
-          return lang as Locale;
-        }
-        
-        // Try base language (e.g., 'en' from 'en-US')
-        const baseLang = lang.split('-')[0];
-        if (i18n.locales.includes(baseLang as Locale)) {
-          log.info(`Found base language match: ${baseLang} from ${lang}`);
-          await setRedisValue(cacheKey, baseLang, 300);
-          return baseLang as Locale;
-        }
-        
-        // Try finding a locale that starts with this language code
-        const matchingLocale = i18n.locales.find(
-          locale => locale.startsWith(baseLang)
-        ) as Locale | undefined;
-        
-        if (matchingLocale) {
-          log.info(`Found partial match: ${lang} -> ${matchingLocale}`);
-          await setRedisValue(cacheKey, matchingLocale, 300);
-          return matchingLocale;
-        }
-      }
-      
-      log.info(`No locale match found for any language in Accept-Language header`);
-    } else {
-      log.info(`No Accept-Language header found or it was empty`);
-    }
-    
-    // STEP 3: Fall back to default locale
-    log.info(`Falling back to default locale: ${i18n.defaultLocale}`);
-    return i18n.defaultLocale;
-  } catch (error) {
-    log.error('Error in detectUserLocale:', error);
-    return i18n.defaultLocale;
-  } finally {
-    log.info(`DETAILED LOCALE DETECTION - END`);
-  }
+    .map(item => item.split(';')[0].trim());
 }
 
 export async function middleware(request: NextRequest) {
-  // Force cache bypass timestamp
+  // Force no cache
   const timestamp = Date.now();
   
-  // Logare pentru cereri
-  log.info(`Request Received [${timestamp}]: ${request.url}`);
-  
-  // Obține pathname-ul cererii (ex. /, /ro, /en/about)
+  // Get pathname
   const pathname = request.nextUrl.pathname;
   
-  // Extrage IP-ul utilizatorului (folosit în tot middleware-ul)
-  const ip = request.headers.get('x-forwarded-for') || 
-             request.headers.get('x-real-ip') || 
-             'unknown';
-  
-  // Ignoră rutele statice și API
+  // Skip for static files and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api') ||
     pathname.includes('.') 
   ) {
-    log.info(`[${timestamp}] Skipping middleware for non-HTML route`, { pathname });
     const response = NextResponse.next();
     response.headers.set('x-middleware-cache', 'no-cache');
-    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-    response.headers.set('surrogate-control', 'no-store');
-    response.headers.set('pragma', 'no-cache');
-    response.headers.set('expires', '0');
     return response;
   }
-  
-  // Detectare IP pentru România (PRIORITATE MAXIMĂ)
-  const vercelCountry = request.headers.get('x-vercel-ip-country');
-             
-  // Verificăm pentru IP-uri românești
-  const isRomanianIP = vercelCountry === 'RO';
-  
-  log.info(`[${timestamp}] ROMANIAN DETECTION: IP=${ip}, Country=${vercelCountry}, isRomanianIP=${isRomanianIP}`);
-  
-  // FORCING ROMANIAN pentru utilizatorii din România (PRIORITATE MAXIMĂ)
-  if (isRomanianIP) {
-    // Verificăm dacă utilizatorul este deja pe versiunea RO
-    if (pathname.startsWith('/ro')) {
-      log.info(`[${timestamp}] User already on RO version`);
-      const response = NextResponse.next();
-      response.headers.set('x-middleware-cache', 'no-cache');
-      response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-      response.headers.set('surrogate-control', 'no-store');
-      response.headers.set('pragma', 'no-cache');
-      response.headers.set('expires', '0');
-      return response;
-    }
-    
-    // Construim noul pathname pentru versiunea RO
-    const newPathname = pathname === '/' 
-      ? '/ro' 
-      : pathname.startsWith('/en') 
-        ? `/ro${pathname.slice(3)}` 
-        : `/ro${pathname}`;
-        
-    log.info(`[${timestamp}] FORCING ROMANIAN REDIRECT: from ${pathname} to ${newPathname}`);
-    
-    // Redirecționăm la versiunea RO
-    const response = NextResponse.redirect(new URL(newPathname, request.url));
-    
-    // Dezactivăm cache-ul pentru redirecționare
-    response.headers.set('x-middleware-cache', 'no-cache');
-    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-    response.headers.set('surrogate-control', 'no-store');
-    response.headers.set('pragma', 'no-cache');
-    response.headers.set('expires', '0');
-    
-    // Adăugăm header-uri de debugging
-    response.headers.set('x-redirect-source', 'romanian-ip-detection');
-    response.headers.set('x-original-path', pathname);
-    response.headers.set('x-new-path', newPathname);
-    response.headers.set('x-timestamp', timestamp.toString());
-    
-    return response;
-  }
-  
-  // Rate limiting
-  const now = Date.now();
   
   try {
-    if (redisClient) {
-      const rateData = await redisClient.get(`rate_limit:${ip}`);
+    // Get the IP for caching and logging
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               'unknown';
+    
+    // Check if we have a cached locale for this IP
+    const cacheKey = `locale:${ip}`;
+    const cachedLocale = await getRedisValue(cacheKey);
+    
+    // If we have a valid cached locale, use it
+    if (cachedLocale && i18n.locales.includes(cachedLocale as Locale)) {
+      log.info(`Using cached locale for IP ${ip}: ${cachedLocale}`);
+      const detectedLocale = cachedLocale as Locale;
       
-      if (rateData) {
-        const parsed = JSON.parse(rateData);
-        const { count, timestamp } = parsed;
+      // SPECIAL CASE: Force Romanian for Romanian IPs regardless of cache
+      const geo = geolocation(request);
+      const country = geo?.country || null;
+      const isRomanianIP = country ? ROMANIAN_COUNTRIES.includes(country) : false;
+      
+      if (isRomanianIP && detectedLocale !== 'ro') {
+        log.info(`Romanian IP detected, overriding cached locale to 'ro'`);
+        await setRedisValue(cacheKey, 'ro', 3600); // Update cache
+        return handleRedirection(request, 'ro', pathname, timestamp);
+      }
+      
+      return handleRedirection(request, detectedLocale, pathname, timestamp);
+    }
+    
+    // GEOLOCALIZARE FOLOSIND HELPER-UL OFICIAL VERCEL
+    const geo = geolocation(request);
+    const country = geo?.country || null;
+    
+    // Log the geolocation info
+    log.info(`Geolocation info:`, { 
+      ip, 
+      country: country || 'unknown',
+      path: pathname
+    });
+    
+    // DETECTĂM LOCALUL CORECT BAZAT PE ȚARĂ
+    let detectedLocale: Locale | null = null;
+    
+    // Verificăm cazul special pentru IP-urile românești
+    const isRomanianIP = country ? ROMANIAN_COUNTRIES.includes(country) : false;
+    if (isRomanianIP) {
+      detectedLocale = 'ro';
+      log.info(`Romanian IP detected, forcing locale to: ro`);
+      await setRedisValue(cacheKey, 'ro', 3600); // Cache for 1 hour
+    } else {
+      // Obținem locale bazat pe țară
+      if (country) {
+        detectedLocale = getLocaleFromCountry(country);
+        log.info(`Country ${country} maps to locale: ${detectedLocale || 'none'}`);
+      }
+      
+      // Dacă nu am putut detecta o limbă bazată pe țară, folosim limba browserului
+      if (!detectedLocale) {
+        const acceptLanguage = request.headers.get('accept-language');
         
-        // Reset counter if outside window
-        if (now - timestamp > RATE_LIMIT_WINDOW) {
-          await redisClient.set(`rate_limit:${ip}`, JSON.stringify({ count: 1, timestamp: now }), {
-            EX: Math.ceil(RATE_LIMIT_WINDOW / 1000) * 2
-          });
-        } 
-        // Increment counter if within window and below limit
-        else if (count < RATE_LIMIT) {
-          await redisClient.set(`rate_limit:${ip}`, JSON.stringify({ count: count + 1, timestamp }), {
-            EX: Math.ceil(RATE_LIMIT_WINDOW / 1000) * 2
-          });
+        if (acceptLanguage) {
+          const browserLanguages = parseAcceptLanguage(acceptLanguage);
+          log.info(`Browser languages: ${browserLanguages.join(', ')}`);
+          
+          // Găsim primul locale suportat din preferințele browserului
+          for (const lang of browserLanguages) {
+            const languageCode = lang.toLowerCase().split('-')[0];
+            
+            if (i18n.locales.includes(lang as Locale)) {
+              detectedLocale = lang as Locale;
+              log.info(`Found exact match for browser language: ${lang}`);
+              break;
+            }
+            
+            if (i18n.locales.includes(languageCode as Locale)) {
+              detectedLocale = languageCode as Locale;
+              log.info(`Found base language match for browser language: ${languageCode}`);
+              break;
+            }
+          }
         }
-        // Rate limit exceeded
-        else {
-          log.warn(`[${timestamp}] Rate limit exceeded for IP: ${ip}`);
-          const response = new NextResponse('Too Many Requests', { status: 429 });
-          response.headers.set('x-middleware-cache', 'no-cache');
-          response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-          response.headers.set('surrogate-control', 'no-store');
-          response.headers.set('pragma', 'no-cache');
-          response.headers.set('expires', '0');
-          return response;
-        }
-      } else {
-        // First request
-        await redisClient.set(`rate_limit:${ip}`, JSON.stringify({ count: 1, timestamp: now }), {
-          EX: Math.ceil(RATE_LIMIT_WINDOW / 1000) * 2
-        });
+      }
+      
+      // Dacă tot nu am găsit un locale, folosim valoarea implicită
+      if (!detectedLocale) {
+        detectedLocale = i18n.defaultLocale;
+        log.info(`Using default locale: ${detectedLocale}`);
+      }
+      
+      // Cache the detected locale for this IP
+      if (detectedLocale) {
+        await setRedisValue(cacheKey, detectedLocale, 3600); // Cache for 1 hour
       }
     }
-  } catch (error) {
-    log.error(`[${timestamp}] Error in rate limiting:`, error);
-  }
-
-  log.info(`[${timestamp}] Processing locale redirection for`, { pathname });
-  
-  // Add special debug for geolocation to check country and mapped locale
-  try {
-    const { country } = geolocation(request);
-    const mappedLocale = country ? (COUNTRY_LOCALE_MAP[country] as Locale) || 'not mapped' : 'no country detected';
     
-    log.info(`[${timestamp}] Geolocation and language detection debug:`, { 
-      ip,
-      country,
-      mappedLocale,
-      acceptLanguageHeader: request.headers.get('Accept-Language') || 'unknown',
-      cookieLocale: request.cookies.get(LOCALE_COOKIE)?.value,
-      pathnameHasLocale: i18n.locales.some(
-        locale => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
-      ),
-      countryLocale: country ? getLocaleFromCountry(country) : 'no country detected',
-    });
+    return handleRedirection(request, detectedLocale, pathname, timestamp);
   } catch (error) {
-    log.error(`[${timestamp}] Error getting detailed language debug info:`, error);
+    log.error(`[MIDDLEWARE-V3] Error:`, error);
+    
+    // În caz de eroare, continuăm cererea normală
+    const response = NextResponse.next();
+    response.headers.set('x-middleware-cache', 'no-cache');
+    return response;
   }
+}
 
-  // Check if path already contains a locale
-  const pathnameHasLocale = i18n.locales.some(
-    locale => pathname === `/${locale}` || pathname.startsWith(`/${locale}/`)
+// Helper function to handle redirection logic
+function handleRedirection(
+  request: NextRequest, 
+  detectedLocale: Locale | null, 
+  pathname: string, 
+  timestamp: number
+) {
+  // Verificăm dacă path-ul curent are un prefix de locale
+  const currentLocale = i18n.locales.find(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
   );
-
-  // Get locale from cookie if available
-  const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
-  log.info(`[${timestamp}] Cookie locale:`, { cookieLocale });
-
-  // Extract current locale from pathname (if any)
-  const currentLocale = pathnameHasLocale ? pathname.split('/')[1] as Locale : null;
   
-  // Detect user preferred locale based on IP and browser language
-  const detectedLocale = (cookieLocale as Locale) || await detectUserLocale(request);
-  log.info(`[${timestamp}] Detected locale:`, { detectedLocale, currentLocale, cookieLocale });
-
-  // If path doesn't have locale OR detected locale differs from current and no cookie is set
-  if (!pathnameHasLocale || (currentLocale !== detectedLocale && !cookieLocale)) {
-    log.info(`[${timestamp}] Redirecting to detected locale`, { 
-      pathnameHasLocale, 
-      currentLocale, 
-      detectedLocale, 
-      cookieLocale 
-    });
-    
-    // Force cache refresh on this request to ensure we get fresh geolocation data
-    request.headers.delete('if-none-match');
-    
-    // Create redirect URL
-    const redirectPathname = pathname === '/' 
-      ? `/${detectedLocale}` 
-      : pathnameHasLocale 
-        ? pathname.replace(`/${currentLocale}`, `/${detectedLocale}`) 
-        : `/${detectedLocale}${pathname === '/' ? '' : pathname}`;
-      
-    log.info(`[${timestamp}] Redirecting to: ${redirectPathname}`);
-    const response = NextResponse.redirect(new URL(redirectPathname, request.url));
-    response.headers.set('x-middleware-cache', 'no-cache');
-    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-    response.headers.set('surrogate-control', 'no-store');
-    response.headers.set('pragma', 'no-cache');
-    response.headers.set('expires', '0');
-    return response;
+  // Dacă nu avem un locale detectat, folosim defaultLocale
+  if (!detectedLocale) {
+    detectedLocale = i18n.defaultLocale;
   }
 
-  // Extract locale from pathname
-  const locale = pathname.split('/')[1];
-  
-  // Validate locale
-  const localeTyped = locale as Locale;
-  const isValidLocale = i18n.locales.includes(localeTyped);
-  log.info(`[${timestamp}] Locale validation:`, { locale, isValid: isValidLocale });
-  
-  // If invalid locale in path, redirect to default or detected locale
-  if (!isValidLocale) {
-    log.info(`[${timestamp}] Invalid locale in pathname, redirecting to valid locale`);
+  // Cazul 1: Suntem pe homepage (/) și trebuie să redirecționăm la versiunea potrivită
+  if (pathname === '/') {
+    // Redirecționăm la locale-ul detectat cu un timestamp pentru a preveni cache-ul
+    const newPathname = `/${detectedLocale}?nocache=${timestamp}`;
     
-    // Detect appropriate locale
-    const detectedLocale = (cookieLocale as Locale) || await detectUserLocale(request);
-    const newPathname = pathname.replace(/^\/[^/]+/, `/${detectedLocale}`);
+    log.info(`Homepage redirect: / -> ${newPathname}`);
     
-    log.info(`[${timestamp}] Redirecting invalid locale to: ${newPathname}`);
-    const response = NextResponse.redirect(new URL(newPathname, request.url));
-    response.headers.set('x-middleware-cache', 'no-cache');
-    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
-    response.headers.set('surrogate-control', 'no-store');
-    response.headers.set('pragma', 'no-cache');
-    response.headers.set('expires', '0');
+    const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
+    
+    // Setăm header-uri agresive anti-cache
+    setAntiCacheHeaders(response, 'homepage-detection-v3');
     return response;
   }
-
+  
+  // Cazul 2: Path-ul are deja un prefix de locale, dar acesta nu se potrivește cu locale-ul detectat
+  if (currentLocale && currentLocale !== detectedLocale) {
+    // Construim noul pathname înlocuind locale-ul curent cu cel detectat
+    const newPathname = pathname.replace(
+      new RegExp(`^/${currentLocale}(/|$)`), 
+      `/${detectedLocale}$1`
+    ) + `?nocache=${timestamp}`;
+    
+    log.info(`Locale mismatch redirect: ${pathname} -> ${newPathname}`);
+    
+    const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
+    
+    // Setăm header-uri agresive anti-cache
+    setAntiCacheHeaders(response, 'locale-mismatch-v3');
+    return response;
+  }
+  
+  // Cazul 3: Path-ul nu are prefix de locale și nu este homepage
+  if (!currentLocale && pathname !== '/') {
+    // Adăugăm prefix-ul de locale corect
+    const newPathname = `/${detectedLocale}${pathname}?nocache=${timestamp}`;
+    
+    log.info(`Missing locale redirect: ${pathname} -> ${newPathname}`);
+    
+    const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
+    
+    // Setăm header-uri agresive anti-cache
+    setAntiCacheHeaders(response, 'missing-locale-prefix-v3');
+    return response;
+  }
+  
+  // Cazul 4: Path-ul are deja locale-ul corect, continuăm cererea
+  log.info(`No redirect needed, continuing with: ${pathname}`);
   const response = NextResponse.next();
+  response.headers.set('x-middleware-cache', 'no-cache');
+  return response;
+}
+
+// Helper function to set anti-cache headers
+function setAntiCacheHeaders(response: NextResponse, source: string) {
   response.headers.set('x-middleware-cache', 'no-cache');
   response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
   response.headers.set('surrogate-control', 'no-store');
   response.headers.set('pragma', 'no-cache');
   response.headers.set('expires', '0');
-  return response;
+  response.headers.set('x-redirect-source', source);
 }
