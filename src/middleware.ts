@@ -412,18 +412,22 @@ async function detectUserLocale(request: NextRequest): Promise<Locale> {
 }
 
 export async function middleware(request: NextRequest) {
-  log.info('Middleware executing', { url: request.url });
-
-  // Extract pathname and search params
+  // Logare pentru cereri
+  log.info(`Request Received: ${request.url}`);
+  
+  // Obține pathname-ul cererii (ex. /, /ro, /en/about)
   const pathname = request.nextUrl.pathname;
-  const searchParams = request.nextUrl.searchParams.toString();
-  const searchParamsSuffix = searchParams ? `?${searchParams}` : '';
-
-  // Skip middleware for static files and API routes
+  
+  // Extrage IP-ul utilizatorului (folosit în tot middleware-ul)
+  const ip = request.headers.get('x-forwarded-for') || 
+             request.headers.get('x-real-ip') || 
+             'unknown';
+  
+  // Ignoră rutele statice și API
   if (
-    pathname.startsWith('/api/') || 
     pathname.startsWith('/_next') ||
-    pathname.includes('.') // Handling static files
+    pathname.startsWith('/api') ||
+    pathname.includes('.') 
   ) {
     log.info('Skipping middleware for non-HTML route', { pathname });
     const response = NextResponse.next();
@@ -431,8 +435,48 @@ export async function middleware(request: NextRequest) {
     return response;
   }
   
+  // Detectare IP pentru România (PRIORITATE MAXIMĂ)
+  const vercelCountry = request.headers.get('x-vercel-ip-country');
+             
+  // Verificăm pentru IP-uri românești
+  const isRomanianIP = vercelCountry === 'RO';
+  
+  log.info(`ROMANIAN DETECTION: IP=${ip}, Country=${vercelCountry}, isRomanianIP=${isRomanianIP}`);
+  
+  // FORCING ROMANIAN pentru utilizatorii din România (PRIORITATE MAXIMĂ)
+  if (isRomanianIP) {
+    // Verificăm dacă utilizatorul este deja pe versiunea RO
+    if (pathname.startsWith('/ro')) {
+      log.info('User already on RO version');
+      const response = NextResponse.next();
+      response.headers.set('x-middleware-cache', 'no-cache');
+      return response;
+    }
+    
+    // Construim noul pathname pentru versiunea RO
+    const newPathname = pathname === '/' 
+      ? '/ro' 
+      : pathname.startsWith('/en') 
+        ? `/ro${pathname.slice(3)}` 
+        : `/ro${pathname}`;
+        
+    log.info(`FORCING ROMANIAN REDIRECT: from ${pathname} to ${newPathname}`);
+    
+    // Redirecționăm la versiunea RO
+    const response = NextResponse.redirect(new URL(newPathname, request.url));
+    
+    // Dezactivăm cache-ul pentru redirecționare
+    response.headers.set('x-middleware-cache', 'no-cache');
+    
+    // Adăugăm header-uri de debugging
+    response.headers.set('x-redirect-source', 'romanian-ip-detection');
+    response.headers.set('x-original-path', pathname);
+    response.headers.set('x-new-path', newPathname);
+    
+    return response;
+  }
+  
   // Rate limiting
-  const ip = request.headers.get('x-forwarded-for') ?? 'unknown';
   const now = Date.now();
   
   try {
@@ -531,7 +575,7 @@ export async function middleware(request: NextRequest) {
         : `/${detectedLocale}${pathname === '/' ? '' : pathname}`;
       
     log.info(`Redirecting to: ${redirectPathname}`);
-    const response = NextResponse.redirect(new URL(redirectPathname + searchParamsSuffix, request.url));
+    const response = NextResponse.redirect(new URL(redirectPathname, request.url));
     response.headers.set('x-middleware-cache', 'no-cache');
     return response;
   }
@@ -553,7 +597,7 @@ export async function middleware(request: NextRequest) {
     const newPathname = pathname.replace(/^\/[^/]+/, `/${detectedLocale}`);
     
     log.info(`Redirecting invalid locale to: ${newPathname}`);
-    const response = NextResponse.redirect(new URL(newPathname + searchParamsSuffix, request.url));
+    const response = NextResponse.redirect(new URL(newPathname, request.url));
     response.headers.set('x-middleware-cache', 'no-cache');
     return response;
   }
