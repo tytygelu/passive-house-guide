@@ -281,10 +281,26 @@ function parseAcceptLanguage(acceptLanguage: string): Array<string> {
 }
 
 async function detectUserLocale(request: NextRequest): Promise<Locale> {
-  const ip = request.headers.get('x-forwarded-for') || 'unknown';
+  // Collect all headers for debugging
+  const allHeaders: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    allHeaders[key] = value;
+  });
+  
+  const ip = request.headers.get('x-forwarded-for') || 
+             request.headers.get('x-real-ip') || 
+             'unknown';
   const acceptLanguageHeader = request.headers.get('Accept-Language') || 'unknown';
   const cacheKey = `${ip}_${acceptLanguageHeader}`;
-  log.info(`Detecting user locale for IP: ${ip}, Accept-Language: ${acceptLanguageHeader}, cache key: ${cacheKey}`);
+  
+  // Enhanced logging for debugging
+  log.info(`DETAILED LOCALE DETECTION - START`, {
+    ip,
+    acceptLanguageHeader,
+    allHeaders,
+    url: request.url,
+    cacheKey
+  });
 
   try {
     // Check if we have a cached result
@@ -294,80 +310,85 @@ async function detectUserLocale(request: NextRequest): Promise<Locale> {
       return cached as Locale;
     }
 
-    // Try geolocation if not found in cache
+    let detectedLocale: Locale | null = null;
+    
+    // STEP 1: Try geolocation API
     try {
-      // Get geolocation data
-      const { country } = geolocation(request);
-      log.info(`Detected country from IP ${ip}: ${country}`);
+      const geoData = geolocation(request);
+      log.info(`Geolocation API response:`, { 
+        country: geoData.country,
+        region: geoData.region,
+        city: geoData.city 
+      });
       
-      // Get locale from country code
+      const country = geoData?.country;
       if (country) {
-        const localeFromCountry = getLocaleFromCountry(country);
-        if (localeFromCountry) {
-          log.info(`Found locale from country ${country}: ${localeFromCountry}`);
-          
-          // Cache result
-          await setRedisValue(cacheKey, localeFromCountry, 300);
-          
-          return localeFromCountry;
+        log.info(`Detected country from geolocation API: ${country}`);
+        detectedLocale = getLocaleFromCountry(country);
+        
+        if (detectedLocale) {
+          log.info(`Successfully mapped country ${country} to locale: ${detectedLocale}`);
+          await setRedisValue(cacheKey, detectedLocale, 300);
+          return detectedLocale;
         } else {
-          log.info(`No locale mapping found for country: ${country}`);
+          log.info(`Country ${country} could not be mapped to a locale`);
         }
+      } else {
+        log.info(`Geolocation API did not return a country code`);
       }
     } catch (error) {
-      log.error(`Error with geolocation for IP ${ip}: ${error}`);
+      log.error(`Error with geolocation API:`, error);
     }
-
-    // Try browser language as fallback
-    const acceptLang = request.headers.get('Accept-Language');
-    if (acceptLang) {
-      log.info(`Accept-Language header: ${acceptLang}`);
+    
+    // STEP 2: Try browser language as fallback
+    if (acceptLanguageHeader && acceptLanguageHeader !== 'unknown') {
+      log.info(`Using Accept-Language header: ${acceptLanguageHeader}`);
       
-      const languages = parseAcceptLanguage(acceptLang);
-      log.info(`Parsed languages: ${JSON.stringify(languages)}`);
+      const languages = parseAcceptLanguage(acceptLanguageHeader);
+      log.info(`Parsed languages from header: ${JSON.stringify(languages)}`);
       
       // Try to match against our supported locales
       for (const lang of languages) {
-        const exactMatch = lang as Locale;
-        if (i18n.locales.includes(exactMatch)) {
-          log.info(`Direct match found for ${lang}`);
+        // Direct match
+        if (i18n.locales.includes(lang as Locale)) {
+          log.info(`Found direct locale match: ${lang}`);
           await setRedisValue(cacheKey, lang, 300);
-          return exactMatch;
+          return lang as Locale;
         }
         
-        // Handle hyphenated formats (e.g. en-US)
-        const baseLang = lang.split('-')[0]; 
-        const baseLangAsLocale = baseLang as Locale;
-        
-        // Try base language match
-        if (i18n.locales.includes(baseLangAsLocale)) {
-          log.info(`Base language match found for ${baseLang}`);
+        // Try base language (e.g., 'en' from 'en-US')
+        const baseLang = lang.split('-')[0];
+        if (i18n.locales.includes(baseLang as Locale)) {
+          log.info(`Found base language match: ${baseLang} from ${lang}`);
           await setRedisValue(cacheKey, baseLang, 300);
-          return baseLangAsLocale;
+          return baseLang as Locale;
         }
         
-        // Try finding a locale that starts with this language
+        // Try finding a locale that starts with this language code
         const matchingLocale = i18n.locales.find(
           locale => locale.startsWith(baseLang)
         ) as Locale | undefined;
         
         if (matchingLocale) {
-          log.info(`Partial match found: ${lang} -> ${matchingLocale}`);
+          log.info(`Found partial match: ${lang} -> ${matchingLocale}`);
           await setRedisValue(cacheKey, matchingLocale, 300);
           return matchingLocale;
         }
       }
       
-      log.info(`No locale match found for Accept-Language: ${acceptLang}`);
+      log.info(`No locale match found for any language in Accept-Language header`);
     } else {
-      log.info('No Accept-Language header found');
+      log.info(`No Accept-Language header found or it was empty`);
     }
     
-    // Default to English if no match found
+    // STEP 3: Fall back to default locale
+    log.info(`Falling back to default locale: ${i18n.defaultLocale}`);
     return i18n.defaultLocale;
   } catch (error) {
-    log.error('Error detecting user locale:', error);
+    log.error('Error in detectUserLocale:', error);
     return i18n.defaultLocale;
+  } finally {
+    log.info(`DETAILED LOCALE DETECTION - END`);
   }
 }
 
