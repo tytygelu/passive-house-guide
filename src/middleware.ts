@@ -312,32 +312,29 @@ async function detectUserLocale(request: NextRequest): Promise<Locale> {
 
     let detectedLocale: Locale | null = null;
     
-    // STEP 1: Try geolocation API
-    try {
-      const geoData = geolocation(request);
-      log.info(`Geolocation API response:`, { 
-        country: geoData.country,
-        region: geoData.region,
-        city: geoData.city 
-      });
+    // STEP 1: Try direct Vercel geolocation headers (most reliable)
+    const country = request.headers.get('x-vercel-ip-country') || 
+                   request.headers.get('x-vercel-ip-country-region');
+    
+    log.info(`Geolocation headers:`, { 
+      'x-vercel-ip-country': request.headers.get('x-vercel-ip-country'),
+      'x-vercel-ip-country-region': request.headers.get('x-vercel-ip-country-region'),
+      detectedCountry: country
+    });
+    
+    if (country) {
+      log.info(`Detected country from headers: ${country}`);
+      detectedLocale = getLocaleFromCountry(country);
       
-      const country = geoData?.country;
-      if (country) {
-        log.info(`Detected country from geolocation API: ${country}`);
-        detectedLocale = getLocaleFromCountry(country);
-        
-        if (detectedLocale) {
-          log.info(`Successfully mapped country ${country} to locale: ${detectedLocale}`);
-          await setRedisValue(cacheKey, detectedLocale, 300);
-          return detectedLocale;
-        } else {
-          log.info(`Country ${country} could not be mapped to a locale`);
-        }
+      if (detectedLocale) {
+        log.info(`Successfully mapped country ${country} to locale: ${detectedLocale}`);
+        await setRedisValue(cacheKey, detectedLocale, 300);
+        return detectedLocale;
       } else {
-        log.info(`Geolocation API did not return a country code`);
+        log.info(`Country ${country} could not be mapped to a locale`);
       }
-    } catch (error) {
-      log.error(`Error with geolocation API:`, error);
+    } else {
+      log.info(`No country code detected from headers`);
     }
     
     // STEP 2: Try browser language as fallback
