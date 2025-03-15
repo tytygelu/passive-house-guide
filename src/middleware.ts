@@ -412,8 +412,11 @@ async function detectUserLocale(request: NextRequest): Promise<Locale> {
 }
 
 export async function middleware(request: NextRequest) {
+  // Force cache bypass timestamp
+  const timestamp = Date.now();
+  
   // Logare pentru cereri
-  log.info(`Request Received: ${request.url}`);
+  log.info(`Request Received [${timestamp}]: ${request.url}`);
   
   // Obține pathname-ul cererii (ex. /, /ro, /en/about)
   const pathname = request.nextUrl.pathname;
@@ -429,9 +432,13 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/api') ||
     pathname.includes('.') 
   ) {
-    log.info('Skipping middleware for non-HTML route', { pathname });
+    log.info(`[${timestamp}] Skipping middleware for non-HTML route`, { pathname });
     const response = NextResponse.next();
     response.headers.set('x-middleware-cache', 'no-cache');
+    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('surrogate-control', 'no-store');
+    response.headers.set('pragma', 'no-cache');
+    response.headers.set('expires', '0');
     return response;
   }
   
@@ -441,15 +448,19 @@ export async function middleware(request: NextRequest) {
   // Verificăm pentru IP-uri românești
   const isRomanianIP = vercelCountry === 'RO';
   
-  log.info(`ROMANIAN DETECTION: IP=${ip}, Country=${vercelCountry}, isRomanianIP=${isRomanianIP}`);
+  log.info(`[${timestamp}] ROMANIAN DETECTION: IP=${ip}, Country=${vercelCountry}, isRomanianIP=${isRomanianIP}`);
   
   // FORCING ROMANIAN pentru utilizatorii din România (PRIORITATE MAXIMĂ)
   if (isRomanianIP) {
     // Verificăm dacă utilizatorul este deja pe versiunea RO
     if (pathname.startsWith('/ro')) {
-      log.info('User already on RO version');
+      log.info(`[${timestamp}] User already on RO version`);
       const response = NextResponse.next();
       response.headers.set('x-middleware-cache', 'no-cache');
+      response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+      response.headers.set('surrogate-control', 'no-store');
+      response.headers.set('pragma', 'no-cache');
+      response.headers.set('expires', '0');
       return response;
     }
     
@@ -460,18 +471,23 @@ export async function middleware(request: NextRequest) {
         ? `/ro${pathname.slice(3)}` 
         : `/ro${pathname}`;
         
-    log.info(`FORCING ROMANIAN REDIRECT: from ${pathname} to ${newPathname}`);
+    log.info(`[${timestamp}] FORCING ROMANIAN REDIRECT: from ${pathname} to ${newPathname}`);
     
     // Redirecționăm la versiunea RO
     const response = NextResponse.redirect(new URL(newPathname, request.url));
     
     // Dezactivăm cache-ul pentru redirecționare
     response.headers.set('x-middleware-cache', 'no-cache');
+    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('surrogate-control', 'no-store');
+    response.headers.set('pragma', 'no-cache');
+    response.headers.set('expires', '0');
     
     // Adăugăm header-uri de debugging
     response.headers.set('x-redirect-source', 'romanian-ip-detection');
     response.headers.set('x-original-path', pathname);
     response.headers.set('x-new-path', newPathname);
+    response.headers.set('x-timestamp', timestamp.toString());
     
     return response;
   }
@@ -501,9 +517,13 @@ export async function middleware(request: NextRequest) {
         }
         // Rate limit exceeded
         else {
-          log.warn(`Rate limit exceeded for IP: ${ip}`);
+          log.warn(`[${timestamp}] Rate limit exceeded for IP: ${ip}`);
           const response = new NextResponse('Too Many Requests', { status: 429 });
           response.headers.set('x-middleware-cache', 'no-cache');
+          response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+          response.headers.set('surrogate-control', 'no-store');
+          response.headers.set('pragma', 'no-cache');
+          response.headers.set('expires', '0');
           return response;
         }
       } else {
@@ -514,17 +534,17 @@ export async function middleware(request: NextRequest) {
       }
     }
   } catch (error) {
-    log.error('Error in rate limiting:', error);
+    log.error(`[${timestamp}] Error in rate limiting:`, error);
   }
 
-  log.info('Processing locale redirection for', { pathname });
+  log.info(`[${timestamp}] Processing locale redirection for`, { pathname });
   
   // Add special debug for geolocation to check country and mapped locale
   try {
     const { country } = geolocation(request);
     const mappedLocale = country ? (COUNTRY_LOCALE_MAP[country] as Locale) || 'not mapped' : 'no country detected';
     
-    log.info('Geolocation and language detection debug:', { 
+    log.info(`[${timestamp}] Geolocation and language detection debug:`, { 
       ip,
       country,
       mappedLocale,
@@ -536,7 +556,7 @@ export async function middleware(request: NextRequest) {
       countryLocale: country ? getLocaleFromCountry(country) : 'no country detected',
     });
   } catch (error) {
-    log.error('Error getting detailed language debug info:', error);
+    log.error(`[${timestamp}] Error getting detailed language debug info:`, error);
   }
 
   // Check if path already contains a locale
@@ -546,18 +566,18 @@ export async function middleware(request: NextRequest) {
 
   // Get locale from cookie if available
   const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
-  log.info('Cookie locale:', { cookieLocale });
+  log.info(`[${timestamp}] Cookie locale:`, { cookieLocale });
 
   // Extract current locale from pathname (if any)
   const currentLocale = pathnameHasLocale ? pathname.split('/')[1] as Locale : null;
   
   // Detect user preferred locale based on IP and browser language
   const detectedLocale = (cookieLocale as Locale) || await detectUserLocale(request);
-  log.info('Detected locale:', { detectedLocale, currentLocale, cookieLocale });
+  log.info(`[${timestamp}] Detected locale:`, { detectedLocale, currentLocale, cookieLocale });
 
   // If path doesn't have locale OR detected locale differs from current and no cookie is set
   if (!pathnameHasLocale || (currentLocale !== detectedLocale && !cookieLocale)) {
-    log.info('Redirecting to detected locale', { 
+    log.info(`[${timestamp}] Redirecting to detected locale`, { 
       pathnameHasLocale, 
       currentLocale, 
       detectedLocale, 
@@ -574,9 +594,13 @@ export async function middleware(request: NextRequest) {
         ? pathname.replace(`/${currentLocale}`, `/${detectedLocale}`) 
         : `/${detectedLocale}${pathname === '/' ? '' : pathname}`;
       
-    log.info(`Redirecting to: ${redirectPathname}`);
+    log.info(`[${timestamp}] Redirecting to: ${redirectPathname}`);
     const response = NextResponse.redirect(new URL(redirectPathname, request.url));
     response.headers.set('x-middleware-cache', 'no-cache');
+    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('surrogate-control', 'no-store');
+    response.headers.set('pragma', 'no-cache');
+    response.headers.set('expires', '0');
     return response;
   }
 
@@ -586,23 +610,31 @@ export async function middleware(request: NextRequest) {
   // Validate locale
   const localeTyped = locale as Locale;
   const isValidLocale = i18n.locales.includes(localeTyped);
-  log.info('Locale validation:', { locale, isValid: isValidLocale });
+  log.info(`[${timestamp}] Locale validation:`, { locale, isValid: isValidLocale });
   
   // If invalid locale in path, redirect to default or detected locale
   if (!isValidLocale) {
-    log.info('Invalid locale in pathname, redirecting to valid locale');
+    log.info(`[${timestamp}] Invalid locale in pathname, redirecting to valid locale`);
     
     // Detect appropriate locale
     const detectedLocale = (cookieLocale as Locale) || await detectUserLocale(request);
     const newPathname = pathname.replace(/^\/[^/]+/, `/${detectedLocale}`);
     
-    log.info(`Redirecting invalid locale to: ${newPathname}`);
+    log.info(`[${timestamp}] Redirecting invalid locale to: ${newPathname}`);
     const response = NextResponse.redirect(new URL(newPathname, request.url));
     response.headers.set('x-middleware-cache', 'no-cache');
+    response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    response.headers.set('surrogate-control', 'no-store');
+    response.headers.set('pragma', 'no-cache');
+    response.headers.set('expires', '0');
     return response;
   }
 
   const response = NextResponse.next();
   response.headers.set('x-middleware-cache', 'no-cache');
+  response.headers.set('cache-control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+  response.headers.set('surrogate-control', 'no-store');
+  response.headers.set('pragma', 'no-cache');
+  response.headers.set('expires', '0');
   return response;
 }
