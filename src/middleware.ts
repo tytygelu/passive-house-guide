@@ -1,6 +1,5 @@
 // src/middleware.ts
 import { NextRequest, NextResponse } from 'next/server';
-import { geolocation } from '@vercel/functions';
 import { i18n } from './lib/i18n-config';
 import type { Locale } from './lib/i18n-config';
 import redisClient from './lib/redis';
@@ -130,35 +129,50 @@ function parseAcceptLanguage(acceptLanguage: string): Array<string> {
     .map(item => item.split(';')[0].trim());
 }
 
-export async function middleware(request: NextRequest) {
-  // Force no cache
-  const timestamp = Date.now();
+// Funcție pentru a obține țara din request folosind headerele Vercel
+function getCountryFromRequest(request: NextRequest): string | null {
+  // Prima dată verificăm header-ul Vercel specific
+  const vercelCountry = request.headers.get('x-vercel-ip-country');
+  if (vercelCountry) {
+    return vercelCountry;
+  }
   
-  // Get pathname
+  // Dacă nu avem header-ul Vercel, verificăm alte headere comune
+  const forwardedFor = request.headers.get('x-forwarded-for');
+  if (forwardedFor) {
+    // Implementare simplificată - în realitate ar trebui să verificăm IP-ul
+    return null;
+  }
+  
+  return null;
+}
+
+export async function middleware(request: NextRequest) {
+  // Get the pathname of the request
   const pathname = request.nextUrl.pathname;
   
-  // Skip for static files and API routes
+  // Add a timestamp to prevent caching issues
+  const timestamp = Date.now();
+  
+  // Avem nevoie de IP pentru logging și cache
+  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
+  const cacheKey = `locale:${ip}`;
+  
+  // Check for routes that don't need redirection
   if (
     pathname.startsWith('/_next') ||
-    pathname.startsWith('/api') ||
-    pathname.includes('.') 
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/favicon.ico') ||
+    pathname.includes('.') // Static files
   ) {
-    const response = NextResponse.next();
-    response.headers.set('x-middleware-cache', 'no-cache');
-    return response;
+    return NextResponse.next();
   }
   
   try {
-    // Get the IP for caching and logging
-    const ip = request.headers.get('x-forwarded-for') || 
-               request.headers.get('x-real-ip') || 
-               'unknown';
+    log.info(`[MIDDLEWARE-V4] Processing request for path: ${pathname}`);
     
-    // Check if we have a cached locale for this IP
-    const cacheKey = `locale:${ip}`;
+    // VERIFICĂM DACĂ AVEM DEJA LOCALE PENTRU ACEST IP ÎN CACHE
     const cachedLocale = await getRedisValue(cacheKey);
-    
-    // If we have a valid cached locale, use it
     if (cachedLocale && i18n.locales.includes(cachedLocale as Locale)) {
       log.info(`Using cached locale for IP ${ip}: ${cachedLocale}`);
       const detectedLocale = cachedLocale as Locale;
@@ -166,16 +180,10 @@ export async function middleware(request: NextRequest) {
       return handleRedirection(request, detectedLocale, pathname, timestamp);
     }
     
-    // GEOLOCALIZARE FOLOSIND HELPER-UL OFICIAL VERCEL
-    const geo = geolocation(request);
-    const country = geo?.country || null;
-    
-    // Log the geolocation info
-    log.info(`Geolocation info:`, { 
-      ip, 
-      country: country || 'unknown',
-      path: pathname
-    });
+    // DACĂ NU AVEM CACHE, DETECTĂM ȚARA DIN HEADERS
+    // Folosim direct header-ele Vercel în loc de helper-ul @vercel/functions
+    const country = getCountryFromRequest(request);
+    log.info(`Detected country from headers: ${country || 'unknown'}`);
     
     // DETECTĂM LOCALUL CORECT BAZAT PE ȚARĂ
     let detectedLocale: Locale | null = null;
@@ -226,7 +234,7 @@ export async function middleware(request: NextRequest) {
     
     return handleRedirection(request, detectedLocale, pathname, timestamp);
   } catch (error) {
-    log.error(`[MIDDLEWARE-V3] Error:`, error);
+    log.error(`[MIDDLEWARE-V4] Error:`, error);
     
     // În caz de eroare, continuăm cererea normală
     const response = NextResponse.next();
