@@ -101,23 +101,23 @@ async function setRedisValue(key: string, value: string, ttlSeconds: number): Pr
   }
 }
 
-// Helper function to get locale from country code
-function getLocaleFromCountry(country: string | null): Locale | null {
-  if (!country) return null;
+// Funcție pentru a obține locale din cod de țară
+function getLocaleFromCountry(countryCode: string): Locale | null {
+  if (!countryCode) return null;
   
-  // Convert country code to uppercase for consistency
-  const countryCode = country.toUpperCase();
+  // Asigurăm-ne că avem un string valid
+  const code = String(countryCode).toUpperCase();
   
-  // Check if country code exists in our mapping
-  if (countryCode in COUNTRY_LOCALE_MAP) {
-    const locale = COUNTRY_LOCALE_MAP[countryCode];
-    
-    // Ensure the locale exists in our supported locales
-    if (i18n.locales.includes(locale as Locale)) {
-      return locale as Locale;
-    }
+  // Obținem locale-ul din mapare
+  const locale = COUNTRY_LOCALE_MAP[code];
+  
+  // Verificăm dacă locale-ul este valid
+  if (locale && i18n.locales.includes(locale as Locale)) {
+    log.info(`Mapped country ${code} to locale ${locale}`);
+    return locale as Locale;
   }
   
+  log.warn(`Country ${code} not found in mapping or has invalid locale`);
   return null;
 }
 
@@ -133,17 +133,13 @@ function parseAcceptLanguage(acceptLanguage: string): Array<string> {
 function getCountryFromRequest(request: NextRequest): string | null {
   // Prima dată verificăm header-ul Vercel specific
   const vercelCountry = request.headers.get('x-vercel-ip-country');
+  
   if (vercelCountry) {
+    log.info(`Detected country from Vercel header: ${vercelCountry}`);
     return vercelCountry;
   }
   
-  // Dacă nu avem header-ul Vercel, verificăm alte headere comune
-  const forwardedFor = request.headers.get('x-forwarded-for');
-  if (forwardedFor) {
-    // Implementare simplificată - în realitate ar trebui să verificăm IP-ul
-    return null;
-  }
-  
+  log.warn('No Vercel country header found');
   return null;
 }
 
