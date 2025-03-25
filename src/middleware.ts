@@ -101,46 +101,12 @@ async function setRedisValue(key: string, value: string, ttlSeconds: number): Pr
   }
 }
 
-// Funcție pentru a obține locale din cod de țară
-function getLocaleFromCountry(countryCode: string): Locale | null {
-  if (!countryCode) return null;
-  
-  // Asigurăm-ne că avem un string valid
-  const code = String(countryCode).toUpperCase();
-  
-  // Obținem locale-ul din mapare
-  const locale = COUNTRY_LOCALE_MAP[code];
-  
-  // Verificăm dacă locale-ul este valid
-  if (locale && i18n.locales.includes(locale as Locale)) {
-    log.info(`Mapped country ${code} to locale ${locale}`);
-    return locale as Locale;
-  }
-  
-  log.warn(`Country ${code} not found in mapping or has invalid locale`);
-  return null;
-}
-
 // Parse Accept-Language header without external dependencies
 function parseAcceptLanguage(acceptLanguage: string): Array<string> {
   // Split on commas and remove spaces
   return acceptLanguage
     .split(',')
     .map(item => item.split(';')[0].trim());
-}
-
-// Funcție pentru a obține țara din request folosind headerele Vercel
-function getCountryFromRequest(request: NextRequest): string | null {
-  // Prima dată verificăm header-ul Vercel specific
-  const vercelCountry = request.headers.get('x-vercel-ip-country');
-  
-  if (vercelCountry) {
-    log.info(`Detected country from Vercel header: ${vercelCountry}`);
-    return vercelCountry;
-  }
-  
-  log.warn('No Vercel country header found');
-  return null;
 }
 
 export async function middleware(request: NextRequest) {
@@ -150,11 +116,7 @@ export async function middleware(request: NextRequest) {
   // Add a timestamp to prevent caching issues
   const timestamp = Date.now();
   
-  // Avem nevoie de IP pentru logging și cache
-  const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
-  const cacheKey = `locale:${ip}`;
-  
-  // Check for routes that don't need redirection
+  // Skip for static files and API routes
   if (
     pathname.startsWith('/_next') ||
     pathname.startsWith('/api/') ||
@@ -165,52 +127,88 @@ export async function middleware(request: NextRequest) {
   }
   
   try {
-    log.info(`[MIDDLEWARE-V4] Processing request for path: ${pathname}`);
+    // Pentru debugging, logăm toate headerele
+    const allHeadersForLog: Record<string, string> = {};
+    request.headers.forEach((value, key) => {
+      allHeadersForLog[key] = value;
+    });
+    log.info(`[MIDDLEWARE-V5] Headers for ${pathname}:`, allHeadersForLog);
     
-    // VERIFICĂM DACĂ AVEM DEJA LOCALE PENTRU ACEST IP ÎN CACHE
+    // Obținem IP-ul pentru cache și logging
+    const ip = request.headers.get('x-forwarded-for') || 
+               request.headers.get('x-real-ip') || 
+               'unknown';
+    
+    // Creăm cheia de cache
+    const cacheKey = `locale:${ip}`;
+    
+    // Verificăm dacă avem un locale în cache pentru acest IP
     const cachedLocale = await getRedisValue(cacheKey);
     if (cachedLocale && i18n.locales.includes(cachedLocale as Locale)) {
       log.info(`Using cached locale for IP ${ip}: ${cachedLocale}`);
-      const detectedLocale = cachedLocale as Locale;
-      
-      return handleRedirection(request, detectedLocale, pathname, timestamp);
+      return handleRedirection(request, cachedLocale as Locale, pathname, timestamp);
     }
     
-    // DACĂ NU AVEM CACHE, DETECTĂM ȚARA DIN HEADERS
-    // Folosim direct header-ele Vercel în loc de helper-ul @vercel/functions
-    const country = getCountryFromRequest(request);
-    log.info(`Detected country from headers: ${country || 'unknown'}`);
+    // IMPORTANT: Folosim direct headerele Vercel pentru geolocation
+    // Headerul X-Vercel-IP-Country este mai fiabil decât helper-ul geolocation
+    const country = request.headers.get('x-vercel-ip-country');
+    log.info(`[MIDDLEWARE-V5] Country from header: ${country || 'null'}`);
     
-    // DETECTĂM LOCALUL CORECT BAZAT PE ȚARĂ
+    // Logăm toate headerele relevante pentru geolocation
+    const geoHeaders = {
+      country: request.headers.get('x-vercel-ip-country'),
+      region: request.headers.get('x-vercel-ip-country-region'),
+      city: request.headers.get('x-vercel-ip-city')
+    };
+    log.info(`[MIDDLEWARE-V5] Geolocation headers:`, geoHeaders);
+    
+    // Detectăm locale-ul bazat pe țară
     let detectedLocale: Locale | null = null;
     
-    // Obținem locale bazat pe țară
+    // Dacă avem un cod de țară valid, îl folosim pentru a determina locale-ul
     if (country) {
-      detectedLocale = getLocaleFromCountry(country);
-      log.info(`Country ${country} maps to locale: ${detectedLocale || 'none'}`);
+      // Convertim la uppercase pentru a fi siguri că se potrivește cu cheile din mapare
+      const upperCountry = country.toUpperCase();
+      
+      // Obținem locale-ul din maparea noastră
+      if (upperCountry in COUNTRY_LOCALE_MAP) {
+        const mappedLocale = COUNTRY_LOCALE_MAP[upperCountry];
+        
+        // Verificăm că locale-ul este suportat
+        if (i18n.locales.includes(mappedLocale as Locale)) {
+          detectedLocale = mappedLocale as Locale;
+          log.info(`[MIDDLEWARE-V5] Country ${upperCountry} maps to locale: ${detectedLocale}`);
+        }
+      } else {
+        log.info(`[MIDDLEWARE-V5] Country ${upperCountry} not found in mapping`);
+      }
     }
     
-    // Dacă nu am putut detecta o limbă bazată pe țară, folosim limba browserului
+    // Dacă nu am putut determina un locale din țară, încercăm cu Accept-Language
     if (!detectedLocale) {
       const acceptLanguage = request.headers.get('accept-language');
+      log.info(`[MIDDLEWARE-V5] Accept-Language header: ${acceptLanguage || 'null'}`);
       
       if (acceptLanguage) {
         const browserLanguages = parseAcceptLanguage(acceptLanguage);
-        log.info(`Browser languages: ${browserLanguages.join(', ')}`);
+        log.info(`[MIDDLEWARE-V5] Browser languages: ${browserLanguages.join(', ')}`);
         
-        // Găsim primul locale suportat din preferințele browserului
+        // Găsim primul locale suportat
         for (const lang of browserLanguages) {
-          const languageCode = lang.toLowerCase().split('-')[0];
+          const normalizedLang = lang.toLowerCase();
+          const baseLanguage = normalizedLang.split('-')[0];
           
-          if (i18n.locales.includes(lang as Locale)) {
-            detectedLocale = lang as Locale;
-            log.info(`Found exact match for browser language: ${lang}`);
+          // Verificăm mai întâi potrivirea exactă
+          if (i18n.locales.includes(normalizedLang as Locale)) {
+            detectedLocale = normalizedLang as Locale;
+            log.info(`[MIDDLEWARE-V5] Found exact match for browser language: ${normalizedLang}`);
             break;
           }
           
-          if (i18n.locales.includes(languageCode as Locale)) {
-            detectedLocale = languageCode as Locale;
-            log.info(`Found base language match for browser language: ${languageCode}`);
+          // Apoi verificăm potrivirea cu limba de bază
+          if (i18n.locales.includes(baseLanguage as Locale)) {
+            detectedLocale = baseLanguage as Locale;
+            log.info(`[MIDDLEWARE-V5] Found base language match for browser language: ${baseLanguage}`);
             break;
           }
         }
@@ -220,21 +218,21 @@ export async function middleware(request: NextRequest) {
     // Dacă tot nu am găsit un locale, folosim valoarea implicită
     if (!detectedLocale) {
       detectedLocale = i18n.defaultLocale;
-      log.info(`Using default locale: ${detectedLocale}`);
+      log.info(`[MIDDLEWARE-V5] Using default locale: ${detectedLocale}`);
     }
     
-    // Cache the detected locale for this IP
+    // Salvăm locale-ul detectat în cache
     if (detectedLocale) {
-      await setRedisValue(cacheKey, detectedLocale, 3600); // Cache for 1 hour
+      await setRedisValue(cacheKey, detectedLocale, 3600); // Cache pentru 1 oră
     }
     
     return handleRedirection(request, detectedLocale, pathname, timestamp);
   } catch (error) {
-    log.error(`[MIDDLEWARE-V4] Error:`, error);
+    log.error(`[MIDDLEWARE-V5] Error:`, error);
     
     // În caz de eroare, continuăm cererea normală
     const response = NextResponse.next();
-    response.headers.set('x-middleware-cache', 'no-cache');
+    setAntiCacheHeaders(response, 'error-v5');
     return response;
   }
 }
