@@ -244,14 +244,11 @@ function handleRedirection(
   pathname: string, 
   timestamp: number
 ) {
-  // Verificăm dacă path-ul curent are un prefix de locale
-  const currentLocale = i18n.locales.find(
-    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`
-  );
-  
-  // Dacă nu avem un locale detectat, folosim defaultLocale
-  if (!detectedLocale) {
-    detectedLocale = i18n.defaultLocale;
+  // Verificăm dacă locale-ul detectat este același cu cel din URL
+  const currentLocale = pathname.split('/')[1]; // Extract the first segment after the first slash
+  if (currentLocale === detectedLocale) {
+    log.info(`[handleRedirection] Locale ${detectedLocale} is the same as current locale, skipping redirection`);
+    return NextResponse.next();
   }
 
   // Cazul 1: Suntem pe homepage (/) și trebuie să redirecționăm la versiunea potrivită
