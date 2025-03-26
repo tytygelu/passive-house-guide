@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { i18n } from './lib/i18n-config';
 import type { Locale } from './lib/i18n-config';
 import redisClient from './lib/redis';
+import Negotiator from 'negotiator';
 
 // Logging utilities
 const log = {
@@ -101,20 +102,15 @@ async function setRedisValue(key: string, value: string, ttlSeconds: number): Pr
   }
 }
 
-// Parse Accept-Language header without external dependencies
+// Parse Accept-Language header using negotiator library
 function parseAcceptLanguage(acceptLanguage: string): Array<string> {
-  // Split on commas and remove spaces
-  return acceptLanguage
-    .split(',')
-    .map(item => item.split(';')[0].trim());
+  const negotiator = new Negotiator({ headers: { 'accept-language': acceptLanguage } });
+  return negotiator.languages(i18n.locales as string[]);
 }
 
 export async function middleware(request: NextRequest) {
   // Get the pathname of the request
   const pathname = request.nextUrl.pathname;
-  
-  // Add a timestamp to prevent caching issues
-  const timestamp = Date.now();
   
   // Skip for static files and API routes
   if (
@@ -140,13 +136,14 @@ export async function middleware(request: NextRequest) {
                'unknown';
     
     // Creăm cheia de cache
-    const cacheKey = `locale:${ip}`;
+    const acceptLanguage = request.headers.get('accept-language') || 'unknown';
+    const cacheKey = `locale:${ip}:${acceptLanguage}`;
     
     // Verificăm dacă avem un locale în cache pentru acest IP
     const cachedLocale = await getRedisValue(cacheKey);
     if (cachedLocale && i18n.locales.includes(cachedLocale as Locale)) {
       log.info(`Using cached locale for IP ${ip}: ${cachedLocale}`);
-      return handleRedirection(request, cachedLocale as Locale, pathname, timestamp);
+      return handleRedirection(request, cachedLocale as Locale, pathname);
     }
     
     // IMPORTANT: Folosim direct headerele Vercel pentru geolocation
@@ -226,7 +223,7 @@ export async function middleware(request: NextRequest) {
       await setRedisValue(cacheKey, detectedLocale, 3600); // Cache pentru 1 oră
     }
     
-    return handleRedirection(request, detectedLocale, pathname, timestamp);
+    return handleRedirection(request, detectedLocale, pathname);
   } catch (error) {
     log.error(`[MIDDLEWARE-V5] Error:`, error);
     
@@ -241,8 +238,7 @@ export async function middleware(request: NextRequest) {
 function handleRedirection(
   request: NextRequest, 
   detectedLocale: Locale | null, 
-  pathname: string, 
-  timestamp: number
+  pathname: string
 ) {
   // Verificăm dacă locale-ul detectat este același cu cel din URL
   const currentLocale = pathname.split('/')[1]; // Extract the first segment after the first slash
@@ -254,7 +250,7 @@ function handleRedirection(
   // Cazul 1: Suntem pe homepage (/) și trebuie să redirecționăm la versiunea potrivită
   if (pathname === '/') {
     // Redirecționăm la locale-ul detectat cu un timestamp pentru a preveni cache-ul
-    const newPathname = `/${detectedLocale}?nocache=${timestamp}`;
+    const newPathname = `/_next/cache/${detectedLocale}${pathname}`;
     
     log.info(`Homepage redirect: / -> ${newPathname}`);
     
@@ -262,37 +258,38 @@ function handleRedirection(
     
     // Setăm header-uri agresive anti-cache
     setAntiCacheHeaders(response, 'homepage-detection-v3');
+    response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
     return response;
   }
   
   // Cazul 2: Path-ul are deja un prefix de locale, dar acesta nu se potrivește cu locale-ul detectat
   if (currentLocale && currentLocale !== detectedLocale) {
-    // Construim noul pathname înlocuind locale-ul curent cu cel detectat
-    const newPathname = pathname.replace(
-      new RegExp(`^/${currentLocale}(/|$)`), 
-      `/${detectedLocale}$1`
-    ) + `?nocache=${timestamp}`;
+    const newPathname = `/${detectedLocale}${pathname.substring(currentLocale.length)}`;
+    const finalPathname = `/_next/cache/${newPathname}`;
     
-    log.info(`Locale mismatch redirect: ${pathname} -> ${newPathname}`);
+    log.info(`Locale mismatch redirect: ${pathname} -> ${finalPathname}`);
     
-    const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
+    const response = NextResponse.redirect(new URL(finalPathname, request.url), 302);
     
     // Setăm header-uri agresive anti-cache
     setAntiCacheHeaders(response, 'locale-mismatch-v3');
+    response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
     return response;
   }
   
   // Cazul 3: Path-ul nu are prefix de locale și nu este homepage
   if (!currentLocale && pathname !== '/') {
     // Adăugăm prefix-ul de locale corect
-    const newPathname = `/${detectedLocale}${pathname}?nocache=${timestamp}`;
+    const newPathname = `/${detectedLocale}${pathname}`;
+    const finalPathname = `/_next/cache/${newPathname}`;
     
-    log.info(`Missing locale redirect: ${pathname} -> ${newPathname}`);
+    log.info(`Missing locale redirect: ${pathname} -> ${finalPathname}`);
     
-    const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
+    const response = NextResponse.redirect(new URL(finalPathname, request.url), 302);
     
     // Setăm header-uri agresive anti-cache
     setAntiCacheHeaders(response, 'missing-locale-prefix-v3');
+    response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
     return response;
   }
   
