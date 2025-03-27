@@ -209,3 +209,9 @@ function getLocaleFromHeaders(request: NextRequest): Locale | null {
   
   return null;
 }
+
+// Specificăm pe ce rute să se aplice middleware-ul
+// Aceasta este o configurație CRITICĂ pentru ca middleware-ul să funcționeze
+export const config = {
+  matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico).*)']
+};
