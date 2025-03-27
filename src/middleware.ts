@@ -310,58 +310,103 @@ function handleRedirection(
   detectedLocale: Locale | null,
   pathname: string
 ) {
-  // Excludem toate resursele statice și imaginile de la redirecționare
+  // Reguli stricte pentru excluderea resurselor statice
   if (
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/api/') ||
     pathname.startsWith('/images/') ||
     pathname.startsWith('/fonts/') ||
     pathname.startsWith('/static/') ||
-    pathname.includes('.') || // Excludem toate fișierele cu extensie (.jpg, .png, .css, .js, etc.)
+    pathname.includes('.svg') ||
+    pathname.includes('.jpg') ||
+    pathname.includes('.jpeg') ||
+    pathname.includes('.png') ||
+    pathname.includes('.css') ||
+    pathname.includes('.js') ||
+    pathname.includes('.ico') ||
+    pathname.includes('.json') ||
     pathname === '/favicon.ico'
   ) {
     log.info(`[handleRedirection] Static resource ${pathname}, skipping redirection`);
     return NextResponse.next();
   }
 
-  // Verificăm cazul special în care avem o dublă specificare a limbii (ex: /fr/en/principles)
+  // Verificăm cookie-ul pentru limba preferată
+  const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
+    detectedLocale = cookieLocale as Locale;
+    log.info(`[handleRedirection] Using locale from cookie: ${detectedLocale}`);
+  }
+
+  // Verificăm URL-ul curent pentru o posibilă schimbare de limbă manuală
+  // URL-ul conține setarea manuală de limbă (ex: /fr/en/page)
   const pathParts = pathname.split('/').filter(Boolean);
-  if (pathParts.length >= 2 && i18n.locales.includes(pathParts[0] as Locale) && i18n.locales.includes(pathParts[1] as Locale)) {
-    // Avem o cale de forma /{locale1}/{locale2}/... - eliminăm primul locale și păstrăm al doilea
-    const newTargetLocale = pathParts[1];
-    const remainingPath = pathParts.slice(2).join('/');
-    const correctPath = `/${newTargetLocale}${remainingPath ? `/${remainingPath}` : ''}`;
+  
+  // Verificăm dacă avem un pattern de schimbare a limbii în URL
+  if (pathParts.length >= 2 && 
+      i18n.locales.includes(pathParts[0] as Locale) && 
+      i18n.locales.includes(pathParts[1] as Locale)) {
     
-    log.info(`[handleRedirection] Detected double locale path: ${pathname}, redirecting to ${correctPath}`);
+    // Utilizatorul schimbă limba de la pathParts[0] la pathParts[1]
+    const targetLocale = pathParts[1];
+    const remainingPath = pathParts.slice(2).join('/');
+    const correctPath = `/${targetLocale}${remainingPath ? `/${remainingPath}` : ''}`;
+    
+    // Creăm răspuns cu cookie pentru noua limbă preferată
     const response = NextResponse.redirect(new URL(correctPath, request.url), 302);
-    setAntiCacheHeaders(response, 'double-locale-fix');
+    
+    // Setăm cookie-ul pentru noua limbă preferată (1 an valabilitate)
+    response.cookies.set('NEXT_LOCALE', targetLocale, { 
+      maxAge: 31536000, 
+      path: '/',
+      sameSite: 'lax'
+    });
+    
+    log.info(`[handleRedirection] Language change detected: ${pathParts[0]} -> ${targetLocale}, redirecting to ${correctPath}`);
+    setAntiCacheHeaders(response, 'language-change');
     return response;
   }
 
-  // Verificăm dacă locale-ul detectat este același cu cel din URL
-  const currentLocale = pathParts[0]; // First path segment
-  if (currentLocale === detectedLocale) {
-    log.info(`[handleRedirection] Locale ${detectedLocale} is the same as current locale, skipping redirection`);
-    return NextResponse.next();
+  // Verificăm dacă pagina are deja locale în URL
+  if (i18n.locales.includes(pathParts[0] as Locale)) {
+    // Dacă limba din URL coincide cu limba detectată sau cea din cookie, nu facem redirecționare
+    if (pathParts[0] === detectedLocale) {
+      log.info(`[handleRedirection] URL already has the correct locale: ${pathParts[0]}`);
+      return NextResponse.next();
+    }
+    
+    // Verificăm dacă schimbarea limbii a fost inițiată din UI (prin butonul de selectare limbă)
+    // În acest caz, prioritizăm alegerea utilizatorului față de geolocație
+    if (request.headers.has('x-language-change') || request.cookies.has('NEXT_LOCALE')) {
+      log.info(`[handleRedirection] Respecting user's language preference: ${pathParts[0]}`);
+      return NextResponse.next();
+    }
   }
 
-  // Construim noua cale URL corect, fără a folosi /_next/cache/
+  // Construim noua cale URL pentru redirecționare
   let newPathname;
   if (pathname === '/') {
     newPathname = `/${detectedLocale}`;
-  } else if (i18n.locales.includes(currentLocale as Locale)) {
-    // Dacă URL-ul actual are deja un locale, îl înlocuim
-    newPathname = `/${detectedLocale}${pathname.substring(currentLocale.length + 1)}`;
+  } else if (i18n.locales.includes(pathParts[0] as Locale)) {
+    // Înlocuim locale-ul existent
+    newPathname = `/${detectedLocale}${pathname.substring(pathParts[0].length + 1)}`;
   } else {
-    // Dacă URL-ul nu are locale, adăugăm
+    // Adăugăm locale-ul la path
     newPathname = `/${detectedLocale}${pathname}`;
   }
 
-  log.info(`Redirecting ${pathname} to ${newPathname}`);
+  log.info(`[handleRedirection] Redirecting from ${pathname} to ${newPathname}`);
   const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
   setAntiCacheHeaders(response, 'locale-redirect');
-  response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
-  return response
+  
+  // Setăm cookie-ul pentru limba preferată pentru a preveni alte redirecționări
+  response.cookies.set('NEXT_LOCALE', detectedLocale as string, { 
+    maxAge: 31536000, 
+    path: '/',
+    sameSite: 'lax'
+  });
+  
+  return response;
 }
 
 // Helper function to set anti-cache headers
