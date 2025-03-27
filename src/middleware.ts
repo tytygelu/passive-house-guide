@@ -47,8 +47,15 @@ const COUNTRY_LOCALE_MAP: Record<string, Locale> = {
 
 export function middleware(request: NextRequest) {
   try {
-    // Extract the pathname from the URL
     const pathname = request.nextUrl.pathname;
+    
+    // DEBUG: Log toate headerele pentru diagnosticare
+    const allHeaders: Record<string, string> = {};
+    request.headers.forEach((value, key) => {
+      allHeaders[key] = value;
+    });
+    log.info(`[Middleware] All request headers:`, allHeaders);
+    log.info(`[Middleware] Request pathname: ${pathname}`);
     
     // 1. Excluderea resurselor statice - PRIORITATE MAXIMĂ
     if (
@@ -98,26 +105,27 @@ export function middleware(request: NextRequest) {
       return response;
     }
     
-    // 3. Verificăm cookie-ul pentru preferința de limbă existentă
-    const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-    
-    // 4. Verificăm dacă URL-ul are deja un prefix de limbă valid
+    // 3. Verificăm dacă URL-ul are deja un prefix de limbă valid
     if (pathParts.length >= 1 && i18n.locales.includes(pathParts[0] as Locale)) {
       const urlLocale = pathParts[0] as Locale;
       
       // Dacă utilizatorul are deja un cookie de limbă setat, respectăm alegerea din URL
       // (înseamnă că utilizatorul a schimbat limba manual)
-      if (cookieLocale && urlLocale !== cookieLocale) {
-        // Actualizăm cookie-ul conform noii alegeri din URL
-        const response = NextResponse.next();
-        response.cookies.set('NEXT_LOCALE', urlLocale, { 
-          maxAge: 31536000, 
-          path: '/',
-          sameSite: 'lax',
-          secure: process.env.NODE_ENV === 'production'
-        });
-        log.info(`[Middleware] Updating language preference from ${cookieLocale} to ${urlLocale}`);
-        return response;
+      if (request.cookies.has('NEXT_LOCALE')) {
+        const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+        
+        if (cookieLocale && urlLocale !== cookieLocale) {
+          // Actualizăm cookie-ul conform noii alegeri din URL
+          const response = NextResponse.next();
+          response.cookies.set('NEXT_LOCALE', urlLocale, { 
+            maxAge: 31536000, 
+            path: '/',
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production'
+          });
+          log.info(`[Middleware] Updating language preference from ${cookieLocale} to ${urlLocale}`);
+          return response;
+        }
       }
       
       // Dacă URL-ul are deja un prefix de limbă valid, nu facem nimic
@@ -128,26 +136,49 @@ export function middleware(request: NextRequest) {
     // 5. Redirecționare pentru ruta principală sau URL-uri fără prefix de limbă
     
     // Determinăm limba preferată folosind mai multe metode
-    let locale: Locale | null = null;
+    let locale: Locale = i18n.defaultLocale;
+    let localeSource = 'default';
     
     // Prima prioritate: cookie-ul existent (alegerea explicită a utilizatorului)
-    if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
-      locale = cookieLocale as Locale;
-      log.info(`[Middleware] Using locale from cookie: ${locale}`);
-    } 
+    if (request.cookies.has('NEXT_LOCALE')) {
+      const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+      if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
+        locale = cookieLocale as Locale;
+        localeSource = 'cookie';
+        log.info(`[Middleware] Using locale from cookie: ${locale}`);
+      }
+    }
+    
     // A doua prioritate: detectarea limbii din țară (folosind headerul x-vercel-ip-country)
-    else if (request.headers.has('x-vercel-ip-country')) {
+    if (localeSource === 'default' && request.headers.has('x-vercel-ip-country')) {
       const country = request.headers.get('x-vercel-ip-country');
+      log.info(`[Middleware] Country from header: ${country}`);
+      
       if (country && COUNTRY_LOCALE_MAP[country] && i18n.locales.includes(COUNTRY_LOCALE_MAP[country])) {
         locale = COUNTRY_LOCALE_MAP[country];
+        localeSource = 'country';
         log.info(`[Middleware] Detected locale from country: ${country} -> ${locale}`);
       }
     }
+    
     // A treia prioritate: detectarea limbii din headerele Accept-Language
-    if (!locale) {
-      locale = getLocaleFromHeaders(request) || i18n.defaultLocale;
-      log.info(`[Middleware] Detected locale from headers: ${locale}`);
+    if (localeSource === 'default') {
+      const headerLocale = getLocaleFromHeaders(request);
+      if (headerLocale) {
+        locale = headerLocale;
+        localeSource = 'accept-language';
+        log.info(`[Middleware] Detected locale from headers: ${locale}`);
+      }
     }
+    
+    // FORȚEAZĂ ROMÂNA PENTRU TESTARE
+    if (process.env.NODE_ENV !== 'production') {
+      locale = 'ro';
+      localeSource = 'forced';
+      log.info(`[Middleware] FORCING LOCALE TO RO FOR TESTING`);
+    }
+    
+    log.info(`[Middleware] Final locale decision: ${locale} (source: ${localeSource})`);
     
     // Construim noua cale URL
     const newPathname = `/${locale}${pathname === '/' ? '' : pathname}`;
