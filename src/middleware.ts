@@ -17,6 +17,34 @@ const log = {
   }
 };
 
+/**
+ * Mapping pentru țări la limba preferată bazată pe locație
+ */
+const COUNTRY_LOCALE_MAP: Record<string, Locale> = {
+  // English-speaking countries
+  US: 'en', UK: 'en', CA: 'en', AU: 'en', NZ: 'en', ZA: 'en', IE: 'en',
+  // Spanish-speaking countries
+  ES: 'es', MX: 'es', AR: 'es', CL: 'es', CO: 'es', PE: 'es', VE: 'es',
+  // French-speaking countries
+  FR: 'fr', BE: 'fr', CH: 'fr', LU: 'fr', MC: 'fr',
+  // Portuguese-speaking countries
+  PT: 'pt', BR: 'pt', AO: 'pt', MZ: 'pt',
+  // German-speaking countries
+  DE: 'de', AT: 'de', LI: 'de',
+  // Italian-speaking countries
+  IT: 'it', SM: 'it', VA: 'it',
+  // Dutch-speaking countries
+  NL: 'nl',
+  // Romanian-speaking countries
+  RO: 'ro', MD: 'ro',
+  // Russian-speaking countries
+  RU: 'ru', BY: 'ru', KZ: 'ru',
+  // Polish-speaking countries
+  PL: 'pl',
+  // Amharic-speaking countries
+  ET: 'am'
+};
+
 export function middleware(request: NextRequest) {
   try {
     // Extract the pathname from the URL
@@ -99,16 +127,24 @@ export function middleware(request: NextRequest) {
     
     // 5. Redirecționare pentru ruta principală sau URL-uri fără prefix de limbă
     
-    // Determinăm limba preferată (din cookie, sau detectăm)
+    // Determinăm limba preferată folosind mai multe metode
     let locale: Locale | null = null;
     
-    // Prima prioritate: cookie-ul existent
+    // Prima prioritate: cookie-ul existent (alegerea explicită a utilizatorului)
     if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
       locale = cookieLocale as Locale;
       log.info(`[Middleware] Using locale from cookie: ${locale}`);
     } 
-    // A doua prioritate: detectarea limbii din headerele Accept-Language
-    else {
+    // A doua prioritate: detectarea limbii din țară (folosind headerul x-vercel-ip-country)
+    else if (request.headers.has('x-vercel-ip-country')) {
+      const country = request.headers.get('x-vercel-ip-country');
+      if (country && COUNTRY_LOCALE_MAP[country] && i18n.locales.includes(COUNTRY_LOCALE_MAP[country])) {
+        locale = COUNTRY_LOCALE_MAP[country];
+        log.info(`[Middleware] Detected locale from country: ${country} -> ${locale}`);
+      }
+    }
+    // A treia prioritate: detectarea limbii din headerele Accept-Language
+    if (!locale) {
       locale = getLocaleFromHeaders(request) || i18n.defaultLocale;
       log.info(`[Middleware] Detected locale from headers: ${locale}`);
     }
