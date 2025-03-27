@@ -53,13 +53,20 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
     // Split path by '/' and remove empty strings
     const parts = (pathname || '').split('/').filter(Boolean)
     
-    // If we have at least 2 parts (lang and route)
-    if (parts.length >= 2) {
-      // Return everything after the language code
-      return '/' + parts.slice(1).join('/')
+    // Verificăm dacă URL-ul poate conține deja o limbă
+    if (parts.length >= 1) {
+      // Verificăm prima parte a URL-ului (potențial cod de limbă)
+      const firstPart = parts[0]
+      
+      // Dacă prima parte este un cod de limbă valid (din localeMetadata)
+      if (localeMetadata.some(locale => locale.code === firstPart)) {
+        // Eliminăm această parte și returnăm restul căii
+        return '/' + parts.slice(1).join('/')
+      }
     }
     
-    return '/'
+    // Dacă nu există cod de limbă sau URL este simplu, returnăm întreaga cale
+    return pathname || '/'
   }
 
   const languages = localeMetadata
