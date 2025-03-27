@@ -174,17 +174,80 @@ export async function middleware(request: NextRequest) {
     // Dacă avem un cod de țară valid, îl folosim pentru a determina locale-ul
     if (country) {
       const upperCountry = country.toUpperCase();
-      if (upperCountry === 'FR') {
-        detectedLocale = 'fr';
-        log.info(`[MIDDLEWARE-V5] Overriding detected locale for country FR to fr`);
+      
+      // Tratare specială pentru locații complexe
+      if (upperCountry === 'IN') {
+        // Pentru India, avem mai multe limbi posibile (hi, bn etc.)
+        // Alegeți hindi ca default, în special în regiunile nordice
+        detectedLocale = 'hi';
+        log.info(`[MIDDLEWARE] Setting default locale for IN to hi`);
+      } else if (upperCountry === 'CH') {
+        // Pentru Elveția, alegem limba în funcție de regiune dacă este disponibilă
+        const region = request.headers.get('x-vercel-ip-country-region');
+        if (region) {
+          // Verificăm regiunea pentru a alege între germană, franceză, italiană
+          const regionLowerCase = region.toLowerCase();
+          if (regionLowerCase.includes('geneva') || regionLowerCase.includes('vaud') || 
+              regionLowerCase.includes('neuchatel') || regionLowerCase.includes('jura')) {
+            detectedLocale = 'fr';
+          } else if (regionLowerCase.includes('ticino')) {
+            detectedLocale = 'it';
+          } else {
+            // Default la germană pentru restul Elveției
+            detectedLocale = 'de';
+          }
+          log.info(`[MIDDLEWARE] Detected locale for CH region ${region}: ${detectedLocale}`);
+        } else {
+          // Default la germană dacă nu avem informații despre regiune
+          detectedLocale = 'de';
+        }
+      } else if (upperCountry === 'BE') {
+        // Pentru Belgia, alegem limba în funcție de regiune
+        const region = request.headers.get('x-vercel-ip-country-region');
+        if (region) {
+          const regionLowerCase = region.toLowerCase();
+          if (regionLowerCase.includes('flanders') || regionLowerCase.includes('antwerp') || 
+              regionLowerCase.includes('limburg') || regionLowerCase.includes('flemish')) {
+            detectedLocale = 'nl';
+          } else {
+            // Default la franceză pentru Wallonia și Bruxelles
+            detectedLocale = 'fr';
+          }
+          log.info(`[MIDDLEWARE] Detected locale for BE region ${region}: ${detectedLocale}`);
+        } else {
+          // Default la franceză dacă nu avem informații despre regiune
+          detectedLocale = 'fr';
+        }
+      } else if (upperCountry === 'CA') {
+        // Pentru Canada, verificăm regiunea pentru Quebec
+        const region = request.headers.get('x-vercel-ip-country-region');
+        if (region && (region.toLowerCase().includes('quebec') || region === 'QC')) {
+          detectedLocale = 'fr';
+          log.info(`[MIDDLEWARE] Detected locale for CA Quebec: fr`);
+        } else {
+          detectedLocale = 'en';
+        }
       } else if (upperCountry in COUNTRY_LOCALE_MAP) {
+        // Verificăm dacă avem o mapare directă în COUNTRY_LOCALE_MAP
         const mappedLocale = COUNTRY_LOCALE_MAP[upperCountry];
         if (i18n.locales.includes(mappedLocale as Locale)) {
           detectedLocale = mappedLocale as Locale;
-          log.info(`[MIDDLEWARE-V5] Country ${upperCountry} maps to locale: ${detectedLocale}`);
+          log.info(`[MIDDLEWARE] Country ${upperCountry} maps to locale: ${detectedLocale}`);
         }
       } else {
-        log.info(`[MIDDLEWARE-V5] Country ${upperCountry} not found in mapping`);
+        // Verificăm dacă avem o mapare pentru coduri speciale (ex. "IN_HI", "CH_FR")
+        // Format: COUNTRY_SPECIFICLANG
+        const specialCodes = Object.keys(COUNTRY_LOCALE_MAP).filter(key => key.startsWith(upperCountry + '_'));
+        if (specialCodes.length > 0) {
+          // Folosim prima mapare specială găsită pentru țara respectivă
+          const mappedLocale = COUNTRY_LOCALE_MAP[specialCodes[0]];
+          if (i18n.locales.includes(mappedLocale as Locale)) {
+            detectedLocale = mappedLocale as Locale;
+            log.info(`[MIDDLEWARE] Country ${upperCountry} special code ${specialCodes[0]} maps to locale: ${detectedLocale}`);
+          }
+        } else {
+          log.info(`[MIDDLEWARE] Country ${upperCountry} not found in mapping`);
+        }
       }
     }
     
