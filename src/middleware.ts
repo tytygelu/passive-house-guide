@@ -136,8 +136,7 @@ export async function middleware(request: NextRequest) {
                'unknown';
     
     // Creăm cheia de cache
-    const acceptLanguage = request.headers.get('accept-language') || 'unknown';
-    const cacheKey = `locale:${ip}:${acceptLanguage}`;
+    const cacheKey = `locale:${ip}`;
     
     // Verificăm dacă avem un locale în cache pentru acest IP
     const cachedLocale = await getRedisValue(cacheKey);
@@ -164,14 +163,12 @@ export async function middleware(request: NextRequest) {
     
     // Dacă avem un cod de țară valid, îl folosim pentru a determina locale-ul
     if (country) {
-      // Convertim la uppercase pentru a fi siguri că se potrivește cu cheile din mapare
       const upperCountry = country.toUpperCase();
-      
-      // Obținem locale-ul din maparea noastră
-      if (upperCountry in COUNTRY_LOCALE_MAP) {
+      if (upperCountry === 'FR') {
+        detectedLocale = 'fr';
+        log.info(`[MIDDLEWARE-V5] Overriding detected locale for country FR to fr`);
+      } else if (upperCountry in COUNTRY_LOCALE_MAP) {
         const mappedLocale = COUNTRY_LOCALE_MAP[upperCountry];
-        
-        // Verificăm că locale-ul este suportat
         if (i18n.locales.includes(mappedLocale as Locale)) {
           detectedLocale = mappedLocale as Locale;
           log.info(`[MIDDLEWARE-V5] Country ${upperCountry} maps to locale: ${detectedLocale}`);
@@ -236,8 +233,8 @@ export async function middleware(request: NextRequest) {
 
 // Helper function to handle redirection logic
 function handleRedirection(
-  request: NextRequest, 
-  detectedLocale: Locale | null, 
+  request: NextRequest,
+  detectedLocale: Locale | null,
   pathname: string
 ) {
   // Verificăm dacă locale-ul detectat este același cu cel din URL
@@ -247,57 +244,21 @@ function handleRedirection(
     return NextResponse.next();
   }
 
-  // Cazul 1: Suntem pe homepage (/) și trebuie să redirecționăm la versiunea potrivită
+  let newPathname = `/${detectedLocale}${pathname}`;
   if (pathname === '/') {
-    // Redirecționăm la locale-ul detectat cu un timestamp pentru a preveni cache-ul
-    const newPathname = `/_next/cache/${detectedLocale}${pathname}`;
-    
-    log.info(`Homepage redirect: / -> ${newPathname}`);
-    
-    const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
-    
-    // Setăm header-uri agresive anti-cache
-    setAntiCacheHeaders(response, 'homepage-detection-v3');
-    response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
-    return response;
+    newPathname = `/_next/cache/${detectedLocale}${pathname}`
+  } else if (currentLocale) {
+    newPathname = `/${detectedLocale}${pathname.substring(currentLocale.length)}`
+    newPathname = `/_next/cache/${newPathname}`
+  } else {
+    newPathname = `/_next/cache/${newPathname}`
   }
-  
-  // Cazul 2: Path-ul are deja un prefix de locale, dar acesta nu se potrivește cu locale-ul detectat
-  if (currentLocale && currentLocale !== detectedLocale) {
-    const newPathname = `/${detectedLocale}${pathname.substring(currentLocale.length)}`;
-    const finalPathname = `/_next/cache/${newPathname}`;
-    
-    log.info(`Locale mismatch redirect: ${pathname} -> ${finalPathname}`);
-    
-    const response = NextResponse.redirect(new URL(finalPathname, request.url), 302);
-    
-    // Setăm header-uri agresive anti-cache
-    setAntiCacheHeaders(response, 'locale-mismatch-v3');
-    response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
-    return response;
-  }
-  
-  // Cazul 3: Path-ul nu are prefix de locale și nu este homepage
-  if (!currentLocale && pathname !== '/') {
-    // Adăugăm prefix-ul de locale corect
-    const newPathname = `/${detectedLocale}${pathname}`;
-    const finalPathname = `/_next/cache/${newPathname}`;
-    
-    log.info(`Missing locale redirect: ${pathname} -> ${finalPathname}`);
-    
-    const response = NextResponse.redirect(new URL(finalPathname, request.url), 302);
-    
-    // Setăm header-uri agresive anti-cache
-    setAntiCacheHeaders(response, 'missing-locale-prefix-v3');
-    response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
-    return response;
-  }
-  
-  // Cazul 4: Path-ul are deja locale-ul corect, continuăm cererea
-  log.info(`No redirect needed, continuing with: ${pathname}`);
-  const response = NextResponse.next();
-  response.headers.set('x-middleware-cache', 'no-cache');
-  return response;
+
+  log.info(`Redirecting ${pathname} to ${newPathname}`);
+  const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
+  setAntiCacheHeaders(response, 'locale-redirect');
+  response.headers.set('Cache-Tag', `${detectedLocale}, ${pathname}`);
+  return response
 }
 
 // Helper function to set anti-cache headers
