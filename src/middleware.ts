@@ -254,14 +254,16 @@ function handleRedirection(
     return NextResponse.next();
   }
 
-  let newPathname = `/${detectedLocale}${pathname}`;
+  // Construim noua cale URL corect, fără a folosi /_next/cache/
+  let newPathname;
   if (pathname === '/') {
-    newPathname = `/_next/cache/${detectedLocale}${pathname}`
-  } else if (currentLocale) {
-    newPathname = `/${detectedLocale}${pathname.substring(currentLocale.length)}`
-    newPathname = `/_next/cache/${newPathname}`
+    newPathname = `/${detectedLocale}`;
+  } else if (i18n.locales.includes(currentLocale as Locale)) {
+    // Dacă URL-ul actual are deja un locale, îl înlocuim
+    newPathname = `/${detectedLocale}${pathname.substring(currentLocale.length + 1)}`;
   } else {
-    newPathname = `/_next/cache/${newPathname}`
+    // Dacă URL-ul nu are locale, adăugăm
+    newPathname = `/${detectedLocale}${pathname}`;
   }
 
   log.info(`Redirecting ${pathname} to ${newPathname}`);
