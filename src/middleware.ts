@@ -310,8 +310,36 @@ function handleRedirection(
   detectedLocale: Locale | null,
   pathname: string
 ) {
+  // Excludem toate resursele statice și imaginile de la redirecționare
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/api/') ||
+    pathname.startsWith('/images/') ||
+    pathname.startsWith('/fonts/') ||
+    pathname.startsWith('/static/') ||
+    pathname.includes('.') || // Excludem toate fișierele cu extensie (.jpg, .png, .css, .js, etc.)
+    pathname === '/favicon.ico'
+  ) {
+    log.info(`[handleRedirection] Static resource ${pathname}, skipping redirection`);
+    return NextResponse.next();
+  }
+
+  // Verificăm cazul special în care avem o dublă specificare a limbii (ex: /fr/en/principles)
+  const pathParts = pathname.split('/').filter(Boolean);
+  if (pathParts.length >= 2 && i18n.locales.includes(pathParts[0] as Locale) && i18n.locales.includes(pathParts[1] as Locale)) {
+    // Avem o cale de forma /{locale1}/{locale2}/... - eliminăm primul locale și păstrăm al doilea
+    const newTargetLocale = pathParts[1];
+    const remainingPath = pathParts.slice(2).join('/');
+    const correctPath = `/${newTargetLocale}${remainingPath ? `/${remainingPath}` : ''}`;
+    
+    log.info(`[handleRedirection] Detected double locale path: ${pathname}, redirecting to ${correctPath}`);
+    const response = NextResponse.redirect(new URL(correctPath, request.url), 302);
+    setAntiCacheHeaders(response, 'double-locale-fix');
+    return response;
+  }
+
   // Verificăm dacă locale-ul detectat este același cu cel din URL
-  const currentLocale = pathname.split('/')[1]; // Extract the first segment after the first slash
+  const currentLocale = pathParts[0]; // First path segment
   if (currentLocale === detectedLocale) {
     log.info(`[handleRedirection] Locale ${detectedLocale} is the same as current locale, skipping redirection`);
     return NextResponse.next();
