@@ -109,6 +109,15 @@ function parseAcceptLanguage(acceptLanguage: string): Array<string> {
 }
 
 export async function middleware(request: NextRequest) {
+  log.info(`[MIDDLEWARE-DEBUG] Processing request for: ${request.nextUrl.pathname}, URL: ${request.url}`);
+  
+  // Pentru debugging, logăm toate headerele
+  const allHeadersForLog: Record<string, string> = {};
+  request.headers.forEach((value, key) => {
+    allHeadersForLog[key] = value;
+  });
+  log.info(`[MIDDLEWARE-DEBUG] All headers:`, allHeadersForLog);
+  
   // Get the pathname of the request
   const pathname = request.nextUrl.pathname;
   
