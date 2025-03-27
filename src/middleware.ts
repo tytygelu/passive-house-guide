@@ -135,19 +135,20 @@ export async function middleware(request: NextRequest) {
                request.headers.get('x-real-ip') || 
                'unknown';
     
+    const country = request.headers.get('x-vercel-ip-country');
+    const overrideForFR = country && country.toUpperCase() === 'FR';
+
     // Creăm cheia de cache
     const cacheKey = `locale:${ip}`;
     
-    // Verificăm dacă avem un locale în cache pentru acest IP
     const cachedLocale = await getRedisValue(cacheKey);
-    if (cachedLocale && i18n.locales.includes(cachedLocale as Locale)) {
+    if (cachedLocale && !overrideForFR && i18n.locales.includes(cachedLocale as Locale)) {
       log.info(`Using cached locale for IP ${ip}: ${cachedLocale}`);
       return handleRedirection(request, cachedLocale as Locale, pathname);
     }
     
     // IMPORTANT: Folosim direct headerele Vercel pentru geolocation
     // Headerul X-Vercel-IP-Country este mai fiabil decât helper-ul geolocation
-    const country = request.headers.get('x-vercel-ip-country');
     log.info(`[MIDDLEWARE-V5] Country from header: ${country || 'null'}`);
     
     // Logăm toate headerele relevante pentru geolocation
