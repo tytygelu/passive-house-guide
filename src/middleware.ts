@@ -107,7 +107,7 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
         log.info(`[Middleware] MATCH! Found double locale pattern: /${firstPart}/${secondPart}`);
 
         const remainingPath = pathParts.slice(2).join('/');
-        const correctPath = `/${secondPart}${remainingPath ? `/${remainingPath}` : ''}`;
+        const correctPath = `/${firstPart}${remainingPath ? `/${remainingPath}` : ''}`;
         log.info(`[Middleware] Correct path determined: ${correctPath}`);
 
         const redirectUrl = new URL(correctPath, request.url);
@@ -115,13 +115,13 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
         const response = NextResponse.redirect(redirectUrl, 307);
 
-        response.cookies.set('NEXT_LOCALE', secondPart as Locale, {
+        response.cookies.set('NEXT_LOCALE', firstPart as Locale, {
           maxAge: 31536000,
           path: '/',
           sameSite: 'lax',
           secure: process.env.NODE_ENV === 'production'
         });
-        log.info(`[Middleware] Set NEXT_LOCALE cookie to: ${secondPart}`);
+        log.info(`[Middleware] Set NEXT_LOCALE cookie to: ${firstPart}`);
 
         response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         response.headers.set('Pragma', 'no-cache');
