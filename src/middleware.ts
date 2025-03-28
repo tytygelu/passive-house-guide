@@ -90,8 +90,16 @@ export function middleware(request: NextRequest) {
       const remainingPath = pathParts.slice(2).join('/');
       const correctPath = `/${targetLocale}${remainingPath ? `/${remainingPath}` : ''}`;
       
+      // Adăugăm logare pentru debugging
+      log.info(`[Middleware] Path parts: ${JSON.stringify(pathParts)}`);
+      log.info(`[Middleware] Target locale: ${targetLocale}`);
+      log.info(`[Middleware] Remaining path: ${remainingPath}`);
+      log.info(`[Middleware] Correct path: ${correctPath}`);
+      
       // Creăm răspunsul de redirecționare
-      const response = NextResponse.redirect(new URL(correctPath, request.url), 302);
+      const redirectUrl = new URL(correctPath, request.url);
+      log.info(`[Middleware] Redirect URL: ${redirectUrl.toString()}`);
+      const response = NextResponse.redirect(redirectUrl, 307); // Temporar redirect cu păstrarea metodei HTTP
       
       // Setăm cookie-ul pentru noua limbă
       response.cookies.set('NEXT_LOCALE', targetLocale, { 
@@ -171,11 +179,13 @@ export function middleware(request: NextRequest) {
       }
     }
     
-    // Forțăm limba română doar în mediul de dezvoltare
-    if (process.env.NODE_ENV !== 'production') {
-      locale = 'ro';
-      localeSource = 'forced';
-      log.info(`[Middleware] FORCING LOCALE TO RO FOR TESTING`);
+    // Lăsăm setarea default, care este engleză
+    // Înregistrăm doar informația despre țară în loguri pentru diagnosticare
+    if (request.headers.has('x-vercel-ip-country')) {
+      const country = request.headers.get('x-vercel-ip-country');
+      log.info(`[Middleware] DEBUG: Country from x-vercel-ip-country header: ${country}`);
+    } else {
+      log.warn(`[Middleware] Missing x-vercel-ip-country header!`);
     }
     
     log.info(`[Middleware] Final locale decision: ${locale} (source: ${localeSource})`);
