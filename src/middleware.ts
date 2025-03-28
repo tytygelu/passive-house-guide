@@ -183,10 +183,15 @@ export function middleware(request: NextRequest) {
     // Construim noua cale URL
     const newPathname = `/${locale}${pathname === '/' ? '' : pathname}`;
     
-    // Creăm răspunsul de redirecționare
-    const response = NextResponse.redirect(new URL(newPathname, request.url), 302);
+    // Adăugăm un parametru pentru a forța un cache miss
+    const urlWithNoCacheParam = new URL(newPathname, request.url);
+    urlWithNoCacheParam.searchParams.set('nocache', Date.now().toString());
     
-    // Setăm cookie-ul pentru noua limbă
+    // Creăm răspunsul de redirecționare cu status 307 (Temporary Redirect) în loc de 302
+    // pentru a ne asigura că metoda HTTP și corpul rămân neschimbate
+    const response = NextResponse.redirect(urlWithNoCacheParam, 307);
+    
+    // Setăm cookie-ul pentru noua limbă cu o durată mai scurtă pentru teste
     response.cookies.set('NEXT_LOCALE', locale, { 
       maxAge: 31536000, 
       path: '/',
@@ -194,7 +199,12 @@ export function middleware(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production'
     });
     
-    log.info(`[Middleware] Redirecting to: ${newPathname}`);
+    // Adăugăm headere pentru a dezactiva cache-ul
+    response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    
+    log.info(`[Middleware] Redirecting to: ${urlWithNoCacheParam.toString()}`);
     return response;
     
   } catch (error) {
