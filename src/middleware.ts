@@ -79,38 +79,62 @@ export function middleware(request: NextRequest) {
       return NextResponse.next();
     }
 
-    // 2. Verificăm modelul de URL cu dublă specificare a limbii (ex: /fr/en/page)
+    // 2. Verificăm adrese URL malformate cu multiple coduri de limbă
     const pathParts = pathname.split('/').filter(Boolean);
-    if (pathParts.length >= 2 && 
-        i18n.locales.includes(pathParts[0] as Locale) && 
-        i18n.locales.includes(pathParts[1] as Locale)) {
+    
+    // 2.1 Verificăm modelul de URL cu dublă sau multiplă specificare a limbii (ex: /fr/en/page sau /ro/en/en)
+    if (pathParts.length >= 2) {
+      const firstPart = pathParts[0];
+      const secondPart = pathParts[1];
       
-      // Extragem noua limbă și restul căii
-      const targetLocale = pathParts[1];
-      const remainingPath = pathParts.slice(2).join('/');
-      const correctPath = `/${targetLocale}${remainingPath ? `/${remainingPath}` : ''}`;
+      // Verifică dacă primele segmente sunt limbi
+      const hasDuplicateLanguages = 
+        (i18n.locales.includes(firstPart as Locale) && i18n.locales.includes(secondPart as Locale)) ||
+        (pathParts.length >= 3 && secondPart === pathParts[2] && i18n.locales.includes(secondPart as Locale));
       
-      // Adăugăm logare pentru debugging
-      log.info(`[Middleware] Path parts: ${JSON.stringify(pathParts)}`);
-      log.info(`[Middleware] Target locale: ${targetLocale}`);
-      log.info(`[Middleware] Remaining path: ${remainingPath}`);
-      log.info(`[Middleware] Correct path: ${correctPath}`);
-      
-      // Creăm răspunsul de redirecționare
-      const redirectUrl = new URL(correctPath, request.url);
-      log.info(`[Middleware] Redirect URL: ${redirectUrl.toString()}`);
-      const response = NextResponse.redirect(redirectUrl, 307); // Temporar redirect cu păstrarea metodei HTTP
-      
-      // Setăm cookie-ul pentru noua limbă
-      response.cookies.set('NEXT_LOCALE', targetLocale, { 
-        maxAge: 31536000, 
-        path: '/',
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production'
-      });
-      
-      log.info(`[Middleware] Detected double locale path: ${pathname} -> ${correctPath}`);
-      return response;
+      if (hasDuplicateLanguages) {
+        // Adăugăm logare specifică pentru debugging
+        log.info(`[Middleware] Detected malformed URL with duplicate locales: ${pathname}`);
+        log.info(`[Middleware] Path parts: ${JSON.stringify(pathParts)}`);
+        
+        // Determinăm care limbă să folosim (a doua, care este cea selectată de utilizator)
+        const targetLocale = secondPart as Locale;
+        
+        // Eliminăm toate instanțele duplicate de limbi și păstrăm restul căii
+        const remainingParts: string[] = [];
+        for (let i = 2; i < pathParts.length; i++) {
+          // Dacă segmentul curent este o limbă și este aceeași cu targetLocale, îl ignorăm
+          if (i18n.locales.includes(pathParts[i] as Locale) && pathParts[i] === targetLocale) {
+            log.info(`[Middleware] Skipping duplicate locale at position ${i}: ${pathParts[i]}`);
+            continue; 
+          }
+          remainingParts.push(pathParts[i]);
+        }
+        
+        // Construim noua cale corectă
+        const correctPath = `/${targetLocale}${remainingParts.length > 0 ? `/${remainingParts.join('/')}` : ''}`;
+        
+        // Adăugăm logare pentru debugging
+        log.info(`[Middleware] Target locale: ${targetLocale}`);
+        log.info(`[Middleware] Remaining parts: ${JSON.stringify(remainingParts)}`);
+        log.info(`[Middleware] Correct path: ${correctPath}`);
+        
+        // Creăm răspunsul de redirecționare
+        const redirectUrl = new URL(correctPath, request.url);
+        log.info(`[Middleware] Redirect URL: ${redirectUrl.toString()}`);
+        const response = NextResponse.redirect(redirectUrl, 307);
+        
+        // Setăm cookie-ul pentru noua limbă
+        response.cookies.set('NEXT_LOCALE', targetLocale, { 
+          maxAge: 31536000, 
+          path: '/',
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production'
+        });
+        
+        log.info(`[Middleware] Redirecting malformed path: ${pathname} -> ${correctPath}`);
+        return response;
+      }
     }
     
     // 3. Verificăm dacă URL-ul are deja un prefix de limbă valid
