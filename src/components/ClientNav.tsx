@@ -183,7 +183,13 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
                   // Obținem ruta curentă fără segmentul de limbă
                   const route = getCurrentRoute()
                   // Construim URL-ul nou cu codul de limbă corect
-                  const newUrl = route ? `/${language.code}/${route}` : `/${language.code}`
+                  // Aici e fix problema! Când route este gol (suntem pe pagina principală a unei limbi)
+                  // const newUrl = route ? `/${language.code}/${route}` : `/${language.code}`
+                  
+                  // Corectare - construim URL-ul corect fără a adăuga slash în plus
+                  const newUrl = `/${language.code}${route ? `/${route}` : ''}`
+                  
+                  console.log(`Changing language - Current route: "${route}", New URL: "${newUrl}"`)
                   
                   return (
                     <Link
