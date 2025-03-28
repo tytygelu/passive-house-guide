@@ -57,6 +57,11 @@ export function middleware(request: NextRequest) {
     log.info(`[Middleware] All request headers:`, allHeaders);
     log.info(`[Middleware] Request pathname: ${pathname}`);
     
+    // SUPER DEBUG - adaugă detalii esențiale pentru diagnosticare
+    console.log(`=== MIDDLEWARE DEBUGGING ===`);
+    console.log(`Request URL: ${request.url}`);
+    console.log(`Pathname: ${pathname}`);
+    
     // 1. Excluderea resurselor statice - PRIORITATE MAXIMĂ
     if (
       pathname.startsWith('/_next/') ||
@@ -82,14 +87,44 @@ export function middleware(request: NextRequest) {
     // 2. Verificăm adrese URL malformate cu multiple coduri de limbă
     const pathParts = pathname.split('/').filter(Boolean);
     
-    // 2.1 Verificăm modelul de URL cu dublă sau multiplă specificare a limbii (ex: /fr/en/page sau /ro/en/en)
+    // Adăugăm loguri pentru a vedea exact ce se întâmplă cu pathParts
+    console.log(`Path parts: ${JSON.stringify(pathParts)}`);
+    
+    // 2.1 Verificare EXPLICITĂ pentru /ro/en
     if (pathParts.length >= 2) {
       const firstPart = pathParts[0];
       const secondPart = pathParts[1];
       
-      // Verifică dacă primele segmente sunt limbi
+      console.log(`First part: ${firstPart}, Second part: ${secondPart}`);
+      console.log(`Is first part a locale? ${i18n.locales.includes(firstPart as Locale)}`);
+      console.log(`Is second part a locale? ${i18n.locales.includes(secondPart as Locale)}`);
+      
+      // Verificăm specific pentru `/ro/en` și orice altă combinație de limbi
+      if (i18n.locales.includes(firstPart as Locale) && i18n.locales.includes(secondPart as Locale)) {
+        console.log(`MATCH! Found language pattern: /${firstPart}/${secondPart}`);
+        
+        // Redirectăm către a doua limbă (cea selectată)
+        const correctPath = `/${secondPart}`;
+        console.log(`Will redirect to: ${correctPath}`);
+        
+        // Redirecționare
+        const redirectUrl = new URL(correctPath, request.url);
+        const response = NextResponse.redirect(redirectUrl, 307);
+        
+        // Setăm cookie-ul pentru noua limbă
+        response.cookies.set('NEXT_LOCALE', secondPart as Locale, { 
+          maxAge: 31536000, 
+          path: '/',
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production'
+        });
+        
+        console.log(`🔴 Redirecting: ${pathname} -> ${correctPath}`);
+        return response;
+      }
+      
+      // Vechea logică pentru cazuri complexe - o păstrăm ca backup
       const hasDuplicateLanguages = 
-        (i18n.locales.includes(firstPart as Locale) && i18n.locales.includes(secondPart as Locale)) ||
         (pathParts.length >= 3 && secondPart === pathParts[2] && i18n.locales.includes(secondPart as Locale));
       
       if (hasDuplicateLanguages) {
