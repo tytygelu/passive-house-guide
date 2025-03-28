@@ -103,8 +103,9 @@ export function middleware(request: NextRequest) {
       if (i18n.locales.includes(firstPart as Locale) && i18n.locales.includes(secondPart as Locale)) {
         console.log(`MATCH! Found language pattern: /${firstPart}/${secondPart}`);
         
-        // Redirectăm către a doua limbă (cea selectată)
-        const correctPath = `/${secondPart}`;
+        // Redirectăm către a doua limbă (cea selectată) și păstrăm restul căii
+        const remainingPath = pathParts.slice(2).join('/'); // Obținem restul segmentelor
+        const correctPath = `/${secondPart}${remainingPath ? `/${remainingPath}` : ''}`; // Construim calea corectă
         console.log(`Will redirect to: ${correctPath}`);
         
         // Redirecționare
