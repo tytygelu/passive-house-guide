@@ -49,7 +49,7 @@ export function middleware(request: NextRequest) {
   try {
     const pathname = request.nextUrl.pathname;
     
-    // DEBUG: Log toate headerele pentru diagnosticare
+    // DEBUG: Log all headers for diagnosis
     const allHeaders: Record<string, string> = {};
     request.headers.forEach((value, key) => {
       allHeaders[key] = value;
@@ -57,12 +57,12 @@ export function middleware(request: NextRequest) {
     log.info(`[Middleware] All request headers:`, allHeaders);
     log.info(`[Middleware] Request pathname: ${pathname}`);
     
-    // SUPER DEBUG - adaugă detalii esențiale pentru diagnosticare
+    // SUPER DEBUG - add essential details for diagnosis
     console.log(`=== MIDDLEWARE DEBUGGING ===`);
     console.log(`Request URL: ${request.url}`);
     console.log(`Pathname: ${pathname}`);
     
-    // 1. Excluderea resurselor statice - PRIORITATE MAXIMĂ
+    // 1. Exclude static resources - HIGHEST PRIORITY
     if (
       pathname.startsWith('/_next/') ||
       pathname.startsWith('/api/') ||
@@ -75,114 +75,85 @@ export function middleware(request: NextRequest) {
       pathname.includes('.png') ||
       pathname.includes('.css') ||
       pathname.includes('.js') ||
-      pathname.includes('.ico') ||
-      pathname.includes('.json') ||
-      pathname === '/favicon.ico'
+      pathname.includes('.ico') || // Includes favicon.ico implicitly
+      pathname.includes('.json') // Includes manifest.json
+      // Removed explicit favicon.ico check as .ico covers it
     ) {
-      // Permitem încărcarea resurselor statice fără redirecționare
+      // Allow static resources to load without redirection
       log.info(`[Middleware] Skipping redirection for static resource: ${pathname}`);
       return NextResponse.next();
     }
 
-    // 2. Verificăm adrese URL malformate cu multiple coduri de limbă
+    // 2. Check for malformed URLs with multiple language codes - NOW HIGHER PRIORITY
     const pathParts = pathname.split('/').filter(Boolean);
-    
-    // Adăugăm loguri pentru a vedea exact ce se întâmplă cu pathParts
-    console.log(`Path parts: ${JSON.stringify(pathParts)}`);
-    
-    // 2.1 Verificare EXPLICITĂ pentru /ro/en
+    log.info(`[Middleware] Path parts: ${JSON.stringify(pathParts)}`); // Keep this log
+
     if (pathParts.length >= 2) {
       const firstPart = pathParts[0];
       const secondPart = pathParts[1];
-      
-      console.log(`First part: ${firstPart}, Second part: ${secondPart}`);
-      console.log(`Is first part a locale? ${i18n.locales.includes(firstPart as Locale)}`);
-      console.log(`Is second part a locale? ${i18n.locales.includes(secondPart as Locale)}`);
-      
-      // Verificăm specific pentru `/ro/en` și orice altă combinație de limbi
+      log.info(`[Middleware] Checking double locale: /${firstPart}/${secondPart}`); // Keep this log
+
       if (i18n.locales.includes(firstPart as Locale) && i18n.locales.includes(secondPart as Locale)) {
-        console.log(`MATCH! Found language pattern: /${firstPart}/${secondPart}`);
-        
-        const remainingPath = pathParts.slice(2).join('/'); // Obținem restul segmentelor
-        const correctPath = `/${secondPart}${remainingPath ? `/${remainingPath}` : ''}`; // Construim calea corectă
-        console.log(`Will redirect to: ${correctPath}`);
-        
-        // Redirecționare
+        log.info(`[Middleware] MATCH! Found double locale pattern: /${firstPart}/${secondPart}`); // Keep this log
+
+        const remainingPath = pathParts.slice(2).join('/');
+        const correctPath = `/${secondPart}${remainingPath ? `/${remainingPath}` : ''}`;
+        log.info(`[Middleware] Correct path determined: ${correctPath}`); // Keep this log
+
         const redirectUrl = new URL(correctPath, request.url);
-        const response = NextResponse.redirect(redirectUrl, 307);
-        
-        // Setăm cookie-ul pentru noua limbă
-        response.cookies.set('NEXT_LOCALE', secondPart as Locale, { 
-          maxAge: 31536000, 
+        log.info(`[Middleware] 🔴 Attempting REDIRECT: ${pathname} -> ${correctPath}`); // Keep this log
+
+        const response = NextResponse.redirect(redirectUrl, 307); // Use 307 Temporary Redirect
+
+        // Set cookie for the *correct* locale
+        response.cookies.set('NEXT_LOCALE', secondPart as Locale, {
+          maxAge: 31536000, // 1 year
           path: '/',
           sameSite: 'lax',
           secure: process.env.NODE_ENV === 'production'
         });
-        
-        console.log(`🔴 Redirecting: ${pathname} -> ${correctPath}`);
+        log.info(`[Middleware] Set NEXT_LOCALE cookie to: ${secondPart}`); // Keep this log
+
+        // Add AGGRESSIVE no-cache headers to THIS redirect response
+        response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        response.headers.set('Pragma', 'no-cache');
+        response.headers.set('Expires', '0');
+        response.headers.set('Surrogate-Control', 'no-store');
+        log.info(`[Middleware] Added no-cache headers to redirect response`); // Keep this log
+
+        // Ensure we RETURN the response
         return response;
       }
-      
-      // Vechea logică pentru cazuri complexe - o păstrăm ca backup
+       log.info(`[Middleware] No double locale pattern detected at start.`); // Add log for else case
+    }
+    
+    // OLD BLOCK FOR COMPLEX DUPLICATES - Can be removed or kept commented if needed
+    /*
+    if (pathParts.length >= 2) {
+      const firstPart = pathParts[0];
+      const secondPart = pathParts[1];
       const hasDuplicateLanguages = 
         (pathParts.length >= 3 && secondPart === pathParts[2] && i18n.locales.includes(secondPart as Locale));
       
       if (hasDuplicateLanguages) {
-        // Adăugăm logare specifică pentru debugging
-        log.info(`[Middleware] Detected malformed URL with duplicate locales: ${pathname}`);
-        log.info(`[Middleware] Path parts: ${JSON.stringify(pathParts)}`);
-        
-        // Determinăm care limbă să folosim (a doua, care este cea selectată de utilizator)
-        const targetLocale = secondPart as Locale;
-        
-        // Eliminăm toate instanțele duplicate de limbi și păstrăm restul căii
-        const remainingParts: string[] = [];
-        for (let i = 2; i < pathParts.length; i++) {
-          // Dacă segmentul curent este o limbă și este aceeași cu targetLocale, îl ignorăm
-          if (i18n.locales.includes(pathParts[i] as Locale) && pathParts[i] === targetLocale) {
-            log.info(`[Middleware] Skipping duplicate locale at position ${i}: ${pathParts[i]}`);
-            continue; 
-          }
-          remainingParts.push(pathParts[i]);
-        }
-        
-        // Construim noua cale corectă
-        const correctPath = `/${targetLocale}${remainingParts.length > 0 ? `/${remainingParts.join('/')}` : ''}`;
-        
-        // Adăugăm logare pentru debugging
-        log.info(`[Middleware] Target locale: ${targetLocale}`);
-        log.info(`[Middleware] Remaining parts: ${JSON.stringify(remainingParts)}`);
-        log.info(`[Middleware] Correct path: ${correctPath}`);
-        
-        // Creăm răspunsul de redirecționare
-        const redirectUrl = new URL(correctPath, request.url);
-        log.info(`[Middleware] Redirect URL: ${redirectUrl.toString()}`);
-        const response = NextResponse.redirect(redirectUrl, 307);
-        
-        // Setăm cookie-ul pentru noua limbă
-        response.cookies.set('NEXT_LOCALE', targetLocale, { 
-          maxAge: 31536000, 
-          path: '/',
-          sameSite: 'lax',
-          secure: process.env.NODE_ENV === 'production'
-        });
-        
-        log.info(`[Middleware] Redirecting malformed path: ${pathname} -> ${correctPath}`);
+        // ... (previous logic for complex duplicates) ...
+        log.info(`[Middleware] Redirecting malformed path (complex): ${pathname} -> ${correctPath}`);
         return response;
       }
     }
+    */
     
-    // 3. Verificăm dacă URL-ul are deja un prefix de limbă valid
+    // 3. Check if URL already has a valid language prefix
     if (pathParts.length >= 1 && i18n.locales.includes(pathParts[0] as Locale)) {
       const urlLocale = pathParts[0] as Locale;
       
-      // Dacă utilizatorul are deja un cookie de limbă setat, respectăm alegerea din URL
-      // (înseamnă că utilizatorul a schimbat limba manual)
+      // If user has a language cookie set, respect the choice in the URL
+      // (means user changed language manually)
       if (request.cookies.has('NEXT_LOCALE')) {
         const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
         
         if (cookieLocale && urlLocale !== cookieLocale) {
-          // Actualizăm cookie-ul conform noii alegeri din URL
+          // Update cookie according to the new choice in the URL
           const response = NextResponse.next();
           response.cookies.set('NEXT_LOCALE', urlLocale, { 
             maxAge: 31536000, 
@@ -195,18 +166,18 @@ export function middleware(request: NextRequest) {
         }
       }
       
-      // Dacă URL-ul are deja un prefix de limbă valid, nu facem nimic
+      // If URL already has a valid language prefix and cookie matches or is absent, do nothing
       log.info(`[Middleware] URL already has valid locale prefix: ${urlLocale}`);
       return NextResponse.next();
     }
     
-    // 5. Redirecționare pentru ruta principală sau URL-uri fără prefix de limbă
+    // 4. Redirect for root path or URLs without a language prefix
     
-    // Determinăm limba preferată folosind mai multe metode
+    // Determine preferred locale using multiple methods
     let locale: Locale = i18n.defaultLocale;
     let localeSource = 'default';
     
-    // Prima prioritate: cookie-ul existent (alegerea explicită a utilizatorului)
+    // Priority 1: Existing cookie (user's explicit choice)
     if (request.cookies.has('NEXT_LOCALE')) {
       const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
       if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
@@ -216,7 +187,7 @@ export function middleware(request: NextRequest) {
       }
     }
     
-    // A doua prioritate: detectarea limbii din țară (folosind headerul x-vercel-ip-country)
+    // Priority 2: Locale from country (using x-vercel-ip-country header)
     if (localeSource === 'default' && request.headers.has('x-vercel-ip-country')) {
       const country = request.headers.get('x-vercel-ip-country');
       log.info(`[Middleware] Country from header: ${country}`);
@@ -228,7 +199,7 @@ export function middleware(request: NextRequest) {
       }
     }
     
-    // A treia prioritate: detectarea limbii din headerele Accept-Language
+    // Priority 3: Locale from Accept-Language headers
     if (localeSource === 'default') {
       const headerLocale = getLocaleFromHeaders(request);
       if (headerLocale) {
@@ -238,8 +209,7 @@ export function middleware(request: NextRequest) {
       }
     }
     
-    // Lăsăm setarea default, care este engleză
-    // Înregistrăm doar informația despre țară în loguri pentru diagnosticare
+    // Log country info for diagnostics regardless of source used
     if (request.headers.has('x-vercel-ip-country')) {
       const country = request.headers.get('x-vercel-ip-country');
       log.info(`[Middleware] DEBUG: Country from x-vercel-ip-country header: ${country}`);
@@ -247,20 +217,19 @@ export function middleware(request: NextRequest) {
       log.warn(`[Middleware] Missing x-vercel-ip-country header!`);
     }
     
-    log.info(`[Middleware] Final locale decision: ${locale} (source: ${localeSource})`);
+    log.info(`[Middleware] Final locale decision for redirect: ${locale} (source: ${localeSource})`);
     
-    // Construim noua cale URL
+    // Construct the new URL path
     const newPathname = `/${locale}${pathname === '/' ? '' : pathname}`;
     
-    // Adăugăm un parametru pentru a forța un cache miss
+    // Add a parameter to force a cache miss (optional, but can help during debugging)
     const urlWithNoCacheParam = new URL(newPathname, request.url);
-    urlWithNoCacheParam.searchParams.set('nocache', Date.now().toString());
+    // urlWithNoCacheParam.searchParams.set('nocache', Date.now().toString()); // Can uncomment if needed
     
-    // Creăm răspunsul de redirecționare cu status 307 (Temporary Redirect) în loc de 302
-    // pentru a ne asigura că metoda HTTP și corpul rămân neschimbate
+    // Create the redirect response (307 Temporary Redirect)
     const response = NextResponse.redirect(urlWithNoCacheParam, 307);
     
-    // Setăm cookie-ul pentru noua limbă cu o durată mai scurtă pentru teste
+    // Set the language cookie
     response.cookies.set('NEXT_LOCALE', locale, { 
       maxAge: 31536000, 
       path: '/',
@@ -268,16 +237,17 @@ export function middleware(request: NextRequest) {
       secure: process.env.NODE_ENV === 'production'
     });
     
-    // Adăugăm headere pentru a dezactiva cache-ul
+    // Add cache-disabling headers (might be redundant with 307 but good practice)
     response.headers.set('Cache-Control', 'no-store, max-age=0, must-revalidate');
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
     
-    log.info(`[Middleware] Redirecting to: ${urlWithNoCacheParam.toString()}`);
+    log.info(`[Middleware] Redirecting path without prefix: ${pathname} -> ${urlWithNoCacheParam.toString()}`);
     return response;
     
   } catch (error) {
     log.error('[Middleware] Error:', error);
+    // Fallback to allow the request to proceed in case of middleware error
     return NextResponse.next();
   }
 }
