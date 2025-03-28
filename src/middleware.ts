@@ -1,4 +1,6 @@
 // src/middleware.ts
+console.log('--- Middleware Invoked ---');
+
 import { NextRequest, NextResponse } from 'next/server';
 import { i18n } from './lib/i18n-config';
 import type { Locale } from './lib/i18n-config';
@@ -45,7 +47,9 @@ const COUNTRY_LOCALE_MAP: Record<string, Locale> = {
   ET: 'am'
 };
 
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest): Promise<NextResponse> {
+  console.log(`--- Middleware Execution Started for URL: ${request.url} ---`);
+
   try {
     const pathname = request.nextUrl.pathname;
     
@@ -293,5 +297,8 @@ function getLocaleFromHeaders(request: NextRequest): Locale | null {
 // Specificăm pe ce rute să se aplice middleware-ul
 // Aceasta este o configurație CRITICĂ pentru ca middleware-ul să funcționeze
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico).*)']
+  // Folosim un matcher simplificat temporar pentru debugging
+  // Acesta ar trebui să prindă TOATE rutele
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'] // Păstrăm excluderile de bază
+  // matcher: ['/:path*'] // Alternativă super-simplă dacă cea de sus tot nu merge
 };
