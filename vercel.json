@@ -32,7 +32,7 @@
       ]
     },
     {
-      "source": "/((?!en|_next|api).*)",
+      "source": "/((?!en|_next|api|images).*)",
       "destination": "/en/$1",
       "permanent": false,
       "has": [
@@ -56,7 +56,7 @@
       ]
     },
     {
-      "source": "/((?!en|_next|api).*)",
+      "source": "/((?!en|_next|api|images).*)",
       "destination": "/en/$1",
       "permanent": false,
       "has": [
@@ -80,7 +80,7 @@
       ]
     },
     {
-      "source": "/((?!es|_next|api).*)",
+      "source": "/((?!es|_next|api|images).*)",
       "destination": "/es/$1",
       "permanent": false,
       "has": [
@@ -104,7 +104,7 @@
       ]
     },
     {
-      "source": "/((?!es-mx|_next|api).*)",
+      "source": "/((?!es-mx|_next|api|images).*)",
       "destination": "/es-mx/$1",
       "permanent": false,
       "has": [
@@ -128,7 +128,7 @@
       ]
     },
     {
-      "source": "/((?!fr|_next|api).*)",
+      "source": "/((?!fr|_next|api|images).*)",
       "destination": "/fr/$1",
       "permanent": false,
       "has": [
@@ -152,7 +152,7 @@
       ]
     },
     {
-      "source": "/((?!fr|_next|api).*)",
+      "source": "/((?!fr|_next|api|images).*)",
       "destination": "/fr/$1",
       "permanent": false,
       "has": [
@@ -176,7 +176,7 @@
       ]
     },
     {
-      "source": "/((?!de|_next|api).*)",
+      "source": "/((?!de|_next|api|images).*)",
       "destination": "/de/$1",
       "permanent": false,
       "has": [
@@ -200,7 +200,7 @@
       ]
     },
     {
-      "source": "/((?!de|_next|api).*)",
+      "source": "/((?!de|_next|api|images).*)",
       "destination": "/de/$1",
       "permanent": false,
       "has": [
@@ -224,7 +224,7 @@
       ]
     },
     {
-      "source": "/((?!it|_next|api).*)",
+      "source": "/((?!it|_next|api|images).*)",
       "destination": "/it/$1",
       "permanent": false,
       "has": [
@@ -248,7 +248,7 @@
       ]
     },
     {
-      "source": "/((?!pt|_next|api).*)",
+      "source": "/((?!pt|_next|api|images).*)",
       "destination": "/pt/$1",
       "permanent": false,
       "has": [
@@ -272,7 +272,7 @@
       ]
     },
     {
-      "source": "/((?!pt|_next|api).*)",
+      "source": "/((?!pt|_next|api|images).*)",
       "destination": "/pt/$1",
       "permanent": false,
       "has": [
@@ -296,7 +296,7 @@
       ]
     },
     {
-      "source": "/((?!nl|_next|api).*)",
+      "source": "/((?!nl|_next|api|images).*)",
       "destination": "/nl/$1",
       "permanent": false,
       "has": [
@@ -320,7 +320,7 @@
       ]
     },
     {
-      "source": "/((?!ro|_next|api).*)",
+      "source": "/((?!ro|_next|api|images).*)",
       "destination": "/ro/$1",
       "permanent": false,
       "has": [
@@ -344,7 +344,7 @@
       ]
     },
     {
-      "source": "/((?!ro|_next|api).*)",
+      "source": "/((?!ro|_next|api|images).*)",
       "destination": "/ro/$1",
       "permanent": false,
       "has": [
@@ -368,7 +368,7 @@
       ]
     },
     {
-      "source": "/((?!ru|_next|api).*)",
+      "source": "/((?!ru|_next|api|images).*)",
       "destination": "/ru/$1",
       "permanent": false,
       "has": [
@@ -392,7 +392,7 @@
       ]
     },
     {
-      "source": "/((?!ar|_next|api).*)",
+      "source": "/((?!ar|_next|api|images).*)",
       "destination": "/ar/$1",
       "permanent": false,
       "has": [
@@ -416,7 +416,7 @@
       ]
     },
     {
-      "source": "/((?!zh|_next|api).*)",
+      "source": "/((?!zh|_next|api|images).*)",
       "destination": "/zh/$1",
       "permanent": false,
       "has": [
@@ -440,7 +440,7 @@
       ]
     },
     {
-      "source": "/((?!ja|_next|api).*)",
+      "source": "/((?!ja|_next|api|images).*)",
       "destination": "/ja/$1",
       "permanent": false,
       "has": [
@@ -464,7 +464,7 @@
       ]
     },
     {
-      "source": "/((?!ko|_next|api).*)",
+      "source": "/((?!ko|_next|api|images).*)",
       "destination": "/ko/$1",
       "permanent": false,
       "has": [
@@ -488,7 +488,7 @@
       ]
     },
     {
-      "source": "/((?!tr|_next|api).*)",
+      "source": "/((?!tr|_next|api|images).*)",
       "destination": "/tr/$1",
       "permanent": false,
       "has": [
@@ -512,7 +512,7 @@
       ]
     },
     {
-      "source": "/((?!vi|_next|api).*)",
+      "source": "/((?!vi|_next|api|images).*)",
       "destination": "/vi/$1",
       "permanent": false,
       "has": [
@@ -536,7 +536,7 @@
       ]
     },
     {
-      "source": "/((?!pl|_next|api).*)",
+      "source": "/((?!pl|_next|api|images).*)",
       "destination": "/pl/$1",
       "permanent": false,
       "has": [
@@ -560,7 +560,7 @@
       ]
     },
     {
-      "source": "/((?!uk|_next|api).*)",
+      "source": "/((?!uk|_next|api|images).*)",
       "destination": "/uk/$1",
       "permanent": false,
       "has": [
@@ -584,7 +584,7 @@
       ]
     },
     {
-      "source": "/((?!sv|_next|api).*)",
+      "source": "/((?!sv|_next|api|images).*)",
       "destination": "/sv/$1",
       "permanent": false,
       "has": [
@@ -608,7 +608,7 @@
       ]
     },
     {
-      "source": "/((?!el|_next|api).*)",
+      "source": "/((?!el|_next|api|images).*)",
       "destination": "/el/$1",
       "permanent": false,
       "has": [
@@ -632,7 +632,7 @@
       ]
     },
     {
-      "source": "/((?!hi|_next|api).*)",
+      "source": "/((?!hi|_next|api|images).*)",
       "destination": "/hi/$1",
       "permanent": false,
       "has": [
@@ -656,7 +656,7 @@
       ]
     },
     {
-      "source": "/((?!bn|_next|api).*)",
+      "source": "/((?!bn|_next|api|images).*)",
       "destination": "/bn/$1",
       "permanent": false,
       "has": [
@@ -680,7 +680,7 @@
       ]
     },
     {
-      "source": "/((?!am|_next|api).*)",
+      "source": "/((?!am|_next|api|images).*)",
       "destination": "/am/$1",
       "permanent": false,
       "has": [
