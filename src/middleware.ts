@@ -171,12 +171,13 @@ export function middleware(request: NextRequest) {
       }
     }
     
-    // FORȚEAZĂ ROMÂNA PENTRU TESTARE
-    // Forțăm temporar româna și în producție până confirmăm că funcționează
-    locale = 'ro';
-    localeSource = 'forced';
-    log.info(`[Middleware] FORCING LOCALE TO RO FOR TESTING (temporary in all environments)`);
-
+    // Forțăm limba română doar în mediul de dezvoltare
+    if (process.env.NODE_ENV !== 'production') {
+      locale = 'ro';
+      localeSource = 'forced';
+      log.info(`[Middleware] FORCING LOCALE TO RO FOR TESTING`);
+    }
+    
     log.info(`[Middleware] Final locale decision: ${locale} (source: ${localeSource})`);
     
     // Construim noua cale URL
