@@ -172,12 +172,11 @@ export function middleware(request: NextRequest) {
     }
     
     // FORȚEAZĂ ROMÂNA PENTRU TESTARE
-    if (process.env.NODE_ENV !== 'production') {
-      locale = 'ro';
-      localeSource = 'forced';
-      log.info(`[Middleware] FORCING LOCALE TO RO FOR TESTING`);
-    }
-    
+    // Forțăm temporar româna și în producție până confirmăm că funcționează
+    locale = 'ro';
+    localeSource = 'forced';
+    log.info(`[Middleware] FORCING LOCALE TO RO FOR TESTING (temporary in all environments)`);
+
     log.info(`[Middleware] Final locale decision: ${locale} (source: ${localeSource})`);
     
     // Construim noua cale URL
