@@ -53,20 +53,14 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
     // Split path by '/' and remove empty strings
     const parts = (pathname || '').split('/').filter(Boolean)
     
-    // Verificăm dacă URL-ul poate conține deja o limbă
-    if (parts.length >= 1) {
-      // Verificăm prima parte a URL-ului (potențial cod de limbă)
-      const firstPart = parts[0]
-      
-      // Dacă prima parte este un cod de limbă valid (din localeMetadata)
-      if (localeMetadata.some(locale => locale.code === firstPart)) {
-        // Eliminăm această parte și returnăm restul căii
-        return '/' + parts.slice(1).join('/')
-      }
+    // Verificăm dacă primul segment este un cod de limbă
+    if (parts.length >= 1 && localeMetadata.some(locale => locale.code === parts[0])) {
+      // Dacă da, returnăm restul căii fără codul de limbă
+      return parts.slice(1).join('/') 
     }
     
-    // Dacă nu există cod de limbă sau URL este simplu, returnăm întreaga cale
-    return pathname || '/'
+    // Dacă nu este un cod de limbă sau URL-ul e simplu, returnăm calea fără primul segment
+    return parts.slice(Math.min(1, parts.length)).join('/')
   }
 
   const languages = localeMetadata
@@ -185,24 +179,31 @@ export default function ClientNav({ lang, menuItems }: ClientNavProps) {
             </button>
             {isLanguageMenuOpen && (
               <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-xl max-h-96 overflow-y-auto">
-                {languages.map(language => (
-                  <Link
-                    key={language.code}
-                    href={`/${language.code}${getCurrentRoute()}`}
-                    className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                    onClick={() => setIsLanguageMenuOpen(false)}
-                  >
-                    <div className="w-4 h-3 flex-shrink-0 overflow-hidden">
-                      { language.flag && language.flag !== "" ? (
-                        <Flag
-                          code={language.flag}
-                          className="w-full h-full object-cover rounded-sm"
-                        />
-                      ) : null }
-                    </div>
-                    <span>{language.name}</span>
-                  </Link>
-                ))}
+                {languages.map(language => {
+                  // Obținem ruta curentă fără segmentul de limbă
+                  const route = getCurrentRoute()
+                  // Construim URL-ul nou cu codul de limbă corect
+                  const newUrl = route ? `/${language.code}/${route}` : `/${language.code}`
+                  
+                  return (
+                    <Link
+                      key={language.code}
+                      href={newUrl}
+                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={() => setIsLanguageMenuOpen(false)}
+                    >
+                      <div className="w-4 h-3 flex-shrink-0 overflow-hidden">
+                        { language.flag && language.flag !== "" ? (
+                          <Flag
+                            code={language.flag}
+                            className="w-full h-full object-cover rounded-sm"
+                          />
+                        ) : null }
+                      </div>
+                      <span>{language.name}</span>
+                    </Link>
+                  )
+                })}
               </div>
             )}
           </div>
