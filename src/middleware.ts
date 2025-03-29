@@ -252,5 +252,10 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|images|favicon.ico).*)']
+  // Matcher specifică căile unde va rula middleware-ul
+  // Este crucial să NU includem căile pentru resurse statice sau API aici
+  matcher: [
+    // Rulează pe toate căile care NU încep cu /api/, /_next/static/, /_next/image/, sau nu au extensie de fișier (ex: .ico, .png)
+    "/((?!api|_next/static|_next/image|favicon.ico|apple-touch-icon.png|apple-touch-icon-precomposed.png|icon.svg|icon-192.png|icon-512.png|manifest.json|robots.txt|sitemap.xml|sitemap-0.xml).*)",
+  ],
 };
