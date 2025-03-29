@@ -131,29 +131,43 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
         return response;
       }
-      log.info(`[Middleware] No double locale pattern detected at start.`);
     }
 
     if (pathParts.length >= 1 && i18n.locales.includes(pathParts[0] as Locale)) {
       const urlLocale = pathParts[0] as Locale;
+      const currentCookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
 
-      if (request.cookies.has('NEXT_LOCALE')) {
-        const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+      log.info(`[Middleware] Path has locale: ${urlLocale}. Cookie locale: ${currentCookieLocale || 'Not set'}`);
 
-        if (cookieLocale && urlLocale !== cookieLocale) {
-          const response = NextResponse.next();
-          response.cookies.set('NEXT_LOCALE', urlLocale, {
-            maxAge: 31536000,
-            path: '/',
-            sameSite: 'lax',
-            secure: process.env.NODE_ENV === 'production'
-          });
-          log.info(`[Middleware] Updating language preference from ${cookieLocale} to ${urlLocale}`);
-          return response;
-        }
+      if (currentCookieLocale && i18n.locales.includes(currentCookieLocale as Locale) && currentCookieLocale !== urlLocale) {
+        log.info(`[Middleware] URL locale (${urlLocale}) differs from cookie (${currentCookieLocale}). Prioritizing URL.`);
+        const response = NextResponse.redirect(request.nextUrl);
+        response.cookies.set('NEXT_LOCALE', urlLocale, {
+          maxAge: 31536000,
+          path: '/',
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production'
+        });
+        log.info(`[Middleware] Redirecting to ${request.nextUrl.pathname} to set cookie to ${urlLocale}`);
+        response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+        response.headers.set('Pragma', 'no-cache');
+        response.headers.set('Expires', '0');
+        return response;
       }
 
-      log.info(`[Middleware] URL already has valid locale prefix: ${urlLocale}`);
+      if (!currentCookieLocale || !i18n.locales.includes(currentCookieLocale as Locale) || currentCookieLocale !== urlLocale) {
+        log.info(`[Middleware] Setting/updating cookie to match URL locale: ${urlLocale}`);
+        const response = NextResponse.next();
+        response.cookies.set('NEXT_LOCALE', urlLocale, {
+          maxAge: 31536000,
+          path: '/',
+          sameSite: 'lax',
+          secure: process.env.NODE_ENV === 'production'
+        });
+        return response;
+      }
+
+      log.info(`[Middleware] URL locale (${urlLocale}) matches cookie (${currentCookieLocale}). Proceeding.`);
       return NextResponse.next();
     }
 
