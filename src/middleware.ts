@@ -171,47 +171,61 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       return NextResponse.next();
     }
 
-    let locale: Locale = i18n.defaultLocale;
-    let localeSource = 'default';
+    log.info(`[Middleware] URL does not have a locale prefix. Detecting locale for redirect...`);
 
-    if (request.cookies.has('NEXT_LOCALE')) {
-      const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-      if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
-        locale = cookieLocale as Locale;
-        localeSource = 'cookie';
-        log.info(`[Middleware] Using locale from cookie: ${locale}`);
-      }
-    }
+    let locale: Locale = i18n.defaultLocale; // Începem cu default ('en')
+    let localeSource = 'default'; // Sursa din care am determinat limba
 
-    if (localeSource === 'default' && request.headers.has('x-vercel-ip-country')) {
+    // 1. Prioritate: Detectare bazată pe IP (doar pe Vercel)
+    if (request.headers.has('x-vercel-ip-country')) {
       const country = request.headers.get('x-vercel-ip-country');
-      log.info(`[Middleware] Country from header: ${country}`);
-
+      log.info(`[Middleware] GeoIP: Found country header: ${country}`);
       if (country && COUNTRY_LOCALE_MAP[country] && i18n.locales.includes(COUNTRY_LOCALE_MAP[country])) {
         locale = COUNTRY_LOCALE_MAP[country];
         localeSource = 'country';
-        log.info(`[Middleware] Detected locale from country: ${country} -> ${locale}`);
+        log.info(`[Middleware] GeoIP: Using locale from country: ${country} -> ${locale}`);
+      } else {
+        log.warn(`[Middleware] GeoIP: Country '${country}' not in map or locale not supported.`);
       }
+    } else {
+      // Acest mesaj va apărea local, dar nu ar trebui să apară pe Vercel
+      log.warn('[Middleware] GeoIP: Missing x-vercel-ip-country header (expected in Vercel env).');
     }
 
+    // 2. Dacă IP-ul nu a determinat limba, încercăm Cookie
+    if (localeSource === 'default' && request.cookies.has('NEXT_LOCALE')) {
+      const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
+      log.info(`[Middleware] Cookie: Found cookie value: ${cookieLocale}`);
+      if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
+        locale = cookieLocale as Locale;
+        localeSource = 'cookie';
+        log.info(`[Middleware] Cookie: Using locale from cookie: ${locale}`);
+      } else {
+        log.warn(`[Middleware] Cookie: Invalid or unsupported locale value in cookie: ${cookieLocale}`);
+        // Opțional: am putea șterge cookie-ul invalid aici
+        // response.cookies.delete('NEXT_LOCALE');
+      }
+    } else if (localeSource === 'default') {
+      log.info('[Middleware] Cookie: No NEXT_LOCALE cookie found or IP already determined locale.');
+    }
+
+    // 3. Dacă nici IP, nici Cookie nu au funcționat, încercăm Accept-Language Header
     if (localeSource === 'default') {
+      log.info('[Middleware] Headers: Attempting locale detection from Accept-Language.');
       const headerLocale = getLocaleFromHeaders(request);
       if (headerLocale) {
         locale = headerLocale;
         localeSource = 'accept-language';
-        log.info(`[Middleware] Detected locale from headers: ${locale}`);
+        log.info(`[Middleware] Headers: Using locale from Accept-Language: ${locale}`);
+      } else {
+        log.info('[Middleware] Headers: Could not determine valid locale from Accept-Language.');
       }
     }
 
-    if (request.headers.has('x-vercel-ip-country')) {
-      const country = request.headers.get('x-vercel-ip-country');
-      log.info(`[Middleware] DEBUG: Country from x-vercel-ip-country header: ${country}`);
-    } else {
-      log.warn(`[Middleware] Missing x-vercel-ip-country header!`);
-    }
-
+    // 4. Log final înainte de redirect
     log.info(`[Middleware] Final locale decision for redirect: ${locale} (source: ${localeSource})`);
 
+    // Construim și executăm redirect-ul
     const newPathname = `/${locale}${pathname === '/' ? '' : pathname}`;
     const redirectUrl = new URL(newPathname, request.url);
 
