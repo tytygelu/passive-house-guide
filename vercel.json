@@ -17,6 +17,6 @@
         }
       ]
     }
-  ]
-  // Am eliminat secțiunea "redirects" de aici, deoarece este gestionată de middleware.ts
+  ],
+  "redirects": []
 }
