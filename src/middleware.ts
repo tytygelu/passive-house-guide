@@ -43,6 +43,7 @@ function getLocaleFromHeaders(request: NextRequest): Locale | null {
   });
 
   if (Object.keys(negotiatorHeaders).length === 0) {
+    console.warn('[MW] Headers: No Accept-Language header found.');
     return null;
   }
 
@@ -59,6 +60,7 @@ function getLocaleFromHeaders(request: NextRequest): Locale | null {
     }
   }
 
+  console.log('[MW] Headers: Could not determine valid locale from Accept-Language.');
   return null;
 }
 
@@ -67,8 +69,6 @@ const PUBLIC_FILE = /\.(.*)$/;
 export async function middleware(request: NextRequest): Promise<NextResponse> {
   try {
     const pathname = request.nextUrl.pathname;
-
-    console.log(`[MW-Check] Request pathname: ${pathname}`);
 
     if (
       pathname.startsWith('/_next/') ||
@@ -83,22 +83,17 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     }
 
     const pathParts = pathname.split('/').filter(Boolean);
-    console.log(`[MW-Check] Path parts: ${JSON.stringify(pathParts)}`);
 
     if (pathParts.length >= 2) {
       const firstPart = pathParts[0];
       const secondPart = pathParts[1];
-      console.log(`[MW-Check] Checking double locale: /${firstPart}/${secondPart}`);
 
       if (i18n.locales.includes(firstPart as Locale) && i18n.locales.includes(secondPart as Locale)) {
-        console.log(`[MW-Check] MATCH! Found double locale pattern: /${firstPart}/${secondPart}`);
-
+        console.warn(`[MW-Check] Detected multiple locales in path: ${pathname}. Redirecting to assumed correct locale.`);
         const remainingPath = pathParts.slice(2).join('/');
         const correctPath = `/${firstPart}${remainingPath ? `/${remainingPath}` : ''}`;
-        console.log(`[MW-Check] Correct path determined: ${correctPath}`);
-
         const redirectUrl = new URL(correctPath, request.url);
-        console.log(`[MW-Check] 🔴 Attempting REDIRECT: ${pathname} -> ${correctPath}`);
+        console.log(`[MW-Check] Redirecting path without prefix: ${pathname} -> ${correctPath}`);
 
         const response = NextResponse.redirect(redirectUrl, 307);
 
@@ -108,13 +103,11 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
           sameSite: 'lax',
           secure: process.env.NODE_ENV === 'production'
         });
-        console.log(`[MW-Check] Set NEXT_LOCALE cookie to: ${firstPart}`);
 
         response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
         response.headers.set('Pragma', 'no-cache');
         response.headers.set('Expires', '0');
         response.headers.set('Surrogate-Control', 'no-store');
-        console.log(`[MW-Check] Added no-cache headers to redirect response`);
 
         return response;
       }
@@ -124,10 +117,8 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
       const urlLocale = pathParts[0] as Locale;
       const currentCookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
 
-      console.log(`[MW-Check] Path has locale: ${urlLocale}. Cookie locale: ${currentCookieLocale || 'Not set'}`);
-
       if (currentCookieLocale && i18n.locales.includes(currentCookieLocale as Locale) && currentCookieLocale !== urlLocale) {
-        console.log(`[MW-Check] URL locale (${urlLocale}) differs from cookie (${currentCookieLocale}). Prioritizing URL.`);
+        console.warn(`[MW-Check] URL locale (${urlLocale}) differs from cookie (${currentCookieLocale}). Prioritizing URL.`);
         const response = NextResponse.redirect(request.nextUrl);
         response.cookies.set('NEXT_LOCALE', urlLocale, {
           maxAge: 31536000,
@@ -166,55 +157,42 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     // 1. Prioritate: Detectare bazată pe IP (doar pe Vercel)
     if (request.headers.has('x-vercel-ip-country')) {
       const country = request.headers.get('x-vercel-ip-country');
-      console.log(`[MW-Check] GeoIP: Found country header: ${country}`);
       if (country && COUNTRY_LOCALE_MAP[country] && i18n.locales.includes(COUNTRY_LOCALE_MAP[country])) {
         locale = COUNTRY_LOCALE_MAP[country];
         localeSource = 'country';
-        console.log(`[MW-Check] GeoIP: Using locale from country: ${country} -> ${locale}`);
       } else {
         console.warn(`[MW-Check] GeoIP: Country '${country}' not in map or locale not supported.`);
       }
     } else {
-      // Acest mesaj va apărea local, dar nu ar trebui să apară pe Vercel
       console.warn('[MW-Check] GeoIP: Missing x-vercel-ip-country header (expected in Vercel env).');
     }
 
     // 2. Dacă IP-ul nu a determinat limba, încercăm Cookie
     if (localeSource === 'default' && request.cookies.has('NEXT_LOCALE')) {
       const cookieLocale = request.cookies.get('NEXT_LOCALE')?.value;
-      console.log(`[MW-Check] Cookie: Found cookie value: ${cookieLocale}`);
       if (cookieLocale && i18n.locales.includes(cookieLocale as Locale)) {
         locale = cookieLocale as Locale;
         localeSource = 'cookie';
-        console.log(`[MW-Check] Cookie: Using locale from cookie: ${locale}`);
       } else {
         console.warn(`[MW-Check] Cookie: Invalid or unsupported locale value in cookie: ${cookieLocale}`);
-        // Opțional: am putea șterge cookie-ul invalid aici
-        // response.cookies.delete('NEXT_LOCALE');
       }
-    } else if (localeSource === 'default') {
-      console.log('[MW-Check] Cookie: No NEXT_LOCALE cookie found or IP already determined locale.');
     }
 
     // 3. Dacă nici IP, nici Cookie nu au funcționat, încercăm Accept-Language Header
     if (localeSource === 'default') {
-      console.log('[MW-Check] Headers: Attempting locale detection from Accept-Language.');
       const headerLocale = getLocaleFromHeaders(request);
       if (headerLocale) {
         locale = headerLocale;
         localeSource = 'accept-language';
-        console.log(`[MW-Check] Headers: Using locale from Accept-Language: ${locale}`);
-      } else {
-        console.log('[MW-Check] Headers: Could not determine valid locale from Accept-Language.');
       }
     }
 
-    // 4. Log final înainte de redirect
     console.log(`[MW-Check] Final locale decision for redirect: ${locale} (source: ${localeSource})`);
 
     // Construim și executăm redirect-ul
     const newPathname = `/${locale}${pathname === '/' ? '' : pathname}`;
     const redirectUrl = new URL(newPathname, request.url);
+    console.log(`[MW-Check] Redirecting path without prefix: ${pathname} -> ${redirectUrl.toString()}`);
 
     const response = NextResponse.redirect(redirectUrl, 307);
 
@@ -229,7 +207,6 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
     response.headers.set('Pragma', 'no-cache');
     response.headers.set('Expires', '0');
 
-    console.log(`[MW-Check] Redirecting path without prefix: ${pathname} -> ${redirectUrl.toString()}`);
     return response;
 
   } catch (error) {
