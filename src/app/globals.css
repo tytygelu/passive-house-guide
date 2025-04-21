@@ -1,3 +1,22 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Stiluri pentru tabele Markdown (fără @apply) */
+.markdown table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.markdown th,
+.markdown td {
+  border: 1px solid #d1d5db; /* Tailwind gray-300 */
+  padding: 0.5rem 1rem;       /* px-4 py-2 */
+  text-align: left;
+  vertical-align: top;
+}
+.markdown th {
+  background-color: #f3f4f6;  /* Tailwind gray-100 */
+  font-weight: 600;
+}
